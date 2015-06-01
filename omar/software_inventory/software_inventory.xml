@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="software_tree">
+			<field name="name">software.tree</field>
+			<field name="model">software</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="software">
+					<field name="name_software"/>
+					<field name="architecture"/>
+					<field name="license"/>
+					<field name="version"/>
+					<field name="expiration"/>
+					<field name="used"/>
+					<field name="installation"/>
+					<field name="free"/>
+					<field name="cost_software"/>
+					<field name="description"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="software_form">
+			<field name="name">software.form</field>
+			<field name="model">software</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="software">
+					<field name="name_software"/>
+					<field name="architecture"/>
+					<field name="license"/>
+					<field name="version"/>
+					<field name="expiration"/>
+					<field name="used"/>
+					<field name="installation"/>
+					<field name="free"/>
+					<field name="cost_software"/>
+					<field name="description"/>
+					<field name="hardware_id"/>
+				</form>
+			</field>
+		</record>
+		<record id="software_action" model="ir.actions.act_window">
+			<field name="name">software</field>
+			<field name="res_model">software</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		<menuitem name="Software" id="software_menu" sequence="90"/>
+		<menuitem name="General data" id="software_menu_general" parent="software_menu"/>
+		<menuitem action="software_action" id="ctrl_software_menu" sequence="1" parent="software_menu_general"/>
+	</data>
+</openerp>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="time_control_tree">
+			<field name="name">time_control.tree</field>
+			<field name="model">time_control</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="time_control">
+					<field name="employee"/>
+					<field name="start_time"/>
+					<field name="start_food"/>
+					<field name="end_food"/>
+					<field name="end_time"/>
+					<field name="total_hours"/>
+					<field name="date_register"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="time_control_form">
+			<field name="name">time_control.form</field>
+			<field name="model">time_control</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="time_control" create="false" version="7.0">
+					<sheet>
+						<group string="Lista" colspan='2' col='2'>
+				        	<field name="employee" id="employee_id"/>
+							<button name="search_employee" create="false" string="check" type="object"/>
+				        </group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="time_control_action" model="ir.actions.client">
+			<field name="name">time control</field>
+			<field name="res_model">time_control</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="tag">example.action</field>
+		</record>
+		<menuitem name="time control" id="time_control_menu" sequence="90"/>
+		<menuitem name="time control" id="time_control_menu_general" parent="time_control_menu"/>
+		<menuitem action="time_control_action" id="ctrl_time_control_menu" sequence="1" parent="time_control_menu_general"/>
+	</data>
+</openerp>
+

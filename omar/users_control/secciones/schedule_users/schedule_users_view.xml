@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="schedule_users_tree">
+			<field name="name">schedule_users.tree</field>
+			<field name="model">schedule_users</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="schedule_users">
+					<field name="name"/>
+					<field name="first_name"/>
+					<field name="second_name"/>
+					<field name="employee_number"/>
+					<field name="lunch_time"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="schedule_users_form">
+			<field name="name">schedule_users.form</field>
+			<field name="model">schedule_users</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="schedule_users">
+					<field name="photo" widget="image" string="photo"/>
+					<field name="name"/>
+					<field name="first_name"/>
+					<field name="second_name"/>
+					<field name="lunch_time"/>
+					<field name="employee_number"/>
+					<field name="sucursal"/>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_schedule_users" model="ir.actions.act_window">
+			<field name="name">schedule users</field>
+			<field name="res_model">schedule_users</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Register User"
+			parent="users_control.top_schedule_users"  
+			id="schedule_users_control"
+			action="action_schedule_users"/>
+
+	</data>
+</openerp>
+

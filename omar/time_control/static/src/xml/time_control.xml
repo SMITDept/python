@@ -1,0 +1,14 @@
+<templates>
+	<div t-name="time_control.action" class="oe_time_control">
+		<div class="oe_info">
+			<h1 class="font_h1" id='ct' ></h1>
+		    <h2 class="margin">Employee number</h2>
+		    <p class="employee_number margin">
+		        <input type="text" id="employee_number" name="Employee" placeholder="Example: 213165"></input>
+		    </p>
+		    <p class="oe_time_control_timer margin">
+		        <button class="styled-button" type="button" >Cheked</button>
+		    </p>
+		</div>
+	</div> 
+</templates>

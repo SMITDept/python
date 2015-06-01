@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+
+<!-- XML Módulo -->
+
+<openerp>
+	<data>
+		<record id="schedule_report_view" model="ir.ui.view">
+			<field name="name">Schedule Report</field>
+			<field name="model">schedule.report</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Report Options">
+					<notebook tabpos="up" colspan="2">
+						<page string="Filtros" name="filters">
+							<separator string="Fechas" colspan="4"/>
+							<group colspan="4" col="4">
+								<group colspan="2" col="2">
+									<field name="rango_fechas"/>
+								</group>
+								<group colspan="2" col="2">
+								</group>
+								<group colspan="2" col="2">
+									<field name="fecha_inicio"
+												 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ] }"/>
+								</group>
+								<group colspan="2" col="2">
+									<newline/>
+									<field name="fecha_fin"
+												 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ] }"/>
+								</group>
+							</group>
+								<separator string="Employee Number" colspan="4"/>
+								<group colspan="4" col="4">
+									<field name="employee_number"/>
+								</group>
+						</page>
+					</notebook>
+					<newline/>
+					<separator colspan="4"/>
+					<group col="4" colspan="4">
+						<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
+						<button icon="gtk-print" name="print_report"
+										string="Imprimir"
+										type="object"
+										colspan="2"
+										default_focus="1" />
+					</group>
+				</form>
+			</field>
+		</record>
+	
+		<!-- Sección de Action(s) Record(s) -->
+		<!-- El prefijo "action_"  y el sufijo "report" es obligatorio -->
+		
+		<record id="action_schedule_report" model="ir.actions.act_window">
+			<field name="name">Schedule Report</field>
+			<field name="res_model">schedule.report</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="schedule_report_view"/>
+			<field name="target">new</field>
+		</record>
+		<!-- Sección de Menu(s) Record(s) -->
+		
+		<menuitem icon="STOCK_PRINT"
+			id="menu_schedule_report"
+			name="Schedule Report"
+			action="action_schedule_report"
+			parent="users_control.top_wizard"/>
+	</data>
+</openerp>

@@ -1,0 +1,14 @@
+<templates>
+<div t-name="time_control.action" class="oe_time_control oe_time_control_stopped">
+    <center><h1 id='ct' ></h1></center>
+    <div id="txt"></div>
+    <center><h2>CHECADOR</h2></center>
+    <p class="employee_number">
+        <center><input type="text" id="employee_number" name="FirstName" placeholder="Employee number"></input></center>
+    </p>
+    <p class="oe_time_control_timer">
+        <center><button type="button" >Cheked</button></center>
+    </p>
+</div> 
+
+</templates>
