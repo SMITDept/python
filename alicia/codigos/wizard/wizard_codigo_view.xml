@@ -16,7 +16,10 @@
 			<field name="arch" type="xml">
 				<form string="Lista de Precios">
           <group string="Insertar Codigos" colspan='2' col='2'>
-            <field name="lista" nolabel="1" colspan='2' placeholder="Por favor insertar en lista y no dejar espacios entre cada codigo"/>
+            <field name="lista"
+									 nolabel="1"
+									 colspan='2'
+									 placeholder="Por favor de insertar los codigos en lista y no dejar espacios entre ellos, recuerde que para llenar una hoja deben ser 36 codigos"/>
           </group>
 					<group col="4" colspan="4">
 						<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
