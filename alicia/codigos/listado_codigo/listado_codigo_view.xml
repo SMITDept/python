@@ -15,6 +15,7 @@
           <field name="cod_barras"/>
           <field name="descripcion"/>
           <field name="precio"/>
+          <field name="fecha"/>
 				</tree>
 			</field>
 		</record>

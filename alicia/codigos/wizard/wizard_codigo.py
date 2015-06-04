@@ -14,9 +14,6 @@ from osv import fields, osv
 import pooler
 from openerp.tools.translate import _
 import barcode
-from barcode.writer import ImageWriter
-from barcode import generate
-from StringIO import StringIO
 
 #Modelo
 class wizard_codigo(osv.osv_memory):
@@ -29,16 +26,6 @@ class wizard_codigo(osv.osv_memory):
   ###                                                                 METODOS                                                                      ###
   ###                                                                                                                                              ###
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
-  #---------------------------------------------------------------------------------------------------------------------------------------------------
-  def crear_ean13_png(valor, archivo):
-    ean = barcode.get('ean13', valor, writer=barcode.writer.ImageWriter())
-    # generamos el archivo
-    filename = ean.save(archivo)
-    # #generamos el archivo
-    # name = generate('EAN13', codigo, output= str('ean_' + codigo ))
-    # generamos el archivo
-    # filename = ean.save(str('ean_' + codigo ))
-  
   #---------------------------------------------------------------------------------------------------------------------------------------------------  
   def obtenerCodigos( self, cr, uid, ids, context = None ):
     """
@@ -72,9 +59,10 @@ class wizard_codigo(osv.osv_memory):
            'report_name': 'sm_etiquetas',
            'datas': datas,
            'nodestroy': True,
-       }      
+       }  
     else :
       return { 'value' : {} }
+    
   #---------------------------------------------------------------------------------------------------------------------------------------------------
   def _obtener_codigos( self, cr, uid, lista ) :
     """
@@ -85,7 +73,7 @@ class wizard_codigo(osv.osv_memory):
     """
     listado = lista.split('\n')
     valores = '\n'
-    fecha = time.strftime("%Y%m%d")
+    fecha = time.strftime("%y%m%d")
     fecha_imp = time.strftime('%d/%m/%y')
     # time.strftime('%d %b %y'))   %d/%m/%Y
     if ( type( listado ) in ( list, tuple ) ):
@@ -121,10 +109,8 @@ class wizard_codigo(osv.osv_memory):
         resultado = cr.fetchone()
         valores = (( resultado[0], resultado[1], (resultado[2]), ruta, fecha, (str(resultado[2])+'0'), str(fecha_imp) )) if type( resultado ) in ( list, tuple ) and resultado != None else no_encontrado
         #se insertan los nuevos datos a la tabla
-        cr.execute(
-        """
-          INSERT INTO listado_codigo (descripcion, cod_barras, precio, ruta_codigo, fecha, precio_str, fecha_str ) VALUES %s
-        """,(valores,))
+        cr.execute('INSERT INTO listado_codigo (descripcion, cod_barras, precio, ruta_codigo, fecha, precio_str, fecha_str ) VALUES (%s::varchar(24), %s, %s, %s, %s, %s, %s)',
+                     valores )
       return True
     else :
       return False

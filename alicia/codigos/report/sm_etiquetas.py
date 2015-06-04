@@ -51,6 +51,7 @@ class sm_etiquetas(report_sxw.rml_parse):
 imprimir = report_sxw.report_sxw('report.sm_etiquetas',
                       'listado_codigo',
                       'addons/codigos/report/sm_etiquetas.rml',
-                      parser = sm_etiquetas
+                      parser = sm_etiquetas,
+                      header=False
                       )
 
