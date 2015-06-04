@@ -9,7 +9,7 @@
   'website': 'http://www.supermas.mx',
   'installable': True, 
   'active': False,
-  'description': 'Módulo Codigo- Modulo para obtener precios',
+  'description': 'Módulo Codigos- Modulo desarrollado para generar las etiquetas automaticamente de cada producto atraves de una lista codigos EAN-13',   
   #This model depends of BASE OpenERP model...
   'depends': [
     'base',
