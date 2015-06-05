@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-
+<!-- @autor       : SUPERMAS-ARC -->
 <!-- RML Documento -->
 
 <document filename="etiquetas.pdf">
@@ -31,7 +31,7 @@
 							 />
 				<paraStyle name="PF"
 							 fontname="Courier" 	 
-							 fontSize="3.0"
+							 fontSize="5.0"
 							 alignment="justify"
 							 leading="-15"/>
 				

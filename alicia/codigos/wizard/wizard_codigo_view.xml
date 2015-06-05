@@ -14,9 +14,12 @@
 			<field name="model">wizard_codigo</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="Lista de Precios">
-          <group string="Insertar Codigos" colspan='2' col='2'>
-            <field name="lista" nolabel="1" colspan='2' placeholder="Por favor insertar en lista y no dejar espacios entre cada codigo"/>
+				<form string="Lista">
+          <group string="Insertar Códigos" colspan='2' col='2'>
+            <field name="lista"
+									 nolabel="1"
+									 colspan='2'
+									 placeholder="Por favor de insertar los códigos en lista y no dejar espacios entre cada dígito, Recuerde que para llenar una hoja son 36 códigos"/>
           </group>
 					<group col="4" colspan="4">
 						<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
