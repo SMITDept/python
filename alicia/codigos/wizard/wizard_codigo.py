@@ -36,7 +36,7 @@ class wizard_codigo(osv.osv_memory):
     """
     lista = self.pool.get( self._name ).browse( cr, uid, ids[0] ).lista
     if len(lista) < 13 or lista == '\n' :
-      raise osv.except_osv(_( 'Aviso' ),_( 'Debe ingresar una lista de codigos' ) )
+      raise osv.except_osv(_( 'Aviso' ),_( 'Debe ingresar una lista de códigos' ) )
     buscar = self._obtener_codigos( cr, uid, lista)
     if buscar == True :
         #imprimir reporte
