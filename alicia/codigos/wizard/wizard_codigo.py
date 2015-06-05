@@ -87,11 +87,11 @@ class wizard_codigo(osv.osv_memory):
         if codigo.isdigit() == True:
           if len(codigo) != 13:
             nombre_produc ='NO ES EAN-13'
-            raise osv.except_osv(_( 'Aviso' ),_( 'El codigo debe contener 13 números' ) )
+            raise osv.except_osv(_( 'Aviso' ),_( 'El código debe contener 13 números sin espacios entre cada dígito' ) )
           else :
             nombre_produc = 'NO ENCONTRADO'
         else :
-          raise osv.except_osv(_( 'Aviso!' ),_( 'El codigo solo debe contener números' ) )
+          raise osv.except_osv(_( 'Aviso!' ),_( 'El código sólo debe contener números' ) )
         #Crea el codigo de Barras
         ean = barcode.get('ean13', codigo, writer=barcode.writer.ImageWriter())
         # Genera el archivo

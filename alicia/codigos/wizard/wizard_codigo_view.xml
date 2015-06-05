@@ -19,7 +19,7 @@
             <field name="lista"
 									 nolabel="1"
 									 colspan='2'
-									 placeholder="Por favor de insertar los códigos en lista y no dejar espacios entre ellos, Recuerde que para llenar una hoja son 36 códigos"/>
+									 placeholder="Por favor de insertar los códigos en lista y no dejar espacios entre cada dígito, Recuerde que para llenar una hoja son 36 códigos"/>
           </group>
 					<group col="4" colspan="4">
 						<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
