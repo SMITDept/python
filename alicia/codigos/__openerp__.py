@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-  'name': 'SM Códigos',
+  'name': 'SM Codigo',
   'version': '1.0',
   'category': 'SUPERMAS',
   'author': 'SUPERMAS',
@@ -9,7 +9,7 @@
   'website': 'http://www.supermas.mx',
   'installable': True, 
   'active': False,
-  'description': 'Módulo: SM Códigos - Generador de Etiquetas- El módulo requiere de la instalación especial de la libreria pyBarcode enlace: https://pypi.python.org/pypi/pyBarcode/0.7',
+  'description': 'Módulo Codigo- Modulo para obtener precios',
   #This model depends of BASE OpenERP model...
   'depends': [
     'base',
@@ -26,7 +26,6 @@
     'menus.xml',
      'listado_codigo/listado_codigo_view.xml',
      'wizard/wizard_codigo_view.xml',
-     'wizard/wizard_fechas_view.xml',
   ],
   'demo_xml': [
                ],

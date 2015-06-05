@@ -2,12 +2,12 @@
 
 #########################################################################################################################
 #  @version  : 1.0                                                                                                      #
-#  @autor    : Supermas-ARC                                                                                             #
+#  @autor    : supermas                                                                                                 #
 #  @creacion : 2015-05-22 (aaaa/mm/dd)                                                                                  #
 #  @linea    : Máximo, 121 caracteres                                                                                   #                                                                           #
 #########################################################################################################################
 
-#Importando las clases necesarias
+#Importando las clases necesarias para construir un modelo OpenERP
 import time
 from datetime import datetime
 from osv import fields, osv
@@ -35,8 +35,8 @@ class wizard_codigo(osv.osv_memory):
     @return 
     """
     lista = self.pool.get( self._name ).browse( cr, uid, ids[0] ).lista
-    if len(lista) < 13 or lista == '\n' :
-      raise osv.except_osv(_( 'Aviso' ),_( 'Debe ingresar una lista de códigos' ) )
+    if lista == None or lista == '\n':
+      raise osv.except_osv(_( 'Notice!' ),_( 'Debe Ingresar Datos' ) )
     buscar = self._obtener_codigos( cr, uid, lista)
     if buscar == True :
         #imprimir reporte
@@ -66,15 +66,16 @@ class wizard_codigo(osv.osv_memory):
   #---------------------------------------------------------------------------------------------------------------------------------------------------
   def _obtener_codigos( self, cr, uid, lista ) :
     """
-    Metodo que obtiene la informacion del producto apartir del codigo
+    Metodo que obtiene la informacion del producto
     * Argumentos OpenERP: [cr]
     @param lista:
     @return string
     """
-    listado = lista.split()
-    valores = ' '
+    listado = lista.split('\n')
+    valores = '\n'
     fecha = time.strftime("%y%m%d")
     fecha_imp = time.strftime('%d/%m/%y')
+    # time.strftime('%d %b %y'))   %d/%m/%Y
     if ( type( listado ) in ( list, tuple ) ):
       #se eliminan los datos de la tabla listado antes de insertar
       cr.execute(
@@ -84,23 +85,17 @@ class wizard_codigo(osv.osv_memory):
       )
       #se recorre el listado
       for codigo in listado:
-        if codigo.isdigit() == True:
-          if len(codigo) != 13:
-            nombre_produc ='NO ES EAN-13'
-            raise osv.except_osv(_( 'Aviso' ),_( 'El código debe contener 13 números sin espacios entre cada dígito' ) )
-          else :
-            nombre_produc = 'NO ENCONTRADO'
-        else :
-          raise osv.except_osv(_( 'Aviso!' ),_( 'El código sólo debe contener números' ) )
+
         #Crea el codigo de Barras
         ean = barcode.get('ean13', codigo, writer=barcode.writer.ImageWriter())
         # Genera el archivo
-        ruta = '/opt/openerp/server/openerp/addons/codigos/img/ean_'+ str(codigo)
+        ruta = '/opt/openerp/server/openerp/addons/codigos/img/'+ str('ean_' + codigo )
         f = open(ruta , 'wb')
-        #se crea la imagen y se guarda en la ruta especifica
+        #se crea la imagen y se guarda en la ruta especificada
         almacena = ean.write(f)
+        
         #si no encuentra el producto insertar
-        no_encontrado = (nombre_produc, codigo, 0.0, ruta, fecha, '0.00', str(fecha_imp) )
+        no_encontrado = ('NO ENCONTRADO', codigo, 0.0, ruta, fecha, '0.00', str(fecha_imp) )
         #se ejecuta la consulta en la tabla productos
         cr.execute(
         """
@@ -112,17 +107,10 @@ class wizard_codigo(osv.osv_memory):
         """,(codigo,)
         )
         resultado = cr.fetchone()
-        valores = (
-                    ( resultado[0], resultado[1], (resultado[2]), ruta, fecha, (str(resultado[2])+'0'), str(fecha_imp) )
-                    if type( resultado ) in ( list, tuple ) and resultado != None else no_encontrado
-                  )
-        #se insertan los nuevos datos a la tabla listado_codigo
-        cr.execute(
-          """
-          INSERT INTO listado_codigo
-          (descripcion, cod_barras, precio, ruta_codigo, fecha, precio_str, fecha_str )
-          VALUES (%s::varchar(24), %s, %s, %s, %s, %s, %s)
-          """, valores )
+        valores = (( resultado[0], resultado[1], (resultado[2]), ruta, fecha, (str(resultado[2])+'0'), str(fecha_imp) )) if type( resultado ) in ( list, tuple ) and resultado != None else no_encontrado
+        #se insertan los nuevos datos a la tabla
+        cr.execute('INSERT INTO listado_codigo (descripcion, cod_barras, precio, ruta_codigo, fecha, precio_str, fecha_str ) VALUES (%s::varchar(24), %s, %s, %s, %s, %s, %s)',
+                     valores )
       return True
     else :
       return False

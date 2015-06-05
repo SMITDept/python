@@ -11,7 +11,7 @@
 			<field name="model">listado_codigo</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
-				<tree string="Lista de Códigos">
+				<tree string="Lista de Codigos">
           <field name="cod_barras"/>
           <field name="descripcion"/>
           <field name="precio"/>
@@ -26,7 +26,7 @@
       <field name="model">listado_codigo</field>
       <field name="type">form</field>
       <field name="arch" type="xml">
-        <form string="Lista de Códigos" version="7.0" >
+        <form string="Lista de Codigos" version="7.0" >
           <sheet>
           <group string="Producto" colspan='2' col='2'>
             <field name="cod_barras"/>
@@ -48,7 +48,7 @@
 			<field name="model">listado_codigo</field>
 			<field name="type">search</field>
 			<field name="arch" type="xml">					
-				<search string="Lista de Códigos">
+				<search string="Lista de Codigos">
           <field name="descripcion"/>
 				</search>
 			</field>
@@ -61,7 +61,7 @@
 			<field name="res_model">listado_codigo</field> 
 		</record>
 		<!-- Menu Items -->	
-		<menuitem name="Lista de Códigos"
+		<menuitem name="Lista de Codigos"
 							parent="codigos.top_lista"  
 							id="listado_codigo_muestra"
 							action="action_listado_codigo"/>
