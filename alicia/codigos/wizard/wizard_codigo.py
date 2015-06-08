@@ -95,7 +95,7 @@ class wizard_codigo(osv.osv_memory):
         #Crea el codigo de Barras
         ean = barcode.get('ean13', codigo, writer=barcode.writer.ImageWriter())
         # Genera el archivo
-        ruta = '/opt/openerp/server/openerp/addons/codigos/img/ean_'+ str(codigo)
+        ruta = '/tmp/ean_'+ str(codigo)
         f = open(ruta , 'wb')
         #se crea la imagen y se guarda en la ruta especifica
         almacena = ean.write(f)
