@@ -1,0 +1,133 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# 	* users_control
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0-20150511\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-06-09 17:29+0000\n"
+"PO-Revision-Date: 2015-06-09 12:36-0600\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: users_control
+#: view:schedule_users:0
+msgid "photo"
+msgstr "Foto"
+
+#. module: users_control
+#: field:schedule.report,location:0 field:schedule_users,sucursal:0
+msgid "Location"
+msgstr "Localización"
+
+#. module: users_control
+#: view:location_user:0 field:location_user,sucursal:0
+msgid "Branch"
+msgstr "Sucursal"
+
+#. module: users_control
+#: model:ir.actions.act_window,name:users_control.action_schedule_users
+msgid "schedule users"
+msgstr "Horario de usuarios"
+
+#. module: users_control
+#: field:schedule.report,fecha_inicio:0
+msgid "Start date"
+msgstr "Fecha de inicio"
+
+#. module: users_control
+#: model:ir.actions.act_window,name:users_control.action_schedule_report
+#: model:ir.ui.menu,name:users_control.menu_schedule_report
+#: model:ir.ui.menu,name:users_control.top_wizard
+msgid "Schedule Report"
+msgstr "Reporte de horario"
+
+#. module: users_control
+#: model:ir.ui.menu,name:users_control.top_time
+msgid "Users Control"
+msgstr "Control de Usuarios"
+
+#. module: users_control
+#: model:ir.model,name:users_control.model_location_user
+msgid "location_user"
+msgstr "location_user"
+
+#. module: users_control
+#: model:ir.model,name:users_control.model_schedule_report
+msgid "Schedule report"
+msgstr "Reporte de horario"
+
+#. module: users_control
+#: view:schedule.report:0
+msgid "Report Options"
+msgstr "Opciones de Reporte"
+
+#. module: users_control
+#: view:schedule.report:0
+msgid "Dates"
+msgstr "Fechas"
+
+#. module: users_control
+#: field:schedule.report,rango_fechas:0
+msgid "By date range"
+msgstr "Por rango de fecha"
+
+#. module: users_control
+#: view:schedule.report:0
+msgid "Filter"
+msgstr "Filtro"
+
+#. module: users_control
+#: model:ir.ui.menu,name:users_control.schedule_users_control
+#: model:ir.ui.menu,name:users_control.top_schedule_users
+msgid "Register User"
+msgstr "Registro de Usuarios"
+
+#. module: users_control
+#: model:ir.actions.act_window,name:users_control.action_location_user
+#: model:ir.ui.menu,name:users_control.list_location_user
+#: model:ir.ui.menu,name:users_control.top_location_user
+msgid "Location User"
+msgstr "Localización del usuario"
+
+#. module: users_control
+#: view:schedule.report:0
+msgid "Generate report"
+msgstr "Generar reporte"
+
+#. module: users_control
+#: field:schedule_users,md5:0
+msgid "MD5"
+msgstr "MD5"
+
+#. module: users_control
+#: field:schedule.report,fecha_fin:0
+msgid "End date"
+msgstr "Fecha fin"
+
+#. module: users_control
+#: model:ir.model,name:users_control.model_schedule_users
+#: view:schedule_users:0
+msgid "schedule_users"
+msgstr "schedule_users"
+
+#. module: users_control
+#: view:schedule.report:0
+msgid "Employee Number"
+msgstr "Número de Empleado"
+
+#. module: users_control
+#: view:schedule.report:0
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: users_control
+#: view:location_user:0
+msgid "Location Users"
+msgstr "Localización de Usuarios"

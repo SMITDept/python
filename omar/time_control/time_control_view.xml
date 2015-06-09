@@ -26,8 +26,8 @@
 				<form string="time_control" create="false" version="7.0">
 					<sheet>
 						<group string="Lista" colspan='2' col='2'>
-				        	<field name="employee" id="employee_id"/>
-							<button name="search_employee" create="false" string="check" type="object"/>
+				        	<field name="employee" id="employee_id" invisible="1"/>
+							<button name="search_employee" create="false" string="Registrar" type="object"/>
 				        </group>
 					</sheet>
 				</form>

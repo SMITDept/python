@@ -5,7 +5,7 @@
   <data>
         <menuitem id="top_time" name="Users Control" sequence="100"/>
         	<menuitem id="top_schedule_users" name="Register User" sequence="050" parent="users_control.top_time"/>
-        	<!--<menuitem id="top_time_control" name="Check" sequence="060" parent="users_control.top_time"/>-->
         	<menuitem id="top_wizard" name="Schedule Report" sequence="070" parent="users_control.top_time"/>
+        	<menuitem id="top_location_user" name="Location User" sequence="080" parent="users_control.top_time"/>
   </data>
 </openerp>

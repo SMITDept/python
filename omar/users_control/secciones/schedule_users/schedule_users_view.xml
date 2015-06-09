@@ -28,6 +28,7 @@
 					<field name="second_name"/>
 					<field name="lunch_time"/>
 					<field name="employee_number"/>
+					<field name="md5"/>
 					<field name="sucursal"/>
 				</form>
 			</field>

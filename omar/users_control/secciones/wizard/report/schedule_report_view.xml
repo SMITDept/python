@@ -11,8 +11,8 @@
 			<field name="arch" type="xml">
 				<form string="Report Options">
 					<notebook tabpos="up" colspan="2">
-						<page string="Filtros" name="filters">
-							<separator string="Fechas" colspan="4"/>
+						<page string="Filter" name="filters">
+							<separator string="Dates" colspan="4"/>
 							<group colspan="4" col="4">
 								<group colspan="2" col="2">
 									<field name="rango_fechas"/>
@@ -31,16 +31,16 @@
 							</group>
 								<separator string="Employee Number" colspan="4"/>
 								<group colspan="4" col="4">
-									<field name="employee_number"/>
+									<field name="location"/>
 								</group>
 						</page>
 					</notebook>
 					<newline/>
 					<separator colspan="4"/>
 					<group col="4" colspan="4">
-						<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
+						<button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
 						<button icon="gtk-print" name="print_report"
-										string="Imprimir"
+										string="Generate report"
 										type="object"
 										colspan="2"
 										default_focus="1" />

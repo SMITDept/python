@@ -7,9 +7,9 @@ instance.time_control.Action = instance.web.Widget.extend({
     },
 
 	start: function () {
-		//this.display_ct();
-		//var counter=setInterval(this.display_ct(), 1000);
 		this._watch = setInterval(this.proxy('display_ct'), 1000);
+		var inp = document.getElementById('employee_number');
+		inp.setAttribute("type", "password");
 		//mytime=setTimeout(this.display_ct(),1000);
 	},
     
