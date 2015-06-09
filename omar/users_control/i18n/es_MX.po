@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0-20150511\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-09 17:29+0000\n"
-"PO-Revision-Date: 2015-06-09 12:36-0600\n"
+"POT-Creation-Date: 2015-06-09 22:49+0000\n"
+"PO-Revision-Date: 2015-06-09 17:55-0600\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -46,7 +46,7 @@ msgstr "Fecha de inicio"
 #: model:ir.ui.menu,name:users_control.menu_schedule_report
 #: model:ir.ui.menu,name:users_control.top_wizard
 msgid "Schedule Report"
-msgstr "Reporte de horario"
+msgstr "Reporte de Horario"
 
 #. module: users_control
 #: model:ir.ui.menu,name:users_control.top_time
@@ -66,7 +66,7 @@ msgstr "Reporte de horario"
 #. module: users_control
 #: view:schedule.report:0
 msgid "Report Options"
-msgstr "Opciones de Reporte"
+msgstr "Opci"
 
 #. module: users_control
 #: view:schedule.report:0
@@ -76,7 +76,7 @@ msgstr "Fechas"
 #. module: users_control
 #: field:schedule.report,rango_fechas:0
 msgid "By date range"
-msgstr "Por rango de fecha"
+msgstr "Por rango de fechas"
 
 #. module: users_control
 #: view:schedule.report:0
@@ -87,14 +87,19 @@ msgstr "Filtro"
 #: model:ir.ui.menu,name:users_control.schedule_users_control
 #: model:ir.ui.menu,name:users_control.top_schedule_users
 msgid "Register User"
-msgstr "Registro de Usuarios"
+msgstr "Registro de usuarios"
 
 #. module: users_control
 #: model:ir.actions.act_window,name:users_control.action_location_user
 #: model:ir.ui.menu,name:users_control.list_location_user
 #: model:ir.ui.menu,name:users_control.top_location_user
 msgid "Location User"
-msgstr "Localización del usuario"
+msgstr "Localización del Usuario"
+
+#. module: users_control
+#: view:schedule.report:0
+msgid "Employee Location"
+msgstr "Localización del Empleado"
 
 #. module: users_control
 #: view:schedule.report:0
@@ -119,15 +124,10 @@ msgstr "schedule_users"
 
 #. module: users_control
 #: view:schedule.report:0
-msgid "Employee Number"
-msgstr "Número de Empleado"
-
-#. module: users_control
-#: view:schedule.report:0
 msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: users_control
 #: view:location_user:0
 msgid "Location Users"
-msgstr "Localización de Usuarios"
+msgstr "Localización de usuarios"

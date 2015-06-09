@@ -29,7 +29,7 @@
 												 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ] }"/>
 								</group>
 							</group>
-								<separator string="Employee Number" colspan="4"/>
+								<separator string="Employee Location" colspan="4"/>
 								<group colspan="4" col="4">
 									<field name="location"/>
 								</group>
