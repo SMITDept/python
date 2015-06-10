@@ -10,7 +10,7 @@
 					<field name="name"/>
 					<field name="first_name"/>
 					<field name="second_name"/>
-					<field name="employee_number"/>
+					<field name="sucursal"/>
 					<field name="lunch_time"/>
 				</tree>
 			</field>
@@ -23,9 +23,9 @@
 			<field name="arch" type="xml">
 				<form string="schedule_users">
 					<field name="photo" widget="image" string="photo"/>
-					<field name="name"/>
-					<field name="first_name"/>
-					<field name="second_name"/>
+					<field name="name" on_change="onchange_name(name)"/>
+					<field name="first_name" on_change="onchange_first_name(first_name)"/>
+					<field name="second_name" on_change="onchange_second_name(second_name)"/>
 					<field name="lunch_time"/>
 					<field name="employee_number"/>
 					<field name="md5"/>

@@ -130,7 +130,7 @@ class schedule_report( osv.osv_memory ) :
 			#raise Warning(_('Reporte generado.'))
 		#else:
 			#raise Warning(_('No se encontraron resultados.'))
-		wb.save('/tmp/report.xls')
+		return wb.save('/tmp/report.xls')
 		
 schedule_report()
 

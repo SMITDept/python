@@ -42,6 +42,34 @@ def md5_number_generator(self, cr ,uid, context=None):
 
 class schedule_users(osv.osv):
 
+    def onchange_name( self, cr, uid, ids, name ) :
+        if name :
+          return {
+            'value' : {
+              'name' : name.upper()
+            }
+          }
+        return { 'value' : {} }
+
+    def onchange_first_name( self, cr, uid, ids, first_name ) :
+        if first_name :
+          return {
+            'value' : {
+              'first_name' : first_name.upper()
+            }
+          }
+        return { 'value' : {} }
+
+    def onchange_second_name( self, cr, uid, ids, second_name ) :
+        if second_name :
+          return {
+            'value' : {
+              'second_name' : second_name.upper()
+            }
+          }
+        return { 'value' : {} }
+
+
     _name = 'schedule_users'
     _columns = {
         'name': fields.char("Name", size=100, required=True),
