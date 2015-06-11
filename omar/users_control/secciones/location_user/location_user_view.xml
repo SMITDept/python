@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Module XML -->
+
+<openerp>
+	<data>
+		
+		<!-- Tree View Records -->	
+	
+		<record model="ir.ui.view" id="view_sucursal_tree">		 
+			<field name="name">sucursal.tree</field>
+			<field name="model">location_user</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Location Users">
+					<field name="sucursal"/>
+				</tree>
+			</field>
+		</record>
+	
+		<!-- Form View Records -->	
+	
+		<record model="ir.ui.view" id="view_sucursal_form">
+			<field name="name">sucursal.form</field>
+			<field name="model">location_user</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Branch">
+					<group col="2" colspan="2">
+						<field name="sucursal"/>
+					</group>
+				</form>
+			</field>
+		</record>
+	
+		<!-- Action Records -->	
+	
+		<record model="ir.actions.act_window" id="action_location_user">
+			<field name="name">Location User</field>
+			<field name="view_id" ref="view_sucursal_tree"/>
+			<field name="res_model">location_user</field>
+		</record>
+		
+		<!-- Menu Items-->
+		<menuitem name="Location User"
+							parent="users_control.top_location_user"
+							id="list_location_user"
+							action="action_location_user"/>
+		
+	</data>
+</openerp>
