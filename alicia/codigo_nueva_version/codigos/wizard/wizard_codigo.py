@@ -31,10 +31,10 @@ class wizard_codigo(osv.osv_memory):
   #---------------------------------------------------------------------------------------------------------------------------------------------------  
   def obtenerCodigos( self, cr, uid, ids, context = None ):
     """
-    Método para obtener codigos y mandar a imprimir las etiquetas
+    Funcion que dependiendo de lo que obtenga el metodo _obtener_codigos genera el archivo para imprimir las etiquetas
     * Argumentos OpenERP: [ cr, uid, ids, context ]
-    @param : () 
-    @return 
+    @param : (cr, uid, ids, context) 
+    @return dict
     """
     lista = self.pool.get( self._name ).browse( cr, uid, ids[0] ).lista
     if len(lista) < 13 or lista == '\n' or lista == ' ':
@@ -54,7 +54,6 @@ class wizard_codigo(osv.osv_memory):
          'model': 'listado_codigo',
          'form': data,
        }
-       
        #Return el nombre del reporte que aparece en el service.name y el tipo de datos report.xml	
        return {
            'type': 'ir.actions.report.xml',
@@ -68,10 +67,10 @@ class wizard_codigo(osv.osv_memory):
   #---------------------------------------------------------------------------------------------------------------------------------------------------
   def _obtener_codigos( self, cr, uid, lista ) :
     """
-    Metodo que obtiene la informacion del producto apartir del codigo
+    Metodo que obtiene la informacion del producto y el codigo de barras apartir del codigo del producto e inserta los datos en la tabla listado.
     * Argumentos OpenERP: [cr]
-    @param lista:
-    @return string
+    @param lista: lista de codigos
+    @return bool
     """
     listado = lista.split()
     valores = ' '

@@ -24,7 +24,7 @@
 					<group col="4" colspan="4">
 						<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
             <button name="obtenerCodigos"
-											string="Buscar"
+											string="Generar Etiquetas"
 											type="object"
 											class="oe_highlight"/>
 					</group>
