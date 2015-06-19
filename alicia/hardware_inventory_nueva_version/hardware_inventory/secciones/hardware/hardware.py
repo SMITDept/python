@@ -269,7 +269,7 @@ class hardware(osv.osv):
   #Valores por defecto de los campos del diccionario [_columns]
   _defaults = {
     'status_dic' : 'active',
-    'maintenance_o2m_ids': lambda self, cr, uid, context : context['hardware_m2o_id'] ,
+    # 'maintenance_o2m_ids': lambda self, cr, uid, context : context['hardware_m2o_id'] ,
   }
 
 #se cierra la clase

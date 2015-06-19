@@ -14,6 +14,7 @@
   'depends': [
     'base',
     'board',
+    'hr',
   ],
   #XML imports
   'data': [

@@ -27,38 +27,42 @@
       <field name="type">form</field>
       <field name="arch" type="xml">
         <form string="Maintenance Management" version="7.0" >
-          <!--<sheet>-->
           <group colspan='2' col='4'>
             <h1>
 							<label string="N°:"/>
-							<field name="number_order" class="oe_inline" readonly="1" nolabel="1"/>
+							<field name="number" class="oe_inline" readonly="1" nolabel="1"/>
               <label string="" colspan="2"/>
+              <field name="number_order" invisible="1"/>
 					  </h1>
           </group>
-          <!--<notebook>           -->
-          <!--  <page string="Information device">-->
               <group  string="Information device" col="4" colspan="2">
-                <field name="hardware_m2o_id" colspan="2"/>
+                <field name="hardware_m2o_id"
+                       colspan="2"
+                       domain="[
+												('status_dic', '=', 'active')
+                        ]"/>
                 <field name="hardware_brad" string="Information" colspan="2"/>
               </group>
-<!--            </page>-->
-<!--					</notebook>-->
-          <separator string="Calendar"/>
+          <separator string="Maintenance schedule"/>
           <field name="allday" on_change="onchange_dates(date,False,False,allday)" invisible="1"/>
           <group  colspan='2' col='6'>
-            <field name="date" required="1" colspan='2'
-                on_change="onchange_dates(date,duration,False,allday)"/>
+            <field name="date"
+                   required="1"
+                   colspan='2'
+                   on_change="onchange_dates(date,duration,False,allday)"/>
             <field name="duration" widget="float_time" colspan='2'
                 on_change="onchange_dates(date,duration,False,allday)" />
             <field name="date_deadline" required="1" colspan='2'
                 on_change="onchange_dates(date,False,date_deadline)"/>
-            <field name="user_id"/>
+            <field name="responsible_m2o_id"
+                   domain="[
+												('department_id', '=', 1)
+                        ]"/>
             <field name="show_as" invisible="1"/>
-            <field name="type_maint"/>
+            <field name="type_maint" required="1"/>
             <label string="Description" colspan="6"/>
             <field name="name" nolabel="1" colspan="6"/>
           </group>
-         <!-- page -->
           <notebook>           
             <page string="Report Maintenance">
               <group col="2" colspan="2">
@@ -83,8 +87,6 @@
               </group>
             </page> 
 					</notebook>
-         <!-- page end-->
-          <!--</sheet>-->
         </form>
       </field>
     </record>
@@ -97,7 +99,7 @@
       <field name="arch" type="xml">
         <calendar string="Calendar" date_start="date" color="show_as" date_delay="duration">
            <field name="hardware_m2o_id"/>
-           <field name="user_id"/>
+           <field name="responsible_m2o_id"/>
            <field name="type_maint"/>
         </calendar>
       </field>

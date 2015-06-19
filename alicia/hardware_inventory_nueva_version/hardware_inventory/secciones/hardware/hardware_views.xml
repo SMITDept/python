@@ -64,7 +64,7 @@
             <field name="description" placeholder="Device Description"/>
           </group>
           <group string="Maintenance" colspan='2' col='6' >
-            <field name="maintenance_o2m_ids" nolabel="1" />
+            <field name="maintenance_o2m_ids" nolabel="1" readonly="1" />
             <!-- context="{'hardware_m2o_id': func_key }" domain="[('hardware_m2o_id','=', hardware_m2o_id)]" context="{'hardware_m2o_id': id }"   <field name="bom_id" domain="[('product_id','=',product_id)]" context="{'default_product_id': product_id}" on_change="bom_id_change(bom_id)" required="1"/> domain="[('hardware_m2o_id','=', hardware_m2o_id)]"   -->
           </group>
           </sheet>
