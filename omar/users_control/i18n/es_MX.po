@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenERP Server 7.0-20150511\n"
+"Project-Id-Version: OpenERP Server 7.0-20150622\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-09 22:49+0000\n"
-"PO-Revision-Date: 2015-06-09 17:55-0600\n"
+"POT-Creation-Date: 2015-06-23 21:05+0000\n"
+"PO-Revision-Date: 2015-06-23 16:13-0600\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,6 +22,11 @@ msgid "photo"
 msgstr "Foto"
 
 #. module: users_control
+#: field:schedule_users,second_name:0
+msgid "Second name"
+msgstr "Apellido Materno"
+
+#. module: users_control
 #: field:schedule.report,location:0 field:schedule_users,sucursal:0
 msgid "Location"
 msgstr "Localización"
@@ -34,7 +39,7 @@ msgstr "Sucursal"
 #. module: users_control
 #: model:ir.actions.act_window,name:users_control.action_schedule_users
 msgid "schedule users"
-msgstr "Horario de usuarios"
+msgstr "Horario de los usuarios"
 
 #. module: users_control
 #: field:schedule.report,fecha_inicio:0
@@ -54,6 +59,21 @@ msgid "Users Control"
 msgstr "Control de Usuarios"
 
 #. module: users_control
+#: field:schedule_users,payroll:0
+msgid "Payroll"
+msgstr "Nomina"
+
+#. module: users_control
+#: field:schedule_users,first_name:0
+msgid "First name"
+msgstr "Apellido paterno"
+
+#. module: users_control
+#: field:schedule_users,photo:0
+msgid "Photo of the employee"
+msgstr "Foto del empleado"
+
+#. module: users_control
 #: model:ir.model,name:users_control.model_location_user
 msgid "location_user"
 msgstr "location_user"
@@ -66,12 +86,17 @@ msgstr "Reporte de horario"
 #. module: users_control
 #: view:schedule.report:0
 msgid "Report Options"
-msgstr "Opci"
+msgstr "Opciones de reporte"
 
 #. module: users_control
 #: view:schedule.report:0
 msgid "Dates"
 msgstr "Fechas"
+
+#. module: users_control
+#: field:schedule_users,name:0
+msgid "Name"
+msgstr "Nombre"
 
 #. module: users_control
 #: field:schedule.report,rango_fechas:0
@@ -82,6 +107,11 @@ msgstr "Por rango de fechas"
 #: view:schedule.report:0
 msgid "Filter"
 msgstr "Filtro"
+
+#. module: users_control
+#: field:schedule_users,employee_number:0
+msgid "Employee number"
+msgstr "Numero de empleado"
 
 #. module: users_control
 #: model:ir.ui.menu,name:users_control.schedule_users_control
@@ -123,9 +153,24 @@ msgid "schedule_users"
 msgstr "schedule_users"
 
 #. module: users_control
+#: field:schedule_users,lunch_time:0
+msgid "Lunch time"
+msgstr "Hora de comida"
+
+#. module: users_control
+#: selection:schedule_users,payroll:0
+msgid "Fortnight"
+msgstr "Qincenal"
+
+#. module: users_control
 #: view:schedule.report:0
 msgid "Cancel"
 msgstr "Cancelar"
+
+#. module: users_control
+#: selection:schedule_users,payroll:0
+msgid "Weekly"
+msgstr "Semanal"
 
 #. module: users_control
 #: view:location_user:0

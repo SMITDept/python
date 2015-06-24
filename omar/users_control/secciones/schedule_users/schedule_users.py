@@ -1,46 +1,29 @@
-import string
-import random
 import hashlib
 
 from openerp.osv import osv,fields
 from datetime import date
 
-def employee_number_generator(self, cr ,uid, context=None):
-    size=6
-    chars=string.ascii_uppercase + string.digits
-    emplo_num = ''.join(random.choice(chars) for _ in range(size))
-    cr.execute(
-            """
-              SELECT employee_number
-              FROM schedule_users
-              WHERE employee_number = %s
-            """,(emplo_num,))
-    num = cr.fetchall()
-    if num:
-        employee_number_generator
-    else:
-       return emplo_num
-
-def md5_number_generator(self, cr ,uid, context=None):
-    m = hashlib.md5()
-    size=6
-    chars=string.ascii_uppercase + string.digits
-    md5_num = ''.join(random.choice(chars) for _ in range(size))
-    cr.execute(
-            """
-              SELECT md5
-              FROM schedule_users
-              WHERE md5 = %s
-            """,(md5_num,))
-    md5 = cr.fetchall()
-    if md5:
-        md5_number_generator
-    else:
-        m.update(md5_num)
-        return m.hexdigest()
-
 
 class schedule_users(osv.osv):
+
+    PAYROLL = [
+      ('Q', 'Fortnight'),
+      ('S', 'Weekly'),
+    ]
+
+    def md5_number(self, cr, uid, ids, fields, arg, context):
+      m = hashlib.md5()
+      em = {}
+      pay = {}
+      for line in self.browse(cr, uid, ids):
+          num = line.employee_number + line.payroll
+          m.update(num)
+          print m
+          em[line.id] = m.hexdigest()
+
+      print em
+      print pay
+      return em
 
     def onchange_name( self, cr, uid, ids, name ) :
         if name :
@@ -75,16 +58,16 @@ class schedule_users(osv.osv):
         'name': fields.char("Name", size=100, required=True),
         'first_name': fields.char("First name", size=100, required=True),
         'second_name': fields.char("Second name", size=100, required=True),
-        'employee_number': fields.char("Employee number", size=10, required=True, readonly=True),
-        'md5': fields.char("MD5", size=50, required=True, readonly=True),
+        'employee_number': fields.char("Employee number", size=2, required=True),
+        'md5': fields.function(md5_number, method=True, store=True, string="MD5", size=50, type='char', required=False, readonly=True),
         'photo': fields.binary('Photo of the employee', required=False),
         'lunch_time': fields.boolean('Lunch time'),
+        'payroll':fields.selection(PAYROLL, 'Payroll', required =True),
         'sucursal': fields.many2one('location_user', 'Location', required=True),
     }
 
     _defaults = {
-        'employee_number': employee_number_generator,
-        'md5': md5_number_generator,
+        
     }
 
 schedule_users()

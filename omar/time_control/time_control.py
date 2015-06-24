@@ -71,14 +71,10 @@ class time_control(osv.osv):
   	}
 
 	def search_employee(self, cr, uid, employee, context=None):
-		employee_num = employee[0]
-		if len(employee_num) > 6:
-			cr.execute('SELECT employee_number, lunch_time, id, sucursal FROM schedule_users where md5 = %s', (employee_num,))
-		else:
-			cr.execute('SELECT employee_number, lunch_time, id, sucursal FROM schedule_users where employee_number = %s', (employee_num,))
-
 		datetime_register = get_datetime()
 		date_register = get_date()
+		employee_num = employee[0]
+		cr.execute('SELECT employee_number, lunch_time, id, sucursal FROM schedule_users where md5 = %s', (employee_num,))
 
 		employee = cr.fetchall()
 		if employee:

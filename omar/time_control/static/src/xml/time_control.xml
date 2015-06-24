@@ -4,7 +4,7 @@
 			<h1 class="style_hour" id='ct' ></h1>
 		    <h2 class="margin">Employee number</h2>
 		    <p class="employee_number margin">
-		        <input type="text" id="employee_number" name="Employee" invisible="1" placeholder="Example: 213165"></input>
+		        <input class="input-size" type="text" id="employee_number" name="Employee" invisible="1" placeholder="Example: 213165"></input>
 		    </p>
 		    <p class="oe_time_control_timer margin">
 		        <button class="styled-button" type="button" >Check</button>
