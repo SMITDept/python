@@ -40,40 +40,34 @@ class maintenance(osv.osv):
     """
     
     return str( datetime.date.today() )
+  #----------------------------------------------------------------------------------------------------------------------
+  @staticmethod
+  def getNextModelFolio( cr, tabla, nombre_campo = 'number' ) :
+    """
+    Metodo que obtiene el numero de clave siguiente
+    * Para OpenERP [field.function]
+    * Argumentos OpenERP: [cr, tabla,nombre_campo]
+    :return dict
+    """ 
+    #Consultando cuál sería el nuevo folio
+    cr.execute( 'SELECT ( MAX( ' + nombre_campo + ' ) + 1 ) AS next_folio FROM ' + tabla, () )
+    registro_consultado = cr.fetchone()
+    #Retornando el nuevo folio
+    return (
+      1
+    ) if (
+      registro_consultado is None
+    ) else (
+      1 if ( registro_consultado[0] is None ) else ( int( registro_consultado[0] ) )
+    )	
 
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
   ###                                                                 METODOS                                                                      ###
   ###                                                                                                                                              ###
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
-  #-------------------------------------------------------------------------------------------------------------------------------------------------
-  def onchange_fecha( self, cr, uid, ids, date_deadline ) :
-    """
-    Evento OnChange del campo "date" con etiqueta "Date" que valida que la fecha
-    no sea mayor a la actual
-    * Para OpenERP [onchange]
-    * Argumentos OpenERP: [cr, uid, ids]			
-    @param fecha: (date) Fecha
-    @return dict
-    """
-    #Obtener la fecha del sistema
-    date_system = self._obtener_fecha( cr, uid, ids )
-    bandera = self._valida_fecha( cr, uid, ids, date_system, date_deadline )
-    if bandera == False :
-      return {
-        'value': {
-          #Limpia el campo de la fecha
-          'date': None,
-        },
-        'warning':{
-          'title': 'Error de captura',
-          'message': 'La fecha no puede ser posterior a la fecha actual, favor de verificarla'
-        }
-      }
-    
-    return { 'value' : {} }
   #---------------------------------------------------------------------------------------------------------------------------------------------------
-  def _obtener_informe( self, cr, uid, ids, field_name, arg, context ) :
+  def _func_obtener_informe( self, cr, uid, ids, field_name, arg, context ) :
     """
     Función para el campo "Informacion"
     * Para OpenERP [field.function( ... )]
@@ -87,14 +81,13 @@ class maintenance(osv.osv):
       model = ''
       serial = ''
       if (record.hardware_m2o_id) != 0:
-        print record.hardware_m2o_id
         device = str( record.hardware_m2o_id.dispositivo_m2o_id.descripcion)
         brad = str( record.hardware_m2o_id.brad )
         model = str( record.hardware_m2o_id.model )
         serial = str( record.hardware_m2o_id.serial_number)
         # concatenando
         if model==False:
-          modelo='\n'
+          modelo=', \n MODEL: No'
         else :
           modelo= ', \n MODEL: '+ model 
         informe = 'DEVICE:' + device + ', \n BRAD: ' + brad + modelo + ', \n SERIE: ' + serial
@@ -116,8 +109,6 @@ class maintenance(osv.osv):
     
     lista_fechainicio=str( date_system ).split( '-' )
     lista_fechafinal=str( date ).split( '-' )
-    print lista_fechainicio
-    print int(lista_fechainicio[0])
     #Esta bandera por default es falsa, por si el año escogido es menor al actual
     bandera = False
     
@@ -154,6 +145,7 @@ class maintenance(osv.osv):
   ###                                                                 METODOS ORM                                                                  ###
   ###                                                                                                                                              ###
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
+  #---------------------------------------------------------------------------------------------------------------------------------------------------  
   def onchange_dates(self, cr, uid, ids, date, duration=False, date_deadline=False, allday=False, context=None):
     """Returns duration and/or end date based on values passed
     @param self: The object pointer
@@ -222,20 +214,32 @@ class maintenance(osv.osv):
         value['duration'] = round(duration, 2)
 
     return {'value': value}
-  #----------------------------------------------------------------------------------------------------------------------
-  @staticmethod
-  def getNextModelFolio( cr, tabla, nombre_campo = 'number' ) :
-    #Consultando cuál sería el nuevo folio
-    cr.execute( 'SELECT ( MAX( ' + nombre_campo + ' ) + 1 ) AS next_folio FROM ' + tabla, () )
-    registro_consultado = cr.fetchone()
-    #Retornando el nuevo folio
-    return (
-      1
-    ) if (
-      registro_consultado is None
-    ) else (
-      1 if ( registro_consultado[0] is None ) else ( int( registro_consultado[0] ) )
-    )	
+  #-------------------------------------------------------------------------------------------------------------------------------------------------
+  def onchange_fecha( self, cr, uid, ids, date_deadline ) :
+    """
+    Evento OnChange del campo "date" con etiqueta "Date" que valida que la fecha
+    no sea mayor a la actual
+    * Para OpenERP [onchange]
+    * Argumentos OpenERP: [cr, uid, ids]			
+    @param fecha: (date) Fecha
+    @return dict
+    """
+    #Obtener la fecha del sistema
+    date_system = self._obtener_fecha( cr, uid, ids )
+    bandera = self._valida_fecha( cr, uid, ids, date_system, date_deadline )
+    if bandera == False :
+      return {
+        'value': {
+          #Limpia el campo de la fecha
+          'date': None,
+        },
+        'warning':{
+          'title': 'Error de captura',
+          'message': 'La fecha no puede ser posterior a la fecha actual, favor de verificarla'
+        }
+      }
+    
+    return { 'value' : {} }
  #--------------------------------------------------------------------------------------------------------------------------------------------------- 
   def create(self, cr, uid, vals, context = None ):
     """   
@@ -261,7 +265,7 @@ class maintenance(osv.osv):
   #Nombre de la tabla
   _table = 'maintenance'
   #Ordenar la vista
-  # _order = ' '
+  _order = 'number'
  
   _columns = {
     'number' : fields.integer("Number", requiered=False),
@@ -298,7 +302,7 @@ class maintenance(osv.osv):
     'hardware_m2o_id': fields.many2one(
       'hardware',
       'Device key',
-      required = True
+      required = False
     ),
     'sucursal_m2o_id': fields.many2one(
       'sucursal',
@@ -314,8 +318,8 @@ class maintenance(osv.osv):
     ),
 
   # ================================== Campos Function ==============================================================================================#  
-    'hardware_brad' : fields.function(
-      _obtener_informe,
+    'hardware_info' : fields.function(
+      _func_obtener_informe,
       type = 'char',
       size = 80,
       method = True,
@@ -330,7 +334,8 @@ class maintenance(osv.osv):
     'user_id': lambda self, cr, uid, c: uid,
     'show_as': 'busy',
     'name' : 'Mantenimiento',
-    'allday': False
+    'allday': False,
+    # 'hardware_m2o_id ': lambda self, cr, uid, context=id,
   }
 
 #se cierra la clase

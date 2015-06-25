@@ -37,9 +37,8 @@
 					</h1>
           </group>
           <group string="Hardware Information" colspan='2' col='4'>
-            <field name="key_number"/>
+            <field name="key_number" readonly="1"/>
             <field name="status_dic"/>
-            <!--<label string=" " colspan="2"/>-->
             <field name="dispositivo_m2o_id"/>
 						<field name="brad"/>
             <field name="model"
@@ -47,7 +46,6 @@
             <field name="serial_number"
                    on_change="onchange_serial_number(serial_number)"/>
             <field name="hd_capacity" />
-            <!--attrs="{ 'invisible' : [ ( 'dispositivo_m2o_id', '!=', 5 ) ] }"-->
             <field name="ram"/>
             <field name="mac"
                    placeholder="00:00:00:00:00:00"
@@ -64,8 +62,15 @@
             <field name="description" placeholder="Device Description"/>
           </group>
           <group string="Maintenance" colspan='2' col='6' >
-            <field name="maintenance_o2m_ids" nolabel="1" readonly="1" />
-            <!-- context="{'hardware_m2o_id': func_key }" domain="[('hardware_m2o_id','=', hardware_m2o_id)]" context="{'hardware_m2o_id': id }"   <field name="bom_id" domain="[('product_id','=',product_id)]" context="{'default_product_id': product_id}" on_change="bom_id_change(bom_id)" required="1"/> domain="[('hardware_m2o_id','=', hardware_m2o_id)]"   -->
+            <field name="maintenance_o2m_ids"
+                   domain="[('maintenance_o2m_ids.hardware_m2o_id','=','id')]"
+                   nolabel="1"  attrs="{ 'readonly' : [ ( 'func_key', '=', False ) ] }">
+            <tree string="Maintenance Management" version="7.0" editable="bottom"> 
+            <field name="date"/>
+            <field name="type_maint"/>
+            <field name="responsible_m2o_id"/>
+            </tree>
+            </field>  
           </group>
           </sheet>
         </form>

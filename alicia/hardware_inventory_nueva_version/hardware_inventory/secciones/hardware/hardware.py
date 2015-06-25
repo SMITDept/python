@@ -35,7 +35,32 @@ class hardware(osv.osv):
   ###                                                                 METODOS                                                                      ###
   ###                                                                                                                                              ###
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
-  #--------------------------------------------------Metodo Function-------------------------------------------------------------------------------------------------
+  #----------------------------------------------------------------------------------------------------------------------
+  @staticmethod
+  def getNextModelFolio( cr, device, suc ) :
+    """
+    Metodo que obtiene el numero de clave siguiente
+    * Para OpenERP [field.function]
+    * Argumentos OpenERP: [cr, tabla,nombre_campo]
+    :return dict
+    """ 
+    print device
+    #Consultando cuál sería el nuevo numero
+    cr.execute( """
+               SELECT ( MAX( key_number ) + 1 ) AS next_number
+               FROM hardware
+               WHERE dispositivo_m2o_id = %s and sucursal_m2o_id = %s
+               """ ,(device, suc ) )
+    registro_consultado = cr.fetchone()
+    #Retornando el nuevo folio
+    return (
+      1
+    ) if (
+      registro_consultado is None
+    ) else (
+      1 if ( registro_consultado[0] is None ) else ( int( registro_consultado[0] ) )
+    )	
+  #--------------------------------------------------Metodo Function----------------------------------------------------------------------------------
   def _functGetKey( self, cr, uid, ids, name, arg, context = {} ) :
     """
     Funcion que obtiene la clave
@@ -60,11 +85,8 @@ class hardware(osv.osv):
       key_complet = str( codigo_store + codigo_device + number_n )
       #convirtiendo a mayúsculas
       key = key_complet.upper()
-
       result [record.id] = key
-
     return result
-  
   #---------------------------------------------------------Metodos Privados--------------------------------------------------------------------------
   def _get_image(self, cr, uid, ids, name, args, context=None):
     """
@@ -88,12 +110,11 @@ class hardware(osv.osv):
     """
     #para redimensionar las imágenes más grandes que el estándar 'grande'
     return self.write(cr, uid, [id], {'image': tools.image_resize_image_big(value)}, context=context)
-
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
   ###                                                                 METODOS ONCHANGE                                                             ###
   ###                                                                                                                                              ###
-  ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ### 
+  ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   #---------------------------------------------------------------------------------------------------------------------------------------------------
   def onchange_model( self, cr, uid, ids, model ) :
     """
@@ -128,7 +149,6 @@ class hardware(osv.osv):
         }
       }
     return { 'value' : {} }
-  
   #---------------------------------------------------------------------------------------------------------------------------------------------------
   def onchange_mac( self, cr, uid, ids, mac ) :
     """
@@ -178,14 +198,15 @@ class hardware(osv.osv):
     @return bool    
     """
     nuevo_id = None
-   
-    if vals['key_number'] == 0:
-      raise osv.except_osv(_( 'Notice!' ),_( 'Please fill fields "Key Number" ' ) )
+    #Creando la clave siguiente para este registro
+    device=vals['dispositivo_m2o_id']
+    suc=vals['sucursal_m2o_id']
+    print suc
+    print device
+    vals['key_number'] = self.getNextModelFolio( cr, device, suc )
 
     nuevo_id = super( hardware, self ).create( cr, uid, vals, context = context )
     return nuevo_id
-  
-
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
   ###                                                  Atributos basicos de un modelo OPENERP                                                      ###
@@ -199,23 +220,20 @@ class hardware(osv.osv):
   #Nombre de la descripcion al usuario en las relaciones m2o hacia este módulo
   _rec_name = 'func_key'
   #Ordenar la vista
-  _order = 'key'
+  _order = 'sucursal_m2o_id'
  
   _columns = {
         
     'key':fields.char("Key", size=10, required=False),
-    'key_number':fields.integer("Key Number", size=4, required=True ),
+    'key_number':fields.integer("Key Number", size=4 ),
     'brad':fields.char("Brand", size=50, required=True),
     'model':fields.char("Model", size=50, required=False),
     'serial_number':fields.char("Serial Number", size=50, required=True),
     'description':fields.text("Description"),
-    # 'location':fields.char("Location", size=5, requires=True),
     'mac':fields.char("MAC Ethernet", size=50, required=False),
     'mac_wifi':fields.char("MAC Wi-Fi", size=50, required=False),
     'ram':fields.integer("RAM", required=False),
     'hd_capacity':fields.integer("HD Capacity", required=False),
-    # 'last_maintenance_date':fields.date("Last Maintenance Date", required=False),
-    # 'next_maintenance_date':fields.date("Next Maintenance", required=False),
     'status_dic':fields.selection(STATUS, 'Status', required =True ),
     'cost_hardware':fields.float('Cost Hardware', required=False),
     
@@ -269,7 +287,7 @@ class hardware(osv.osv):
   #Valores por defecto de los campos del diccionario [_columns]
   _defaults = {
     'status_dic' : 'active',
-    # 'maintenance_o2m_ids': lambda self, cr, uid, context : context['hardware_m2o_id'] ,
+    # 'maintenance_o2m_ids': _GetKeyDefault
   }
 
 #se cierra la clase

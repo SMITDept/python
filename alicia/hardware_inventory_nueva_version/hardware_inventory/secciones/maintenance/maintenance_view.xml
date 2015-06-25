@@ -13,9 +13,10 @@
 			<field name="arch" type="xml">
 				<tree string="Maintenance Management">
           <field name="date"/>
+          <field name="date_deadline"/>
           <field name="hardware_m2o_id"/>
           <field name="type_maint"/>
-          <field name="user_id"/>
+          <field name="responsible_m2o_id"/>
 				</tree>
 			</field>
 		</record>
@@ -37,11 +38,12 @@
           </group>
               <group  string="Information device" col="4" colspan="2">
                 <field name="hardware_m2o_id"
+                       required="1"
                        colspan="2"
                        domain="[
 												('status_dic', '=', 'active')
                         ]"/>
-                <field name="hardware_brad" string="Information" colspan="2"/>
+                <field name="hardware_info" string="Information" colspan="2"/>
               </group>
           <separator string="Maintenance schedule"/>
           <field name="allday" on_change="onchange_dates(date,False,False,allday)" invisible="1"/>
