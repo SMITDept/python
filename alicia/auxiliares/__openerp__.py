@@ -9,7 +9,7 @@
   'website': 'http://www.supermas.mx',
   'installable': True, 
   'active': False,
-  'description': 'Módulo: SM Auxiliar - Auxiliar de contabilidad que genera un archivo xls, con lo datos de una cuenta, ya sea por periodo o rango de fechas' ,
+  'description': 'Módulo: SM Auxiliar - Auxiliar de contabilidad, Genera un archivo xls, con lo datos de una cuenta especifica, ya sea por periodo o rango de fechas. Requiere de la libreria https://pypi.python.org/pypi/xlwt/0.7.5' ,
   #This model depends of BASE OpenERP model...
   'depends': [
     'base',
