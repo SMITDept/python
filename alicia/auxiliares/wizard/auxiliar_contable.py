@@ -10,14 +10,11 @@
 
 #Importando las clases necesarias
 import time
-from datetime import datetime
+from datetime import date
 from osv import fields, osv
-import pooler
 from openerp.tools.translate import _
-import sys
-import re
+#para crear la hoja de calculo
 import xlwt
-import xlrd
 
 #Modelo
 class auxiliar_contable(osv.osv_memory):
@@ -30,6 +27,43 @@ class auxiliar_contable(osv.osv_memory):
   ###                                                                 METODOS                                                                      ###
   ###                                                                                                                                              ###
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
+  
+  def _obtener_periodo( self, cr, uid, ids, context = None ):
+    """
+    Metodo para obtener por defecto el id del periodo anterior dependiendo de la fecha actual
+    * Argumentos OpenERP: [cr, uid, ids, context]
+    @return int
+    """   
+    
+    self.query = ""
+    per_id=''
+    current_date=date.today()
+    # current_date=date(2014,03,01)
+    carry, new_month=divmod(current_date.month-1+1, 12)
+    new_month+=-1
+    current_date=current_date.replace(year=current_date.year+carry, month=new_month, day=1)
+    self.query = str(current_date)
+    cr.execute(
+      """
+      SELECT id
+      FROM account_period
+      WHERE date_start = '"""+ self.query +"""'
+      """)
+    registro = cr.fetchone()
+    if registro:
+      #Obteniendo el ID del periodo
+      per_id = (( registro[0] ) if ( len( registro ) > 0 ) else ( None ))
+      return per_id
+    else:
+      cr.execute(
+      """
+      SELECT id
+      FROM account_period
+      ORDER BY id DESC
+      """)
+      registro = cr.fetchone()
+      per_id_ultimo = (( registro[0] ) if ( len( registro ) > 0 ) else ( None ))
+      return per_id_ultimo
   #---------------------------------------------------------------------------------------------------------------------------------------------------     
   def obtenerXlwt( self, cr, uid, ids, context = None ):
     """
@@ -37,81 +71,90 @@ class auxiliar_contable(osv.osv_memory):
     * Argumentos OpenERP: [cr, uid, ids, context]
     @return dict 
     """
-
     #style
-    style_title = xlwt.easyxf('pattern: pattern solid, fore_colour red;'
+    style_title = xlwt.easyxf('pattern: pattern solid, fore_colour red; '
                               'font: colour white, bold True; align: vert centre;')
-    style0 = xlwt.easyxf('font: name Helvetica, color-index black', num_format_str='#,##0.00') #, num_format_str='#,##0.00'
+    style0 = xlwt.easyxf('font: name Arial, color-index black', num_format_str='#,##0.00')
     style1 = xlwt.easyxf(num_format_str='DD-MM-YY')
+    styleNo = xlwt.easyxf('font: name Arial, color-index red', num_format_str='#,##0.00')
     #objeto que crea el libro de trabajo con el constructor Workbook()
     workbook = xlwt.Workbook()
     #El objeto de libro llama al método add_sheet() para agregar una nueva hoja de cálculo
-    worksheet = workbook.add_sheet('Auxiliar por cuenta y periodo')
+    worksheet = workbook.add_sheet('Auxiliar por cuenta')
     #Se crean los nombres de las columnas
-    worksheet.write(0,0,'Creacion', style_title)
-    worksheet.write(0,1,'Fecha', style_title)
-    worksheet.write(0,2,'Debito', style_title)
-    worksheet.write(0,3,'Credito', style_title)
-    worksheet.write(0,4,'Nombre', style_title)
-    worksheet.write(0,5,'Descripcion', style_title)
+    worksheet.write(0,0,'CREACION', style_title)
+    worksheet.write(0,1,'FECHA', style_title)
+    worksheet.write(0,2,'DEBITO', style_title)
+    worksheet.write(0,3,'CREDITO', style_title)
+    worksheet.write(0,4,'NOMBRE', style_title)
+    worksheet.write(0,5,'DESCRIPCION', style_title)
     worksheet.col(0).width = 30 * 256
     worksheet.col(5).width = 50 * 256
-    #
+    #objeto del modelo
     obj=self.pool.get( self._name )
     datos=obj.browse( cr, uid, ids[0] )
     self.query = ""
     cuenta=''
     periodo=''
-    
+    bandera=False
+    path='/tmp/Auxiliar.xls'
     if datos.account_id != 0:
-      # id_cuenta = datos.account_id.id
       cuenta=str(datos.account_id.id)
       self.query = "AND aml.account_id = " + cuenta
-    
-    if datos.por_periodo == True :
-      # id_period = datos.period_id.id
-      periodo=str(datos.period_id.id)
-      self.query = self.query + " AND aml.period_id = " + periodo
       
-    if datos.rango_fechas == True :
-      inicio = datos.fecha_inicio
-      fin = datos.fecha_fin
-      print inicio +'--'+ fin
-      self.query = self.query + " AND aml.create_date BETWEEN " + "'" + inicio + " 06:00:01"+ "'" + " AND " + "'" + fin + " 05:59:59"+ "'"
-  
-    cr.execute(
-      """
-        SELECT aml.create_date AS create_d,
-        aml.date AS date,
-        aml.debit AS debit,
-        aml.credit AS credit,
-        aml.name AS name,
-        acc.name AS nombre
-        FROM account_move_line aml
-        INNER JOIN account_account acc
-        ON aml.account_id = acc.id
-        WHERE  aml.state = 'valid'
-        """+ self.query +"""
-        AND aml.name LIKE 'POS%'
-        ORDER BY aml.create_date
-      """)
-    aux = cr.fetchall()
-    if type( aux ) in ( list, dict) :
-      row = 1
-      col = 0
-      for create_d, date, debit, credit, name, nombre in (aux):
-        worksheet.write(row, col, create_d, style0)
-        worksheet.write(row, col + 1, date, style1)
-        worksheet.write(row, col + 2, debit, style0)
-        worksheet.write(row, col + 3, credit, style0)
-        worksheet.write(row, col + 4, name, style0)
-        worksheet.write(row, col + 5, nombre, style0)
-        # worksheet.write(row, col + 6, periodo, style0)
-        row += 1
+      if datos.por_periodo == True :
+        periodo=str(datos.period_id.id)
+        self.query = self.query + " AND aml.period_id = " + periodo
+        bandera=True
+      else:  
+        if datos.rango_fechas == True :
+          inicio = datos.fecha_inicio
+          fin = datos.fecha_fin
+          self.query = self.query + " AND aml.create_date BETWEEN " + "'" + inicio + " 06:00:01"+ "'" + " AND " + "'" + fin + " 05:59:59"+ "'"
+          bandera=True
         
-    # path='/tmp/auxiliar.xls'
+      if bandera == True: 
+        cr.execute(
+            """
+              SELECT aml.create_date AS create_d,
+              aml.date AS date,
+              aml.debit AS debit,
+              aml.credit AS credit,
+              aml.name AS name,
+              acc.name AS nombre
+              FROM account_move_line aml
+              INNER JOIN account_account acc
+              ON aml.account_id = acc.id
+              WHERE  aml.state = 'valid'
+              """+ self.query +"""
+              AND aml.name LIKE 'POS%'
+              ORDER BY aml.create_date
+            """)
+        aux = cr.fetchall()
+        if type( aux ) in ( list, dict) :
+          if ( len( aux ) > 0 ) :
+            row = 1
+            col = 0
+            titul=''
+            for create_d, date, debit, credit, name, nombre in (aux):
+              worksheet.write(row, col, create_d, style0)
+              worksheet.write(row, col + 1, date, style1)
+              worksheet.write(row, col + 2, debit, style0)
+              worksheet.write(row, col + 3, credit, style0)
+              worksheet.write(row, col + 4, name, style0)
+              worksheet.write(row, col + 5, nombre.title(), style0)
+              row += 1
+              titul=nombre
+              
+            titul=titul.split()
+            path='/tmp/Auxiliar_'+str(titul[0]).capitalize()+'.xls'  
+          else:
+              worksheet.write(1, 0, '* No se encontraron datos en la busqueda *', styleNo)
+      else:
+        raise osv.except_osv(_( 'Aviso' ),_( 'Por favor de seleccionar una de las opciones de búsqueda: Por Periodo ó Por Rango de Fechas' ) )
+    print path  
     # guarda el archivo en la ruta especificada      
-    return workbook.save('/tmp/auxiliar.xls')
+    return workbook.save(path)
   #---------------------------------------------------------------------------------------------------------------------------------------------------
   def onchange_periodo( self, cr, uid, ids, por_periodo) :
     """
@@ -169,7 +212,7 @@ class auxiliar_contable(osv.osv_memory):
 
   #Valores por defecto de los elementos del arreglo [_columns]
   _defaults = {
-    # 'por_periodo': True,
+    'period_id': _obtener_periodo,
     'fecha_inicio': lambda *a: time.strftime('%Y-%m-01'),
     'fecha_fin': lambda *a: time.strftime('%Y-%m-%d'),
   }

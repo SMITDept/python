@@ -21,16 +21,16 @@
 						<newline/>
 						<separator string="Periodo" colspan="4"/>
 						<field name="por_periodo" colspan="4" on_change="onchange_periodo(por_periodo)"/>
-						<field name="period_id" attrs="{ 'readonly' : [ ( 'por_periodo', '=', False ) ], 'require' : [ ( 'por_periodo', '=', True )] }"/>
+						<field name="period_id" attrs="{ 'readonly' : [ ( 'por_periodo', '=', False ) ] }"/>
 						<label string=" " colspan="2"/>
 						<newline/>
 						<separator string="Fechas" colspan="4" />
 						<field name="rango_fechas" colspan="4" on_change="onchange_rango(rango_fechas)"/>
             <field name="fecha_inicio"
-									 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ], 'require' : [ ( 'rango_fechas', '=', True )]}"/>
+									 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ]}"/>
 						<label string=" " colspan="2"/>
             <field name="fecha_fin"
-									 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ], 'require' : [ ( 'rango_fechas', '=', True )] }"/>
+									 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ]}"/>
 						<label string=" " colspan="2"/>
 						
 						<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
