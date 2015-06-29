@@ -9,7 +9,7 @@
   'website': 'http://www.supermas.mx',
   'installable': True, 
   'active': False,
-  'description': 'Módulo: SM Auxiliar' ,
+  'description': 'Módulo: SM Auxiliar - Auxiliar de contabilidad que genera un archivo xls, con lo datos de una cuenta, ya sea por periodo o rango de fechas' ,
   #This model depends of BASE OpenERP model...
   'depends': [
     'base',
