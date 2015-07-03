@@ -6,7 +6,7 @@
             model="account.move"
             name="report_conta_asientoo"  
             rml="account/report/report_conta_asientoo.rml"
-            string="Poliza compra"
+            string="Poliza"
             />
     </data>
 </openerp>
