@@ -78,7 +78,7 @@
         </td>
         <td>
         <para style="terp_default_8"><b>Impresion: </b>[[ formatLang(time.strftime("%Y-%m-%d"), date=True) ]] [[ time.strftime("%H:%M") ]] </para>
-        <para style="terp_default_8">Realizo: [[ user.name ]] - Pag. <pageNumber/> </para>
+        <!--<para style="terp_default_8">Realizo: [[ user.name ]] - Pag. <pageNumber/> </para>-->
         </td>
       </tr>
   </blockTable> 
@@ -125,7 +125,7 @@
         </td>
         <td>
         <para style="terp_default_8">Impresion: [[ formatLang(time.strftime("%Y-%m-%d"), date=True) ]] [[ time.strftime("%H:%M") ]] </para>
-        <para style="terp_default_8">Realizo: [[ user.name ]] - Pag. <pageNumber/> </para>
+        <!--<para style="terp_default_8">Realizo: [[ user.name ]] - Pag. <pageNumber/> </para>-->
         </td>
       </tr>
     </blockTable>
