@@ -245,7 +245,7 @@
       </tr>
     </blockTable>
     </section>
-    <blockTable colWidths="90.0, 70.0, 60.0, 60.0, 70.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0" style="Table1">
+    <blockTable colWidths="90.0, 90.0, 60.0, 60.0, 70.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0" style="Table1">
       <tr>[[ repeatIn(get_sumas(line.move_id.id), 'l') ]]
         <td>
           <para style="terp_tblheader_General_Centre"></para>
