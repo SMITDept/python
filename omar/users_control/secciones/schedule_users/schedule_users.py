@@ -14,15 +14,12 @@ class schedule_users(osv.osv):
     def md5_number(self, cr, uid, ids, fields, arg, context):
       m = hashlib.md5()
       em = {}
-      pay = {}
       for line in self.browse(cr, uid, ids):
           num = line.employee_number + line.payroll
           m.update(num)
-          print m
-          em[line.id] = m.hexdigest()
-
-      print em
-      print pay
+          m = m.hexdigest()
+          m = m[:-16]
+          em[line.id] = m
       return em
 
     def onchange_name( self, cr, uid, ids, name ) :
@@ -52,6 +49,22 @@ class schedule_users(osv.osv):
           }
         return { 'value' : {} }
 
+    def onchange_employee_number( self, cr, uid, ids, employee_number ) :
+        if employee_number:
+          if len(employee_number) < 2:
+            employee_number = "0" + employee_number
+            return {
+              'value' : {
+                'employee_number' : employee_number
+              }
+            }
+          else:
+            return {
+              'value': {
+                'employee_number': employee_number
+              }
+            }
+        return { 'value' : {} }
 
     _name = 'schedule_users'
     _columns = {
@@ -69,5 +82,9 @@ class schedule_users(osv.osv):
     _defaults = {
         
     }
+
+    _sql_constraints = [
+      ('md5_unique', 'unique(md5)', 'MD5 already exists!')
+    ]
 
 schedule_users()

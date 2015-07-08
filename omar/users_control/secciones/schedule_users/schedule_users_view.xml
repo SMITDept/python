@@ -27,7 +27,7 @@
 					<field name="first_name" on_change="onchange_first_name(first_name)"/>
 					<field name="second_name" on_change="onchange_second_name(second_name)"/>
 					<field name="lunch_time"/>
-					<field name="employee_number"/>
+					<field name="employee_number" on_change="onchange_employee_number(employee_number)"/>
 					<field name="md5"/>
 					<field name="payroll"/>
 					<field name="sucursal"/>
