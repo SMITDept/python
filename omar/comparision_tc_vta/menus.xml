@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Menus XML -->
+<openerp>
+  <data>
+        <menuitem id="top_comparision" name="Comparision tc vta" sequence="100"/>
+        	<menuitem id="top_wizard" name="Comparision" sequence="070" parent="comparision_tc_vta.top_comparision"/>
+  </data>
+</openerp>
