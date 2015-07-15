@@ -78,7 +78,6 @@ class comparision_tc_vta( osv.osv_memory ):
   	}
 
 	def print_report(self, cr, uid, ids,context = { } ):
-		
 		"""
 		Metodo para imprimir el reporte
 		""" 
@@ -122,14 +121,14 @@ class comparision_tc_vta( osv.osv_memory ):
 			cr.execute(
             """
               SELECT aml.create_date AS create_d,
-              aml.debit AS debit,
+              round(aml.debit,2) AS debit,
               aml.name AS name
               FROM account_move_line aml
               WHERE aml.state = 'valid'
               """+ self.query +"""
               AND aml.name LIKE 'POS%'
               AND aml.account_id = '164'
-              AND aml.ref LIKE 'SM1%' or aml.ref LIKE 'SM2%'
+              AND (aml.ref LIKE 'SM1%' OR aml.ref LIKE 'SM2%')
               ORDER BY aml.create_date
             """)
 		else:
@@ -138,7 +137,7 @@ class comparision_tc_vta( osv.osv_memory ):
 			cr.execute(
             """
               SELECT aml.create_date AS create_d,
-              aml.debit AS debit,
+              round(aml.debit,2) AS debit,
               aml.name AS name
               FROM account_move_line aml
               WHERE aml.state = 'valid'
@@ -150,7 +149,6 @@ class comparision_tc_vta( osv.osv_memory ):
             """)
 
 		db_results = cr.fetchall()
-		print db_results
 		if db_results:
 			for wiz in self.browse(cr, uid, ids, context=context):
 				# Decode the file data
@@ -166,16 +164,18 @@ class comparision_tc_vta( osv.osv_memory ):
 			        		datetime = db_result[0].split(" ")
 			        		split = datetime[0].split("-")
 			        		year = split[0]
-			        		db_date = split[2] + "/" + split[1] + "/" + year[2:4]
-			        		#print repor
-		        			if csv_result[9] == db_date:
+			        		next_day = str(int(split[2]) +1)
+			        		db_date1 = split[2] + "/" + split[1] + "/" + year
+			        		#db_date2 = next_day + "/" + split[1] + "/" + year
+		        			if csv_result[9] == db_date1 or csv_result[4] == db_date1:
+		        				#print csv_result[9], csv_result[4]
 		        				check_price = str(db_result[1]).split(".")
 		        				db_price = ""
 		        				if len(check_price[1]) < 2:
 		        					db_price = check_price[0] + "." +check_price[1] + "0"
 		        				else:
 		        					db_price = str(db_result[1])
-		        				#print price, "==", record[9]
+		        				#print db_price, "==", csv_result[7]
 		        				if db_price == csv_result[7]:
 		        					#print repor[2]
 		        					bandera = True
@@ -190,5 +190,4 @@ class comparision_tc_vta( osv.osv_memory ):
 		        	fila = fila+1
 
 		wb.save('/tmp/comparision.xls')
-		
 comparision_tc_vta()
