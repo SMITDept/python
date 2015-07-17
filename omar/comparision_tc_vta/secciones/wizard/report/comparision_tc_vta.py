@@ -7,13 +7,40 @@ import StringIO
 import time
 import csv
 
-from datetime import date
-from datetime import datetime
+from datetime import datetime, timedelta, date
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 
+def onchange_wizard(self, cr, uid, ids, context=None):
+	this = self.browse(cr, uid, ids)[0]
+	return {
+        'name': 'test',
+        'view_type': 'form',
+        'view_mode': 'form',
+        'view_id': 'wizard_download',
+        'res_id': this.id,
+        'type': 'ir.actions.act_window',
+        'target': 'new',
+    }
+
+def get_day(date):
+	split = date.split("/")
+	day = str(int(split[0])+1)
+	date = day + "/" + split[1] + "/" + split[2]
+	return date
+
+def date_time(date):
+	db_date = date.split(" ")
+	hours = db_date[1].split(".")
+	hours = hours[0]
+	if hours > "00:00:01" and hours < "05:59:59":
+		current_date=datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f") + timedelta(days=-1)
+		current_date.strftime("%Y-%m-%d %H:%M:%S.%f")
+		return current_date
+	return date
 #Modelo 
 class comparision_tc_vta( osv.osv_memory ):
+
 
 	def _obtener_periodo( self, cr, uid, ids, context = None ):
 	    """
@@ -77,6 +104,8 @@ class comparision_tc_vta( osv.osv_memory ):
     	'period': _obtener_periodo,
   	}
 
+
+
 	def print_report(self, cr, uid, ids,context = { } ):
 		"""
 		Metodo para imprimir el reporte
@@ -84,6 +113,7 @@ class comparision_tc_vta( osv.osv_memory ):
 		period = self.pool.get( self._name ).browse( cr, uid, ids[0] ).period
 
 		wb = xlwt.Workbook()
+		aux = xlwt.Workbook()
 		style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;'
                               'font: colour white, bold True;')
 		red = xlwt.easyxf('pattern: pattern solid, fore_colour red;')
@@ -91,6 +121,7 @@ class comparision_tc_vta( osv.osv_memory ):
 		style0 = xlwt.easyxf('font: name Arial, color-index red, bold on', num_format_str='#,##0.00')
 		xlwt.easyxf('font: name Arial')
 		ws = wb.add_sheet('A Test Sheet')
+		ax = aux.add_sheet('A Test Sheet')
 		ws.write(0, 0, u"ID de Establecimiento", style)
 		ws.write(0, 1, u"Moneda", style)
 		ws.write(0, 2, u"Número de identificación de la Terminal", style)
@@ -112,7 +143,7 @@ class comparision_tc_vta( osv.osv_memory ):
 		periodo=''
 
 		periodo=str(datos.period.id)
-		self.query = self.query + " AND aml.period_id = " + periodo
+		self.query = self.query + "AND aml.period_id = " + periodo
 
 		for line in self.browse(cr, uid, ids):
 			branch = line.branch
@@ -149,6 +180,16 @@ class comparision_tc_vta( osv.osv_memory ):
             """)
 
 		db_results = cr.fetchall()
+		fila = 0
+		for db_result in db_results:
+			result = date_time(db_result[0])
+			lst = list(db_result)
+			lst[0] = str(result)
+			db_result = tuple(lst)
+			for colum in range(len(db_result)):
+				ax.write(fila, colum, db_result[colum])
+			fila = fila +1
+		
 		if db_results:
 			for wiz in self.browse(cr, uid, ids, context=context):
 				# Decode the file data
@@ -157,37 +198,41 @@ class comparision_tc_vta( osv.osv_memory ):
 		        csv_results = csv.reader(StringIO.StringIO(data))
 		        fila = 1
 		        for csv_result in csv_results:
+		        	next_csv_date = get_day(csv_result[9])
 		        	bandera = False
 		        	bandera2 = False
 		        	if fila != 0:
 			        	for db_result in db_results:
+			        		result = date_time(db_result[0])
+			        		lst = list(db_result)
+			        		lst[0] = str(result)
+			        		db_result = tuple(lst)
 			        		datetime = db_result[0].split(" ")
 			        		split = datetime[0].split("-")
 			        		year = split[0]
-			        		next_day = str(int(split[2]) +1)
 			        		db_date1 = split[2] + "/" + split[1] + "/" + year
-			        		#db_date2 = next_day + "/" + split[1] + "/" + year
-		        			if csv_result[9] == db_date1 or csv_result[4] == db_date1:
+		        			if csv_result[9] == db_date1 or next_csv_date == db_date1:
 		        				#print csv_result[9], csv_result[4]
-		        				check_price = str(db_result[1]).split(".")
-		        				db_price = ""
-		        				if len(check_price[1]) < 2:
-		        					db_price = check_price[0] + "." +check_price[1] + "0"
+		        				price = csv_result[7].find(".")
+		        				if price < 0:
+		        					price = csv_result[7] + ".0"
 		        				else:
-		        					db_price = str(db_result[1])
-		        				#print db_price, "==", csv_result[7]
-		        				if db_price == csv_result[7]:
+		        					price = csv_result[7]
+		        				#print price, "==", db_result[1]
+		        				if str(db_result[1]) == price:
 		        					#print repor[2]
 		        					bandera = True
 					    			if bandera2 != True:
 					    				bandera2 = True
 					        			ws.write(fila, 13, db_result[2], style)
 					for colum in range(len(csv_result)):
-						if bandera == True:
+						if bandera == True :
 							ws.write(fila, colum, csv_result[colum], green)
 						else:
 							ws.write(fila, colum, csv_result[colum], red)
 		        	fila = fila+1
+		wb.save('/tmp/conciliacion.xls')
+		aux.save('/tmp/auxiliar.xls')
+		onchange_wizard(self, cr, uid, ids)
 
-		wb.save('/tmp/comparision.xls')
 comparision_tc_vta()

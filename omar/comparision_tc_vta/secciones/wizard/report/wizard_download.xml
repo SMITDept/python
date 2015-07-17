@@ -1,0 +1,21 @@
+<record id="wizard_download" model="ir.ui.view">
+    <field name="name">my.item.config.view</field>
+    <field name="type">form</field>
+    <field name="res_model"></field>
+    <field name="inherit_id" ref="base.res_config_view_base"/>
+        <field name="arch" type="xml">
+            <group string="res_config_contents" position="replace">
+                <a href="/tmp/auxiliar.xls">Download auxiliar.xls</a>
+                <a href="/tmp/conciliacion.xls">Download conciliacion.xls</a>
+            </group>
+        </field>
+</record>
+
+<record id="wizard_download_window" model="ir.actions.act_window">
+    <field name="name">My config window</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="view_type">form</field>
+    <field name="view_id" ref="wizard_download"/>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
