@@ -50,10 +50,9 @@ class auxiliar_contable(osv.osv_memory):
       WHERE date_start = '"""+ self.query +"""'
       """)
     registro = cr.fetchone()
-    if registro:
+    if (len( registro ) > 0 ):
       #Obteniendo el ID del periodo
-      per_id = (( registro[0] ) if ( len( registro ) > 0 ) else ( None ))
-      return per_id
+      per_id = registro[0]
     else:
       cr.execute(
       """
@@ -62,8 +61,8 @@ class auxiliar_contable(osv.osv_memory):
       ORDER BY id DESC
       """)
       registro = cr.fetchone()
-      per_id_ultimo = (( registro[0] ) if ( len( registro ) > 0 ) else ( None ))
-      return per_id_ultimo
+      per_id = registro[0]
+    return per_id
   #---------------------------------------------------------------------------------------------------------------------------------------------------     
   def obtenerXlwt( self, cr, uid, ids, context = None ):
     """
