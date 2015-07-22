@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0-20150622\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-15 15:56+0000\n"
-"PO-Revision-Date: 2015-07-15 11:05-0600\n"
+"POT-Creation-Date: 2015-07-22 01:25+0000\n"
+"PO-Revision-Date: 2015-07-21 20:40-0600\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,42 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
 "X-Generator: Poedit 1.5.4\n"
-
-#. module: comparision_tc_vta
-#: model:ir.ui.menu,name:comparision_tc_vta.top_comparision
-msgid "Comparision tc vta"
-msgstr "Comparación TC VTA"
-
-#. module: comparision_tc_vta
-#: model:ir.actions.act_window,name:comparision_tc_vta.action_comparision_report
-#: model:ir.ui.menu,name:comparision_tc_vta.menu_comparision_report
-msgid "Comparision Report"
-msgstr "Reporte de comparación"
-
-#. module: comparision_tc_vta
-#: model:ir.model,name:comparision_tc_vta.model_comparision_report
-msgid "Comparision TC with VTA"
-msgstr "Comparación TC con VTA"
-
-#. module: comparision_tc_vta
-#: view:comparision.report:0
-msgid "File"
-msgstr "Archivo"
-
-#. module: comparision_tc_vta
-#: view:comparision.report:0
-msgid "Dates"
-msgstr "Fechas"
-
-#. module: comparision_tc_vta
-#: field:comparision.report,period:0
-msgid "Periodo"
-msgstr "Periodo"
-
-#. module: comparision_tc_vta
-#: selection:comparision.report,branch:0
-msgid "Branch 1 and 2"
-msgstr "Sucursal 1 y 2"
 
 #. module: comparision_tc_vta
 #: selection:comparision.report,branch:0
@@ -69,13 +33,13 @@ msgstr "Sucursal 5"
 
 #. module: comparision_tc_vta
 #: view:comparision.report:0
-msgid "Comparision Options"
-msgstr "Opciones de comparación"
+msgid "You can download auxiliar.xls file."
+msgstr "Puede descargar el archivo auxiliar.xls."
 
 #. module: comparision_tc_vta
-#: view:comparision.report:0
-msgid "Filter"
-msgstr "Filtro"
+#: field:comparision.report,aux_name:0 field:comparision.report,compa_name:0
+msgid "Filename"
+msgstr "Nombre del archivo"
 
 #. module: comparision_tc_vta
 #: model:ir.ui.menu,name:comparision_tc_vta.top_wizard
@@ -83,9 +47,9 @@ msgid "Comparision"
 msgstr "Comparación"
 
 #. module: comparision_tc_vta
-#: field:comparision.report,file_csv:0
-msgid "File .csv"
-msgstr "Archivo .csv"
+#: selection:comparision.report,state:0
+msgid "Choose"
+msgstr "Escoge "
 
 #. module: comparision_tc_vta
 #: field:comparision.report,branch:0
@@ -94,10 +58,97 @@ msgstr "Sucursal"
 
 #. module: comparision_tc_vta
 #: view:comparision.report:0
-msgid "Cancel"
-msgstr "Cancelar"
+msgid "Download Files"
+msgstr "Descargar archivos"
+
+#. module: comparision_tc_vta
+#: model:ir.actions.act_window,name:comparision_tc_vta.action_comparision_report
+#: model:ir.ui.menu,name:comparision_tc_vta.menu_comparision_report
+msgid "Comparision Report"
+msgstr "Reporte de comparación"
+
+#. module: comparision_tc_vta
+#: selection:comparision.report,state:0
+msgid "Get"
+msgstr "Obtener"
+
+#. module: comparision_tc_vta
+#: field:comparision.report,state:0
+msgid "unknown"
+msgstr "Desconocido"
+
+#. module: comparision_tc_vta
+#: selection:comparision.report,branch:0
+msgid "Branch 1 and 2"
+msgstr "Sucursal 1 y 2"
+
+#. module: comparision_tc_vta
+#: model:ir.model,name:comparision_tc_vta.model_comparision_report
+#: model:ir.model,name:comparision_tc_vta.model_wizard_download_files
+msgid "Comparision TC with VTA"
+msgstr "Comparación TC con VTA"
+
+#. module: comparision_tc_vta
+#: help:comparision.report,aux_name:0 help:comparision.report,compa_name:0
+msgid "This is File name"
+msgstr "Este es el nombre del archivo"
+
+#. module: comparision_tc_vta
+#: model:ir.ui.menu,name:comparision_tc_vta.top_comparision
+msgid "Comparision tc vta"
+msgstr "Comparación tc vta"
+
+#. module: comparision_tc_vta
+#: view:comparision.report:0
+msgid "You can download comparison.xls file."
+msgstr "Puede descargar el archivo comparacion.xls."
+
+#. module: comparision_tc_vta
+#: field:comparision.report,file_csv:0
+msgid "File .csv"
+msgstr "Archivo .csv"
+
+#. module: comparision_tc_vta
+#: view:comparision.report:0
+msgid "Comparison Report:"
+msgstr "Reporte de comparación:"
 
 #. module: comparision_tc_vta
 #: view:comparision.report:0
 msgid "Generate report"
 msgstr "Generar reporte"
+
+#. module: comparision_tc_vta
+#: help:comparision.report,aux_xls:0 help:comparision.report,compa_xls:0
+msgid "You can export file"
+msgstr "Puede exportar el archivo"
+
+#. module: comparision_tc_vta
+#: field:comparision.report,period:0
+msgid "Periodo"
+msgstr "Periodo"
+
+#. module: comparision_tc_vta
+#: view:comparision.report:0
+msgid "Auxiliar Report:"
+msgstr "Reporte Auxiliar:"
+
+#. module: comparision_tc_vta
+#: field:comparision.report,aux_xls:0 field:comparision.report,compa_xls:0
+msgid "File"
+msgstr "Archivo"
+
+#. module: comparision_tc_vta
+#: view:comparision.report:0
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: comparision_tc_vta
+#: view:comparision.report:0
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: comparision_tc_vta
+#: view:comparision.report:0
+msgid "You comparison has been successfully created!"
+msgstr "Su comparación se ha creado con éxito!"

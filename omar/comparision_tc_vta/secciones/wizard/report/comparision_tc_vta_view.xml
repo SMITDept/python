@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- XML Módulo -->
 <openerp>
 	<data>
@@ -7,37 +7,34 @@
 			<field name="model">comparision.report</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="Comparision Options">
-					<notebook tabpos="up" colspan="2">
-						<page string="Filter" name="filters">
-							<separator string="Dates" colspan="4"/>
-							<group colspan="4" col="4">
-								<group colspan="2" col="2">
-									<field name="period"/>
-								</group>
-								<group colspan="2" col="2">
-									<field name="branch"/>
-								</group>
-								<group colspan="2" col="2">
-								</group>
-							</group>
-							<separator string="File" colspan="4"/>
-							<group colspan="4" col="4">
-								<field name="file_csv"/>
-							</group>
-						</page>
-					</notebook>
-					<newline/>
-					<separator colspan="4"/>
-					<group col="4" colspan="4">
-						<button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
+		         <form string="Download Files"  version="7.0">
+		            <field invisible="1" name="state"/>
+		            <group  states="choose" string=" " colspan="4">
+		                <field name="period"/>
+		                <field name="branch"/>
+		                <field name="file_csv"/>
+		            </group>
+	                
+	                <div states="get">
+	                    <h2>You comparison has been successfully created!</h2>
+	                    <p>You can download auxiliar.xls file.</p>
+	                    <p>You can download comparison.xls file.</p>
+	                    <p>Auxiliar Report: <field name="aux_xls" readonly="1" filename="aux_name"/></p>
+                        <p>Comparison Report: <field name="compa_xls" readonly="1" filename="compa_name"/></p>
+	                </div>
+	                
+	                <footer states="choose">
+	                    <button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
 						<button icon="gtk-print" name="print_report" string="Generate report"
 										type="object"
 										colspan="2"
 										default_focus="1" />
-					</group>
-				</form>
-			</field>
+	                </footer>
+	                <footer attrs="{'invisible':[('state','not in', ('get', 'not_file'))]}">
+	                    <button special="cancel" string="Close" class="oe_link" />
+	                </footer>
+		        </form>
+            </field>
 		</record>
 	
 		<!-- Sección de Action(s) Record(s) -->

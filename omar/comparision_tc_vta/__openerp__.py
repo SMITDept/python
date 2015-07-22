@@ -20,7 +20,6 @@
   'data': [
     'menus.xml',
     'secciones/wizard/report/comparision_tc_vta_view.xml',
-    'secciones/wizard/report/wizard_download.xml',
   ],
 
   'active': False,

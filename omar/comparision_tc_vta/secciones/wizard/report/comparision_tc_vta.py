@@ -1,6 +1,7 @@
 # coding: utf-8
 
 #Importando las clases necesarias para construir un modelo OpenERP
+import tempfile
 import xlwt
 import base64
 import StringIO
@@ -10,18 +11,6 @@ import csv
 from datetime import datetime, timedelta, date
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
-
-def onchange_wizard(self, cr, uid, ids, context=None):
-	this = self.browse(cr, uid, ids)[0]
-	return {
-        'name': 'test',
-        'view_type': 'form',
-        'view_mode': 'form',
-        'view_id': 'wizard_download',
-        'res_id': this.id,
-        'type': 'ir.actions.act_window',
-        'target': 'new',
-    }
 
 def get_day(date):
 	split = date.split("/")
@@ -38,9 +27,9 @@ def date_time(date):
 		current_date.strftime("%Y-%m-%d %H:%M:%S.%f")
 		return current_date
 	return date
+    
 #Modelo 
-class comparision_tc_vta( osv.osv_memory ):
-
+class comparision_tc_vta(osv.TransientModel):
 
 	def _obtener_periodo( self, cr, uid, ids, context = None ):
 	    """
@@ -95,13 +84,24 @@ class comparision_tc_vta( osv.osv_memory ):
 
 	_columns = {
 		'period': fields.many2one('account.period', 'Periodo', required=True), 
-		'file_csv': fields.binary("File .csv", filters="*.csv", requires=True),
-		'branch':fields.selection(BRANCH, 'Branch', required =True),
+		'file_csv': fields.binary("File .csv", filters="*.csv", required=True),
+		'branch':fields.selection(BRANCH, 'Branch', required=True),
+		'state': fields.selection([('choose', 'Choose'),
+                                   ('get', 'Get')]),
+		'aux_name': fields.char('Filename', size=128,
+                                readonly=True, help='This is File name'),
+		'aux_xls': fields.binary(
+            'File', readonly=True, help='You can export file'),
+		'compa_name': fields.char('Filename', size=128,
+                                readonly=True, help='This is File name'),
+		'compa_xls': fields.binary(
+            'File', readonly=True, help='You can export file'),
 	}
 
 	#Valores por defecto de los elementos del arreglo [_columns]
 	_defaults = {
     	'period': _obtener_periodo,
+    	'state': 'choose',
   	}
 
 
@@ -112,16 +112,19 @@ class comparision_tc_vta( osv.osv_memory ):
 		""" 
 		period = self.pool.get( self._name ).browse( cr, uid, ids[0] ).period
 
-		wb = xlwt.Workbook()
-		aux = xlwt.Workbook()
+		wb = xlwt.Workbook(encoding="UTF-8")
+		aux = xlwt.Workbook(encoding="UTF-8")
+
+		ws = wb.add_sheet('Concialiacion')
+		ax = aux.add_sheet('Auxiliar')
+
 		style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;'
                               'font: colour white, bold True;')
 		red = xlwt.easyxf('pattern: pattern solid, fore_colour red;')
 		green = xlwt.easyxf('pattern: pattern solid, fore_colour green;')
 		style0 = xlwt.easyxf('font: name Arial, color-index red, bold on', num_format_str='#,##0.00')
 		xlwt.easyxf('font: name Arial')
-		ws = wb.add_sheet('A Test Sheet')
-		ax = aux.add_sheet('A Test Sheet')
+
 		ws.write(0, 0, u"ID de Establecimiento", style)
 		ws.write(0, 1, u"Moneda", style)
 		ws.write(0, 2, u"Número de identificación de la Terminal", style)
@@ -141,6 +144,7 @@ class comparision_tc_vta( osv.osv_memory ):
 		datos=obj.browse( cr, uid, ids[0] )
 		self.query = ""
 		periodo=''
+		sucursal = ''
 
 		periodo=str(datos.period.id)
 		self.query = self.query + "AND aml.period_id = " + periodo
@@ -149,6 +153,7 @@ class comparision_tc_vta( osv.osv_memory ):
 			branch = line.branch
 
 		if branch == '1':
+			sucursal = "SM1 - SM2"
 			cr.execute(
             """
               SELECT aml.create_date AS create_d,
@@ -163,6 +168,7 @@ class comparision_tc_vta( osv.osv_memory ):
               ORDER BY aml.create_date
             """)
 		else:
+			sucursal = "SM" + branch
 			id_select = "'" + "SM" + branch + "%" + "'" 
 			id_branch = "AND aml.ref LIKE " + id_select
 			cr.execute(
@@ -207,8 +213,8 @@ class comparision_tc_vta( osv.osv_memory ):
 			        		lst = list(db_result)
 			        		lst[0] = str(result)
 			        		db_result = tuple(lst)
-			        		datetime = db_result[0].split(" ")
-			        		split = datetime[0].split("-")
+			        		datetim = db_result[0].split(" ")
+			        		split = datetim[0].split("-")
 			        		year = split[0]
 			        		db_date1 = split[2] + "/" + split[1] + "/" + year
 		        			if csv_result[9] == db_date1 or next_csv_date == db_date1:
@@ -231,8 +237,37 @@ class comparision_tc_vta( osv.osv_memory ):
 						else:
 							ws.write(fila, colum, csv_result[colum], red)
 		        	fila = fila+1
-		wb.save('/tmp/conciliacion.xls')
-		aux.save('/tmp/auxiliar.xls')
-		onchange_wizard(self, cr, uid, ids)
+		date = datetime.today()+timedelta(hours=-5)
+		date = date.strftime("%d-%m-%Y %H:%M")
+		aux_na = "Auxiliar " + sucursal + " - " + date +".xls"
+		compa_na = "Comparacion " + sucursal + " - " + date +".xls"
 
+		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
+			aux.save(fcsv.name)
+		with open(fcsv.name, 'r') as fname:
+			data1 = fname.read()
+
+		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
+			wb.save(fcsv.name)
+		with open(fcsv.name, 'r') as fname:
+			data2 = fname.read()
+
+		self.write(cr, uid, ids, {
+            'state': 'get',
+            'aux_name': aux_na,
+            'aux_xls': base64.encodestring(data1),
+            'compa_name': compa_na,
+            'compa_xls': base64.encodestring(data2),
+        }, context=context)
+
+		this = self.browse(cr, uid, ids)[0]
+		return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': this.id,
+            'views': [(False, 'form')],
+            'res_model': 'comparision.report',
+            'target': 'new',
+        }
 comparision_tc_vta()
