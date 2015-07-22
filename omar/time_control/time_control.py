@@ -79,7 +79,7 @@ class time_control(osv.osv):
 		employee = cr.fetchall()
 		if employee:
 			employee = employee[0]
-			cr.execute('SELECT employee, start_time, start_food, end_food, end_time, total_hours FROM time_control where employee = %s and date_register = %s', (employee[0] , date_register,))
+			cr.execute('SELECT employee, start_time, start_food, end_food, end_time, total_hours FROM time_control where employee = %s and user_m2o_id = %s and date_register = %s', (employee[0], employee[2], date_register,))
 			employee_schedule = cr.fetchall()
 			if employee_schedule:
 				employee_schedule = employee_schedule[0]
@@ -87,13 +87,13 @@ class time_control(osv.osv):
 					if not employee_schedule[2]:
 						#"Inicio de comida"
 						total_hour = total_hours(employee_schedule[1], datetime_register, employee_schedule[5])
-						cr.execute('UPDATE time_control SET start_food = %s, total_hours = %s where employee = %s and date_register = %s', (datetime_register, total_hour, employee[0], date_register,))
+						cr.execute('UPDATE time_control SET start_food = %s, total_hours = %s where employee = %s and user_m2o_id = %s and date_register = %s', (datetime_register, total_hour, employee[0], employee[2], date_register,))
 						return"Registro guardado"
 
 					if not employee_schedule[3]:
 						#"Termina comida"
 						total_hour = total_hours(employee_schedule[2], datetime_register, employee_schedule[5])
-						cr.execute('UPDATE time_control SET end_food = %s, total_hours = %s where employee = %s and date_register = %s', (datetime_register, total_hour, employee[0], date_register,))
+						cr.execute('UPDATE time_control SET end_food = %s, total_hours = %s where employee = %s and user_m2o_id = %s and date_register = %s', (datetime_register, total_hour, employee[0], employee[2], date_register,))
 						return"Registro guardado"
 
 					if employee_schedule[4]:
@@ -102,7 +102,7 @@ class time_control(osv.osv):
 					if not employee_schedule[4]:
 						#"hora de salida"
 						total_hour = total_hours(employee_schedule[3], datetime_register, employee_schedule[5])
-						cr.execute('UPDATE time_control SET end_time = %s, total_hours = %s where employee = %s and date_register = %s', (datetime_register, total_hour, employee[0], date_register,))
+						cr.execute('UPDATE time_control SET end_time = %s, total_hours = %s where employee = %s and user_m2o_id = %s and date_register = %s', (datetime_register, total_hour, employee[0], employee[2], date_register,))
 						return"Registro guardado"
 
 				else:
@@ -112,7 +112,7 @@ class time_control(osv.osv):
 					if not employee_schedule[4]:
 						#"hora de salida"
 						total_hour = total_hours(employee_schedule[1], datetime_register, employee_schedule[5])
-						cr.execute('UPDATE time_control SET end_time = %s, total_hours = %s where employee = %s and date_register = %s', (datetime_register, total_hour, employee[0], date_register,))
+						cr.execute('UPDATE time_control SET end_time = %s, total_hours = %s where employee = %s and user_m2o_id = %s and date_register = %s', (datetime_register, total_hour, employee[0], employee[2], date_register,))
 						return"Registro guardado"
 			else:
 				user = employee[2]

@@ -1,18 +1,16 @@
 # coding: utf-8
 
 #Importando las clases necesarias para construir un modelo OpenERP
-import time
-from datetime import datetime
-from openerp.exceptions import Warning
-from openerp.osv import fields, osv
-from openerp.osv.osv import except_osv
-from openerp.tools.translate import _
-
 import xlwt
+import time
+import base64
+import tempfile
 
-
+from dateutil.relativedelta import relativedelta
+from datetime import datetime, timedelta, date
+from openerp.osv import fields, osv
 #Modelo 
-class schedule_report( osv.osv_memory ) :	
+class schedule_report(osv.TransientModel) :	
 
 	#Descripcion 
 	_description = 'Schedule report'
@@ -25,13 +23,20 @@ class schedule_report( osv.osv_memory ) :
 		'fecha_inicio': fields.date("Start date", required=True),
 		'fecha_fin': fields.date("End date", required=True),
 		'location': fields.many2one('location_user', 'Location', required=False),
+		'state': fields.selection([('choose', 'Choose'),
+                                   ('get', 'Get')]),
+		'report_name': fields.char('File name', size=128,
+                                readonly=True, help='This is File name'),
+		'report_xls': fields.binary(
+            'File', readonly=True, help='You can export file'),
 		}
 
 	#Valores por defecto de los elementos del arreglo [_columns]
 	_defaults = {
+		'state': 'choose',
 		'rango_fechas': True,
-		'fecha_inicio': lambda *a: time.strftime('%Y-01-01'),
-		'fecha_fin': lambda *a: time.strftime('%Y-12-12'),
+		'fecha_inicio': lambda *a: time.strftime('%Y-%m-01'),
+		'fecha_fin': ((datetime.now() + relativedelta(day=1, months=+1, days=-1)).date()).strftime('%Y-%m-%d'),
 	}
 
 	#Reestricciones desde código
@@ -47,18 +52,29 @@ class schedule_report( osv.osv_memory ) :
 		inicio = self.pool.get( self._name ).browse( cr, uid, ids[0] ).fecha_inicio
 		fin = self.pool.get( self._name ).browse( cr, uid, ids[0] ).fecha_fin
 		sucursal = self.pool.get( self._name ).browse( cr, uid, ids[0] ).location
+		
+		if sucursal:
+			cr.execute(
+			"""
+	          SELECT sucursal
+	          FROM location_user
+	          WHERE id = %s 
+	        """,(sucursal.id,))
+
+		sucursal_name = cr.fetchone()
+		sucursal_name = sucursal_name[0]
 
 		if sucursal:
 			cr.execute(
 			"""
-	          SELECT employee, location_m2o_id, date_register, start_time, start_food, end_food, end_time, total_hours
+	          SELECT user_m2o_id, location_m2o_id, date_register, start_time, start_food, end_food, end_time, total_hours
 	          FROM time_control
 	          WHERE location_m2o_id = %s and date_register BETWEEN %s and %s
 	        """,(sucursal.id, inicio, fin,))
 		else:
 			cr.execute(
 			"""
-	          SELECT employee, location_m2o_id, date_register, start_time, start_food, end_food, end_time, total_hours
+	          SELECT user_m2o_id, location_m2o_id, date_register, start_time, start_food, end_food, end_time, total_hours
 	          FROM time_control
 	          WHERE date_register BETWEEN %s and %s
 	        """,(inicio, fin,))
@@ -91,7 +107,7 @@ class schedule_report( osv.osv_memory ) :
 							"""
 					          SELECT name, first_name, second_name
 					          FROM schedule_users
-					          WHERE employee_number = %s
+					          WHERE id = %s
 					        """,(report[i][j],))
 						name = cr.fetchone()
 						name = name[0] + " " + name[1] + " " + name[2]
@@ -130,7 +146,31 @@ class schedule_report( osv.osv_memory ) :
 			#raise Warning(_('Reporte generado.'))
 		#else:
 			#raise Warning(_('No se encontraron resultados.'))
-		return wb.save('/tmp/report.xls')
+		date = datetime.today()+timedelta(hours=-5)
+		date = date.strftime("%d-%m-%Y %H:%M")
+		repo_name = "Reporte de horario " + sucursal_name +" - " + date +".xls"
+
+		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
+			wb.save(fcsv.name)
+		with open(fcsv.name, 'r') as fname:
+			data1 = fname.read()
+
+		self.write(cr, uid, ids, {
+            'state': 'get',
+            'report_name': repo_name,
+            'report_xls': base64.encodestring(data1),
+        }, context=context)
 		
+		this = self.browse(cr, uid, ids)[0]
+		return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': this.id,
+            'views': [(False, 'form')],
+            'res_model': 'schedule.report',
+            'target': 'new',
+        }
+
 schedule_report()
 
