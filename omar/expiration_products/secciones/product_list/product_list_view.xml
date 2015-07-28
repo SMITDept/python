@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="product_list_tree">
+			<field name="name">product_list.tree</field>
+			<field name="model">product.list.expired</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="product_list">
+					<field name="shop_is_m2o"/>
+					<field name="ean13"/>
+					<field name="name"/>
+					<field name="month0_4"/>
+					<field name="month5_8"/>
+					<field name="month9_12"/>
+					<field name="over_12"/>
+					<field name="expired"/>
+					<field name="db_num"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="product_list_form">
+			<field name="name">product_list.form</field>
+			<field name="model">product.list.expired</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="product_list">
+					<field name="shop_is_m2o"/>
+					<field name="ean13"/>
+					<field name="name"/>
+					<field name="month0_4"/>
+					<field name="month5_8"/>
+					<field name="month9_12"/>
+					<field name="over_12"/>
+					<field name="expired"/>
+					<field name="db_num"/>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_product_list" model="ir.actions.act_window">
+			<field name="name">Product list</field>
+			<field name="res_model">product.list.expired</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Product list"
+			parent="expiration_products.top_product_list"  
+			id="product_list_control"
+			action="action_product_list"/>
+
+	</data>
+</openerp>

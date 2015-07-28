@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Menus XML -->
+<openerp>
+  <data>
+        <menuitem id="top_expiration_products" name="Expiration of Products" sequence="100"/>
+        	<menuitem id="top_product_list" name="Product list" sequence="060" parent="expiration_products.top_expiration_products"/>
+        	<menuitem id="top_wizard" name="Expiration" sequence="070" parent="expiration_products.top_expiration_products"/>
+  </data>
+</openerp>

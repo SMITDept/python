@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- XML Módulo -->
+<openerp>
+	<data>
+		<record id="expiration_products_view" model="ir.ui.view">
+			<field name="name">Expiration of Products</field>
+			<field name="model">expiration.product</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+		    	<form string="Expiration of products" version="7.0">
+					<field invisible="1" name="state"/>
+					<div states="branch">
+						<group  states="branch" string=" " colspan="4">
+			                <field name="branch"/>
+		            	</group>
+		            </div>
+		            <div states="ean13">
+		            	<group  states="ean13" string=" " colspan="4">
+			                <field name="code_ean13" on_change="get_product(code_ean13)"/>
+		            	</group>
+		            </div>
+		            <div states="save">
+						<notebook tabpos="up" colspan="2">
+							<page string="Filter" name="filters">
+								<separator string="Dates" colspan="4"/>
+								<group colspan="4" col="4">
+									<group colspan="2" col="2">
+										<field name="product"/>
+									</group>
+									<group colspan="2" col="2">
+										<newline/>
+										<field name="image" widget="image"/>
+									</group>
+								</group>
+								<separator string="Months" colspan="4"/>
+								<group colspan="8" col="8">
+									<field name="mon0_4" attrs="{'readonly' : ['|',( 'mon5_8', '=', True), '|', ('mon9_12', '=', True),
+									('expired', '=', True)]}"/>
+									<field name="mon5_8" attrs="{'readonly' : ['|',( 'mon0_4', '=', True), '|', ('mon9_12', '=', True),
+									('expired', '=', True)]}"/>
+									<field name="mon9_12" attrs="{'readonly' : ['|',( 'mon0_4', '=', True), '|', ('mon5_8', '=', True),
+									('expired', '=', True)]}"/>
+									<field name="expired" attrs="{'readonly' : ['|',( 'mon0_4', '=', True), '|', ('mon5_8', '=', True), 
+									('mon9_12', '=', True)]}"/>
+								</group>
+							</page>
+						</notebook>
+					</div>
+					<newline/>
+
+					<separator colspan="4"/>
+					<footer states="branch">
+						<button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
+						<button icon="gtk-print" name="get_branch" string="select Branch"
+										type="object"
+										colspan="2"
+										default_focus="1" />
+					</footer>
+					<footer states="ean13">
+						<button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
+						<button icon="gtk-print" name="get_product" string="Get product"
+										type="object"
+										colspan="2"
+										default_focus="1" />
+					</footer>
+	                <footer states="save">
+						<button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
+						<button icon="gtk-print" name="save_product" string="Save Product"
+										type="object"
+										colspan="2"
+										default_focus="1" />
+					</footer>
+				</form>
+            </field>
+		</record>
+	
+		<!-- Sección de Action(s) Record(s) -->
+		<!-- El prefijo "action_"  y el sufijo "report" es obligatorio -->
+		
+		<record id="action_expiration_products" model="ir.actions.act_window">
+			<field name="name">Expiration of Products</field>
+			<field name="res_model">expiration.product</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="expiration_products_view"/>
+			<field name="target">new</field>
+		</record>
+		<!-- Sección de Menu(s) Record(s) -->
+		
+		<menuitem icon="STOCK_PRINT"
+			id="menu_expiration_products"
+			name="Register expiration"
+			action="action_expiration_products"
+			parent="expiration_products.top_wizard"/>
+	</data>
+</openerp>
