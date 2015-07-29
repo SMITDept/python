@@ -19,7 +19,8 @@
   #XML imports
   'data': [
     'menus.xml',
-    'secciones/wizard/report/expiration_products_view.xml',
+    'secciones/wizard/add_product/expiration_products_view.xml',
+    'secciones/wizard/products_report/products_report_view.xml',
     'secciones/product_list/product_list_view.xml',
   ],
 

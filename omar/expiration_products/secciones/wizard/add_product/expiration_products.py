@@ -8,13 +8,34 @@ def get_db_data(self, cr, uid, ids, branch, ean13):
 	cr.execute(
         """
           SELECT id, month0_4, month5_8,
-          month9_12, expired, over_12
+          month9_12, expired, over_12,
+          shop_is_m2o, ean13, name, db_num
           FROM product_list_expired
           WHERE shop_is_m2o = %s
           AND ean13 = %s
         """,(branch, ean13))
 	db_expired = cr.fetchall()
+	if db_expired:
+		db_expired = db_expired[0]
 	return db_expired
+
+def update_data(self, cr, uid, ids, over12, id_product):
+	cr.execute(
+		"""
+		UPDATE product_list_expired SET over_12 = %s
+		WHERE id = %s
+		""",(over12, id_product))
+
+def create_log(self, cr, uid, ids, branch, ean13, name, mon0_4, 
+	mon5_8, mon9_12, over12, stock_products, expired):
+	cr.execute(
+		"""
+		INSERT INTO product_list_expired_log 
+		(shop_is_m2o, ean13, name, month0_4, month5_8,
+		month9_12, over_12, db_num, expired, date_register) 
+		VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+		""",(branch, ean13, name, mon0_4, mon5_8, 
+			mon9_12, over12, stock_products, expired, datetime.now()))
 
 #Modelo 
 class expiration_product(osv.TransientModel):
@@ -115,7 +136,7 @@ class expiration_product(osv.TransientModel):
 		db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
 
 		if db_expired:
-			db_expired = db_expired[0]
+
 			if mon0_4 == True:
 				new_number = db_expired[1] +1
 				cr.execute(
@@ -124,13 +145,12 @@ class expiration_product(osv.TransientModel):
 					WHERE id = %s
 					""",(new_number, db_expired[0]))
 				db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
-				db_expired = db_expired[0]
 				over12 = stock_products - (db_expired[1] + db_expired[2] + db_expired[3] + db_expired[4])
-				cr.execute(
-					"""
-					UPDATE product_list_expired SET over_12 = %s
-					WHERE id = %s
-					""",(over12, db_expired[0]))
+				update_data(self, cr, uid, ids, over12, db_expired[0])
+				db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
+				create_log(self, cr, uid, ids, db_expired[6], db_expired[7],
+					db_expired[8], db_expired[1], db_expired[2],
+					db_expired[3], db_expired[5], stock_products, db_expired[4])
 
 			if mon5_8 == True:
 				new_number = db_expired[2] +1
@@ -140,13 +160,13 @@ class expiration_product(osv.TransientModel):
 					WHERE id = %s
 					""",(new_number, db_expired[0]))
 				db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
-				db_expired = db_expired[0]
 				over12 = stock_products - (db_expired[1] + db_expired[2] + db_expired[3] + db_expired[4])
-				cr.execute(
-					"""
-					UPDATE product_list_expired SET over_12 = %s
-					WHERE id = %s
-					""",(over12, db_expired[0]))
+				update_data(self, cr, uid, ids, over12, db_expired[0])
+				db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
+				create_log(self, cr, uid, ids, db_expired[6], db_expired[7],
+					db_expired[8], db_expired[1], db_expired[2],
+					db_expired[3], db_expired[5], stock_products, db_expired[4])
+
 			if mon9_12 == True:
 				new_number = db_expired[3] +1
 				cr.execute(
@@ -155,13 +175,13 @@ class expiration_product(osv.TransientModel):
 					WHERE id = %s
 					""",(new_number, db_expired[0]))
 				db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
-				db_expired = db_expired[0]
 				over12 = stock_products - (db_expired[1] + db_expired[2] + db_expired[3] + db_expired[4])
-				cr.execute(
-					"""
-					UPDATE product_list_expired SET over_12 = %s
-					WHERE id = %s
-					""",(over12, db_expired[0]))
+				update_data(self, cr, uid, ids, over12, db_expired[0])
+				db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
+				create_log(self, cr, uid, ids, db_expired[6], db_expired[7],
+					db_expired[8], db_expired[1], db_expired[2],
+					db_expired[3], db_expired[5], stock_products, db_expired[4])
+
 			if expired == True:
 				new_number = db_expired[4] +1
 				cr.execute(
@@ -170,13 +190,13 @@ class expiration_product(osv.TransientModel):
 					WHERE id = %s
 					""",(new_number, db_expired[0]))
 				db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
-				db_expired = db_expired[0]
 				over12 = stock_products - (db_expired[1] + db_expired[2] + db_expired[3] + db_expired[4])
-				cr.execute(
-					"""
-					UPDATE product_list_expired SET over_12 = %s
-					WHERE id = %s
-					""",(over12, db_expired[0]))
+				update_data(self, cr, uid, ids, over12, db_expired[0])
+				db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
+				create_log(self, cr, uid, ids, db_expired[6], db_expired[7],
+					db_expired[8], db_expired[1], db_expired[2],
+					db_expired[3], db_expired[5], stock_products, db_expired[4])
+
 		else:
 			if mon0_4 == True:
 				mon0_4 = 1
@@ -204,14 +224,8 @@ class expiration_product(osv.TransientModel):
 				month9_12, over_12, db_num, expired) 
 				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
 				""",(branch.id, ean13, name, mon0_4, mon5_8, mon9_12, over12, stock_products, expired))
-
-			cr.execute(
-				"""
-				INSERT INTO product_list_expired_log 
-				(shop_is_m2o, ean13, name, month0_4, month5_8,
-				month9_12, over_12, db_num, expired, date_register) 
-				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-				""",(branch.id, ean13, name, mon0_4, mon5_8, mon9_12, over12, stock_products, expired, datetime.now()))
+			create_log(self, cr, uid, ids, branch.id, ean13, name, mon0_4, mon5_8,
+						mon9_12, over12, stock_products, expired)
 
 		self.write(cr, uid, ids, {
             'state': 'ean13',
@@ -221,6 +235,7 @@ class expiration_product(osv.TransientModel):
             'mon9_12': False,
             'expired': False,
         }, context=context)
+
 		this = self.browse(cr, uid, ids)[0]
 		return {
             'type': 'ir.actions.act_window',
