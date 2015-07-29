@@ -14,35 +14,58 @@
 			<field name="model">auxiliar_contable</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="Auxiliar">
-          <group colspan='2' col='4'>
-						<field name="account_id"
-									 domain="[
-												('type', '!=', 'view'),
-												('type', '!=', 'closed'),
-										]"/>
-						<label string=" " colspan="2"/>
-						<newline/>
-						<separator string="Periodo" colspan="4"/>
-						<field name="por_periodo" colspan="4" on_change="onchange_periodo(por_periodo)"/>
-						<field name="period_id" attrs="{ 'readonly' : [ ( 'por_periodo', '=', False ) ] }"/>
-						<label string=" " colspan="2"/>
-						<newline/>
-						<separator string="Fechas" colspan="4" />
-						<field name="rango_fechas" colspan="4" on_change="onchange_rango(rango_fechas)"/>
-            <field name="fecha_inicio"
-									 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ]}"/>
-						<label string=" " colspan="2"/>
-            <field name="fecha_fin"
-									 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ]}"/>
-						<label string=" " colspan="2"/>
+				<form string="Auxiliar" version="7.0">
+					<field invisible="1" name="state"/>
+					<div states="choose">
+						<group colspan='2' col='4'>
+							<field name="account_id"
+										 domain="[
+													('type', '!=', 'view'),
+													('type', '!=', 'closed'),
+											]"/>
+							<label string=" " colspan="2"/>
+							<newline/>
+							<separator string="Periodo" colspan="4"/>
+							<field name="por_periodo" colspan="4" on_change="onchange_periodo(por_periodo)"/>
+							<field name="period_id"
+										 attrs="{ 'readonly' : [ ( 'por_periodo', '=', False ) ] }"
+										 />
+							<label string=" " colspan="2"/>
+							<field name="period_fin_id"
+										 attrs="{ 'readonly' : [ ( 'por_periodo', '=', False ) ] }"
+										 />
+							<newline/>
+							<separator string="Fechas" colspan="4" />
+							<field name="rango_fechas" colspan="4" on_change="onchange_rango(rango_fechas)"/>
+							<field name="fecha_inicio"
+										 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ]}"/>
+							<label string=" " colspan="2"/>
+							<field name="fecha_fin"
+										 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ]}"/>
+							<label string=" " colspan="2"/>
+						</group>
 						
+					</div>
+					<group colspan='2' col='4'>
+					<newline/>
+
+					<div states="get">
+	          <h2> ¡Se a creado el archivo!</h2>
+						<h2>Click en: <field name="report_xls" readonly="1" filename="report_name"/></h2>
+	        </div>
+		
+					<separator colspan="4"/>
+					<footer states="choose">
 						<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
 						<button name="obtenerXlwt"
-											string="Imprimir"
-											type="object"
-											class="oe_highlight" colspan='2'/>
-					</group>
+										string="Imprimir"
+										type="object"
+										class="oe_highlight" colspan='2'/>
+					</footer>
+	        <footer attrs="{'invisible':[('state','not in', ('get', 'not_file'))]}">
+	          <button special="cancel" string="Cerrar" class="oe_link" />
+	        </footer>
+				</group>
 				</form>
 			</field>
 		</record>

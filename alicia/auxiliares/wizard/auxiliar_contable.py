@@ -16,6 +16,9 @@ from openerp.tools.translate import _
 #para crear la hoja de calculo
 import xlwt
 
+import base64
+import tempfile
+
 #Modelo
 class auxiliar_contable(osv.osv_memory):
  
@@ -63,6 +66,28 @@ class auxiliar_contable(osv.osv_memory):
       registro = cr.fetchone()
       per_id = registro[0]
     return per_id
+  #--------------------------------------------------------------------------------------------------------------------------------------------------- 
+  def _creaworksheet(self, cr, uid, ids, worksheet):
+
+    style_title = xlwt.easyxf('pattern: pattern solid, fore_colour red; '
+                              'font: colour white, bold True; align: vert centre;')
+    
+
+    if worksheet :
+      #Se crean los nombres de las columnas
+      worksheet.write(0,0,'CREACION', style_title)
+      worksheet.write(0,1,'FECHA', style_title)
+      worksheet.write(0,2,'DEBITO', style_title)
+      worksheet.write(0,3,'CREDITO', style_title)
+      worksheet.write(0,4,'NOMBRE', style_title)
+      worksheet.write(0,5,'DESCRIPCION', style_title)
+      worksheet.col(0).width = 30 * 256
+      worksheet.col(4).width = 40 * 256
+      worksheet.col(5).width = 50 * 256
+      return True
+    
+    return False
+  
   #---------------------------------------------------------------------------------------------------------------------------------------------------     
   def obtenerXlwt( self, cr, uid, ids, context = None ):
     """
@@ -70,44 +95,39 @@ class auxiliar_contable(osv.osv_memory):
     * Argumentos OpenERP: [cr, uid, ids, context]
     @return dict 
     """
-    #style
-    style_title = xlwt.easyxf('pattern: pattern solid, fore_colour red; '
-                              'font: colour white, bold True; align: vert centre;')
-    style0 = xlwt.easyxf('font: name Arial, color-index black', num_format_str='#,##0.00')
-    style1 = xlwt.easyxf(num_format_str='DD-MM-YY')
-    styleNo = xlwt.easyxf('font: name Arial, color-index red', num_format_str='#,##0.00')
-    #objeto que crea el libro de trabajo con el constructor Workbook()
-    workbook = xlwt.Workbook()
-    #El objeto de libro llama al método add_sheet() para agregar una nueva hoja de cálculo
-    worksheet = workbook.add_sheet('Auxiliar por cuenta')
-    #Se crean los nombres de las columnas
-    worksheet.write(0,0,'CREACION', style_title)
-    worksheet.write(0,1,'FECHA', style_title)
-    worksheet.write(0,2,'DEBITO', style_title)
-    worksheet.write(0,3,'CREDITO', style_title)
-    worksheet.write(0,4,'NOMBRE', style_title)
-    worksheet.write(0,5,'DESCRIPCION', style_title)
-    worksheet.col(0).width = 30 * 256
-    worksheet.col(5).width = 50 * 256
     #objeto del modelo
     obj=self.pool.get( self._name )
     datos=obj.browse( cr, uid, ids[0] )
     self.query = ""
     cuenta=''
-    periodo=''
+    namee=''
+    tipo_name=''
     bandera=False
-    path='/tmp/Auxiliar.xls'
+    path='Auxiliar.xls'
     if datos.account_id != 0:
       cuenta=str(datos.account_id.id)
       self.query = "AND aml.account_id = " + cuenta
       
       if datos.por_periodo == True :
-        periodo=str(datos.period_id.id)
-        self.query = self.query + " AND aml.period_id = " + periodo
+        periodo_id_init=datos.period_id.id
+        tipo_name='el periodo seleccionado'
+        periodo_fin_id = datos.period_fin_id.id
+        if periodo_id_init <= periodo_fin_id :
+          periodo_id_init=str(periodo_id_init)
+          periodo_fin_id=str(periodo_fin_id)
+          self.query = self.query + " AND aml.period_id BETWEEN " + periodo_id_init + " AND " + periodo_fin_id
+          # print self.query
+        # self.query = self.query + " AND aml.period_id = " + periodo_id_init
+        else:
+          periodo_id_init=str(periodo_id_init)
+          periodo_fin_id=str(periodo_fin_id)
+          self.query = self.query + " AND aml.period_id BETWEEN " + periodo_fin_id + " AND " + periodo_id_init
+          # print self.query
         bandera=True
       else:  
         if datos.rango_fechas == True :
           inicio = datos.fecha_inicio
+          tipo_name = 'las fechas seleccionadas'
           fin = datos.fecha_fin
           self.query = self.query + " AND aml.create_date BETWEEN " + "'" + inicio + " 06:00:01"+ "'" + " AND " + "'" + fin + " 05:59:59"+ "'"
           bandera=True
@@ -131,11 +151,38 @@ class auxiliar_contable(osv.osv_memory):
             """)
         aux = cr.fetchall()
         if type( aux ) in ( list, dict) :
+          #objeto que crea el libro de trabajo con el constructor Workbook()
+          workbook = xlwt.Workbook()
+          #El objeto de libro llama al método add_sheet() para agregar una nueva hoja de cálculo
+          worksheet = workbook.add_sheet('Auxiliar por cuenta')
+          style0 = xlwt.easyxf('font: name Arial, color-index black', num_format_str='#,##0.00')
+          style1 = xlwt.easyxf(num_format_str='DD-MM-YY')
+          styleNo = xlwt.easyxf('font: name Arial, color-index red', num_format_str='#,##0.00')
+    
           if ( len( aux ) > 0 ) :
             row = 1
             col = 0
+            num=0
+            n=1
+            fecha =aux[0][1]
+            num_mess=fecha.split("-")
+            siguiente = int(num_mess[1]) + 1 
+            creado=self._creaworksheet(cr, uid, ids, worksheet)
             titul=''
             for create_d, date, debit, credit, name, nombre in (aux):
+              num_mes=date.split("-")
+              mes = int(num_mes[1])
+              if mes == siguiente :
+                n+=1
+                siguiente = mes + 1
+                worksheet = workbook.add_sheet('Auxiliar por cuenta ' + str(n))
+                creado=self._creaworksheet(cr, uid, ids, worksheet)
+                if creado == True :
+                  row = 1
+                  col = 0
+                else:
+                  break  
+
               worksheet.write(row, col, create_d, style0)
               worksheet.write(row, col + 1, date, style1)
               worksheet.write(row, col + 2, debit, style0)
@@ -143,17 +190,44 @@ class auxiliar_contable(osv.osv_memory):
               worksheet.write(row, col + 4, name, style0)
               worksheet.write(row, col + 5, nombre.title(), style0)
               row += 1
+              num += 1    
               titul=nombre
+              # print row
               
             titul=titul.split()
-            path='/tmp/Auxiliar_'+str(titul[0]).capitalize()+'.xls'  
+            namee='Auxiliar_'+str(titul[0]).capitalize()+'.xls'
+
           else:
-              worksheet.write(1, 0, '* No se encontraron datos en la busqueda *', styleNo)
+              raise osv.except_osv(_( '¡Aviso!' ),_( 'No se encontraron datos en ' + tipo_name) )
+              # worksheet.write(1, 0, '* No se encontraron datos en la busqueda *', styleNo)
       else:
         raise osv.except_osv(_( 'Aviso' ),_( 'Por favor de seleccionar una de las opciones de búsqueda: Por Periodo ó Por Rango de Fechas' ) )
-    print path  
+
+    print namee
     # guarda el archivo en la ruta especificada      
-    return workbook.save(path)
+    # return workbook.save(path)
+    with tempfile.NamedTemporaryFile(delete=False) as fcsv:
+        workbook.save(fcsv.name)
+    with open(fcsv.name, 'r') as fname:
+        data1 = fname.read()
+    
+    self.write(cr, uid, ids, {
+              'state': 'get',
+              'report_name': namee,
+              'report_xls': base64.encodestring(data1),
+          }, context=context)
+      
+    this = self.browse(cr, uid, ids)[0]
+    return {
+              'type': 'ir.actions.act_window',
+              'view_type': 'form',
+              'view_mode': 'form',
+              'res_id': this.id,
+              'views': [(False, 'form')],
+              'res_model': 'auxiliar_contable',
+              'target': 'new',
+          }
+  
   #---------------------------------------------------------------------------------------------------------------------------------------------------
   def onchange_periodo( self, cr, uid, ids, por_periodo) :
     """
@@ -204,16 +278,27 @@ class auxiliar_contable(osv.osv_memory):
     'por_periodo': fields.boolean("Por Periodo"),
     'fecha_inicio':fields.date("Fecha inicio", required=True),
     'fecha_fin':fields.date("Fecha fin", required=True),
+    
+    # ======================================  Dowload ====================================== #
+    'state': fields.selection([ ('choose', 'Choose'),
+                                ('get', 'Get')]),
+    'report_name': fields.char('File name', size=128,
+                                readonly=True, help='This is File name'),
+    'report_xls': fields.binary( 'File', readonly=True, help='You can export file'),
+
   # ======================================  Relaciones OpenERP [one2many](o2m) ====================================== #
-    'period_id': fields.many2one('account.period', 'Periodo', required=True),
+    'period_id': fields.many2one('account.period', 'Periodo inicial', required=True),
+    'period_fin_id': fields.many2one('account.period', 'Periodo final', required=True),
     'account_id': fields.many2one('account.account', 'Cuenta', required=True),
   }
 
   #Valores por defecto de los elementos del arreglo [_columns]
   _defaults = {
+    'state': 'choose',
     'period_id': _obtener_periodo,
-    'fecha_inicio': lambda *a: time.strftime('%Y-%m-01'),
-    'fecha_fin': lambda *a: time.strftime('%Y-%m-%d'),
+    'period_fin_id': _obtener_periodo,
+    'fecha_inicio': lambda *a: time.strftime('%Y-01-%m'),
+    'fecha_fin': lambda *a: time.strftime('%Y-01-%m'),
   }
 auxiliar_contable()
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
