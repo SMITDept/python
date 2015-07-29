@@ -44,9 +44,8 @@
 										 attrs="{ 'readonly' : [ ( 'rango_fechas', '=', False ) ]}"/>
 							<label string=" " colspan="2"/>
 						</group>
-						
 					</div>
-					<group colspan='2' col='4'>
+					
 					<newline/>
 
 					<div states="get">
@@ -56,16 +55,19 @@
 		
 					<separator colspan="4"/>
 					<footer states="choose">
-						<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
-						<button name="obtenerXlwt"
-										string="Imprimir"
-										type="object"
-										class="oe_highlight" colspan='2'/>
+						<group colspan='2' col='6'>
+							<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
+							<label string=" " colspan="2"/>
+							<button name="obtenerXlwt"
+											icon="gtk-print"
+											string="Imprimir"
+											type="object"
+											class="oe_highlight" colspan='2'/>
+						</group>
 					</footer>
 	        <footer attrs="{'invisible':[('state','not in', ('get', 'not_file'))]}">
-	          <button special="cancel" string="Cerrar" class="oe_link" />
+	          <button icon="gtk-cancel" special="cancel" string="Cerrar" class="oe_link" />
 	        </footer>
-				</group>
 				</form>
 			</field>
 		</record>
