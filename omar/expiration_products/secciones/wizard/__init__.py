@@ -4,3 +4,4 @@
 
 import add_product
 import products_report
+import log_report

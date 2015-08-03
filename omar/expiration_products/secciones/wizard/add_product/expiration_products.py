@@ -251,6 +251,11 @@ class expiration_product(osv.TransientModel):
 		"""
 		Metodo obtener la sucursal
 		"""
+		cr.execute(
+			"""
+			DELETE FROM product_list_expired
+			"""
+		)
 		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).branch
 		self.write(cr, uid, ids, {
             'branch': branch.id,
@@ -265,5 +270,5 @@ class expiration_product(osv.TransientModel):
             'views': [(False, 'form')],
             'res_model': 'expiration.product',
             'target': 'new',
-        }
+            }
 expiration_product()
