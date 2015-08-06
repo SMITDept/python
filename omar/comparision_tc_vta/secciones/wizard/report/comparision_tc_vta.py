@@ -139,12 +139,14 @@ class comparision_tc_vta(osv.TransientModel):
 		ws.write(0, 11, u"Clasificación", style)
 		ws.write(0, 12, u"Código de autorización", style)
 		ws.write(0, 13, u"Orden de compra", style)
+		ws.write_merge(0, 0, 15, 17, 'Auxiliar', style)
 
 		obj=self.pool.get( self._name )
 		datos=obj.browse( cr, uid, ids[0] )
 		self.query = ""
 		periodo=''
 		sucursal = ''
+		num_order = []
 
 		periodo=str(datos.period.id)
 		self.query = self.query + "AND aml.period_id = " + periodo
@@ -186,15 +188,6 @@ class comparision_tc_vta(osv.TransientModel):
             """)
 
 		db_results = cr.fetchall()
-		fila = 0
-		for db_result in db_results:
-			result = date_time(db_result[0])
-			lst = list(db_result)
-			lst[0] = str(result)
-			db_result = tuple(lst)
-			for colum in range(len(db_result)):
-				ax.write(fila, colum, db_result[colum])
-			fila = fila +1
 		
 		if db_results:
 			for wiz in self.browse(cr, uid, ids, context=context):
@@ -209,6 +202,7 @@ class comparision_tc_vta(osv.TransientModel):
 		        	bandera2 = False
 		        	if fila != 0:
 			        	for db_result in db_results:
+			        		b = False
 			        		result = date_time(db_result[0])
 			        		lst = list(db_result)
 			        		lst[0] = str(result)
@@ -230,7 +224,19 @@ class comparision_tc_vta(osv.TransientModel):
 		        					bandera = True
 					    			if bandera2 != True:
 					    				bandera2 = True
-					        			ws.write(fila, 13, db_result[2], style)
+					    				for pos in num_order:
+					    					if db_result[2] == pos:
+					    						b = True
+					    				if b == False:
+						        			ws.write(fila, 13, db_result[2], style)
+						        			current_date=datetime.strptime(db_result[0], "%Y-%m-%d %H:%M:%S.%f")
+						        			current_date=current_date.strftime("%d-%m-%Y")
+						        			ws.write(fila, 15, current_date, style)
+						        			ws.write(fila, 16, db_result[1], style)
+						        			ws.write(fila, 17, db_result[2], style)
+						        			num_order.append(db_result[2])
+						        		else:
+						        			bandera2 = False
 					for colum in range(len(csv_result)):
 						if bandera == True :
 							ws.write(fila, colum, csv_result[colum], green)
@@ -239,8 +245,26 @@ class comparision_tc_vta(osv.TransientModel):
 		        	fila = fila+1
 		date = datetime.today()+timedelta(hours=-5)
 		date = date.strftime("%d-%m-%Y %H:%M")
-		aux_na = "Auxiliar " + sucursal + " - " + date +".xls"
+		aux_na = "Sobrantes Auxiliar " + sucursal + " - " + date +".xls"
 		compa_na = "Comparacion " + sucursal + " - " + date +".xls"
+
+		fila = 0
+		for db_result in db_results:
+			b =False
+			result = date_time(db_result[0])
+			lst = list(db_result)
+			lst[0] = str(result)
+			db_result = tuple(lst)
+			for pos in num_order:
+				if db_result[2] == pos:
+					b = True
+			if b == False:
+				current_date=datetime.strptime(db_result[0], "%Y-%m-%d %H:%M:%S.%f")
+				current_date=current_date.strftime("%d-%m-%Y")
+				ax.write(fila, 0, current_date)
+				ax.write(fila, 1, db_result[1])
+				ax.write(fila, 2, db_result[2])
+				fila = fila +1
 
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			aux.save(fcsv.name)
@@ -249,6 +273,7 @@ class comparision_tc_vta(osv.TransientModel):
 
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			wb.save(fcsv.name)
+
 		with open(fcsv.name, 'r') as fname:
 			data2 = fname.read()
 
