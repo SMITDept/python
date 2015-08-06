@@ -11,12 +11,12 @@ class product_list_expired(osv.osv):
         'shop_is_m2o': fields.many2one('sale.shop', 'Branch', required=True),
         'ean13': fields.char("Product id", size=13, required=True),
         'name': fields.char('Product name', size=70, readonly=True),
-        'month0_4': fields.integer("0-4 Months"),
-        'month5_8': fields.integer("5-8 Months"),
-        'month9_12': fields.integer("9-12 Months"),
-        'over_12': fields.integer('Over 12 months', required=True),
-        'db_num': fields.integer('Product in the database', required=True),
-        'expired':fields.integer('Expired'),
+        'month0_4': fields.float("0-4 Months", digits=(12,3)),
+        'month5_8': fields.float("5-8 Months", digits=(12,3)),
+        'month9_12': fields.float("9-12 Months", digits=(12,3)),
+        'over_12': fields.float('Over 12 months', digits=(12,3), required=True),
+        'db_num': fields.float('Product in the database', digits=(12,3), required=True),
+        'expired':fields.float('Expired', digits=(12,3)),
     }
 
     _defaults = {
@@ -33,12 +33,12 @@ class product_list_expired_log(osv.osv):
         'shop_is_m2o': fields.many2one('sale.shop', 'Branch', required=True),
         'ean13': fields.char("Product id", size=13, required=True),
         'name': fields.char('Product name', size=70, readonly=True),
-        'month0_4': fields.integer("0-4 Months"),
-        'month5_8': fields.integer("5-8 Months"),
-        'month9_12': fields.integer("9-12 Months"),
-        'over_12': fields.integer('Over 12 months', required=True),
-        'db_num': fields.integer('Product in the database', required=True),
-        'expired':fields.integer('Expired'),
+        'month0_4': fields.float("0-4 Months", digits=(12,3)),
+        'month5_8': fields.float("5-8 Months", digits=(12,3)),
+        'month9_12': fields.float("9-12 Months", digits=(12,3)),
+        'over_12': fields.float('Over 12 months', digits=(12,3), required=True),
+        'db_num': fields.float('Product in the database', digits=(12,3), required=True),
+        'expired':fields.float('Expired', digits=(12,3)),
         'date_register': fields.datetime('Registration date', required=True),
     }
 

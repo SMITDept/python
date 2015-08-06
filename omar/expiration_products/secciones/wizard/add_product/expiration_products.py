@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from datetime import datetime, timedelta
-from openerp.osv import fields, osv
+from osv import fields, osv
 from openerp.tools.translate import _
 
 def get_db_data(self, cr, uid, ids, branch, ean13):
@@ -56,6 +56,7 @@ class expiration_product(osv.TransientModel):
 		'mon5_8': fields.boolean('5-8 months'),
 		'mon9_12': fields.boolean('9-12 months'),
 		'expired': fields.boolean('Expired'),
+		'pieces': fields.float('Pieces', digits=(12,3), required=True),
 		'state': fields.selection([('branch', 'Branch'),
                                    ('ean13', 'Ean13'),
                                    ('save', 'Save')]),
@@ -65,6 +66,29 @@ class expiration_product(osv.TransientModel):
 	_defaults = {
     	'state': 'branch',
   	}
+
+  	def back_menu(self, cr, uid, ids,context = { }):
+		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).branch
+		self.write(cr, uid, ids, {
+            'branch': branch.id,
+            'code_ean13': '',
+            'state': 'ean13',
+            'mon0_4': False,
+            'mon5_8': False,
+            'mon9_12': False,
+            'expired': False,
+            'pieces': 0,
+        }, context=context)
+		this = self.browse(cr, uid, ids)[0]
+		return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': this.id,
+            'views': [(False, 'form')],
+            'res_model': 'expiration.product',
+            'target': 'new',
+            }
 
   	def get_product(self, cr, uid, ids, ean13):
   		context = ""
@@ -124,6 +148,7 @@ class expiration_product(osv.TransientModel):
 		mon5_8 = self.pool.get( self._name ).browse( cr, uid, ids[0] ).mon5_8
 		mon9_12 = self.pool.get( self._name ).browse( cr, uid, ids[0] ).mon9_12
 		expired = self.pool.get( self._name ).browse( cr, uid, ids[0] ).expired
+		pieces = self.pool.get( self._name ).browse( cr, uid, ids[0] ).pieces
 
 		#cr.execute(
 	    #    """
@@ -138,7 +163,7 @@ class expiration_product(osv.TransientModel):
 		if db_expired:
 
 			if mon0_4 == True:
-				new_number = db_expired[1] +1
+				new_number = db_expired[1] + pieces
 				cr.execute(
 					"""
 					UPDATE product_list_expired SET month0_4 = %s
@@ -153,7 +178,7 @@ class expiration_product(osv.TransientModel):
 					db_expired[3], db_expired[5], stock_products, db_expired[4])
 
 			if mon5_8 == True:
-				new_number = db_expired[2] +1
+				new_number = db_expired[2] + pieces
 				cr.execute(
 					"""
 					UPDATE product_list_expired SET month5_8 = %s
@@ -168,7 +193,7 @@ class expiration_product(osv.TransientModel):
 					db_expired[3], db_expired[5], stock_products, db_expired[4])
 
 			if mon9_12 == True:
-				new_number = db_expired[3] +1
+				new_number = db_expired[3] + pieces
 				cr.execute(
 					"""
 					UPDATE product_list_expired SET month9_12 = %s
@@ -183,7 +208,7 @@ class expiration_product(osv.TransientModel):
 					db_expired[3], db_expired[5], stock_products, db_expired[4])
 
 			if expired == True:
-				new_number = db_expired[4] +1
+				new_number = db_expired[4] + pieces
 				cr.execute(
 					"""
 					UPDATE product_list_expired SET expired = %s
@@ -199,19 +224,19 @@ class expiration_product(osv.TransientModel):
 
 		else:
 			if mon0_4 == True:
-				mon0_4 = 1
+				mon0_4 = pieces
 			else:
 				mon0_4 = 0
 			if mon5_8 == True:
-				mon5_8 = 1
+				mon5_8 = pieces
 			else:
 				mon5_8 = 0
 			if mon9_12 == True:
-				mon9_12 = 1
+				mon9_12 = pieces
 			else:
 				mon9_12 = 0
 			if expired == True:
-				expired = 1
+				expired = pieces
 			else:
 				expired = 0
 
@@ -234,6 +259,7 @@ class expiration_product(osv.TransientModel):
             'mon5_8': False,
             'mon9_12': False,
             'expired': False,
+            'pieces': 0,
         }, context=context)
 
 		this = self.browse(cr, uid, ids)[0]
@@ -251,12 +277,14 @@ class expiration_product(osv.TransientModel):
 		"""
 		Metodo obtener la sucursal
 		"""
+		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).branch
+		
 		cr.execute(
 			"""
 			DELETE FROM product_list_expired
-			"""
-		)
-		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).branch
+			WHERE shop_is_m2o = %s
+			""",(branch.id,))
+
 		self.write(cr, uid, ids, {
             'branch': branch.id,
             'state': 'ean13',

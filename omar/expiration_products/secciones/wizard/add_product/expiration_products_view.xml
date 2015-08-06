@@ -33,7 +33,7 @@
 									</group>
 								</group>
 								<separator string="Months" colspan="4"/>
-								<group colspan="8" col="8">
+								<group colspan="2" col="4">
 									<field name="mon0_4" attrs="{'readonly' : ['|',( 'mon5_8', '=', True), '|', ('mon9_12', '=', True),
 									('expired', '=', True)]}"/>
 									<field name="mon5_8" attrs="{'readonly' : ['|',( 'mon0_4', '=', True), '|', ('mon9_12', '=', True),
@@ -42,6 +42,10 @@
 									('expired', '=', True)]}"/>
 									<field name="expired" attrs="{'readonly' : ['|',( 'mon0_4', '=', True), '|', ('mon5_8', '=', True), 
 									('mon9_12', '=', True)]}"/>
+								</group>
+								<separator string="Pieces" colspan="4"/>
+								<group colspan="2" col="4">
+									<field name="pieces"/>
 								</group>
 							</page>
 						</notebook>
@@ -57,14 +61,17 @@
 										default_focus="1" />
 					</footer>
 					<footer states="ean13">
-						<button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
+						<button icon="gtk-cancel" special="cancel" string="Finish" colspan="2"/>
 						<button icon="gtk-print" name="get_product" string="Get product"
 										type="object"
 										colspan="2"
 										default_focus="1" />
 					</footer>
 	                <footer states="save">
-						<button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
+						<button icon="gtk-cancel" name="back_menu" string="Back" 
+								type="object"
+								colspan="2"
+								default_focus="1" />
 						<button icon="gtk-print" name="save_product" string="Save Product"
 										type="object"
 										colspan="2"

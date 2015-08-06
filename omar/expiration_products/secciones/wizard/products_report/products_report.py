@@ -8,7 +8,7 @@ import tempfile
 
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
-from openerp.osv import fields, osv
+from osv import fields, osv
 #Modelo 
 class products_report(osv.TransientModel) :	
 

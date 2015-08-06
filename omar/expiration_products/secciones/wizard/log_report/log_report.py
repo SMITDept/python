@@ -8,7 +8,8 @@ import time
 
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
-from openerp.osv import fields, osv
+from osv import fields, osv
+from openerp.tools.translate import _
 #Modelo 
 class log_expired_report(osv.TransientModel) :	
 
@@ -65,7 +66,20 @@ class log_expired_report(osv.TransientModel) :
 	          AND date_register BETWEEN %s and %s
 	          ORDER BY product_list_expired_log.date_register
 	        """,(branch.id, product.ean13, start_date, end_date,))
-		else:
+
+		if product and not branch:
+			cr.execute(
+			"""
+	          SELECT shop_is_m2o, ean13, name,
+	          month0_4, month5_8, month9_12, over_12,
+	          db_num, expired, date_register
+	          FROM product_list_expired_log
+	          WHERE ean13 = %s 
+	          AND date_register BETWEEN %s and %s
+	          ORDER BY product_list_expired_log.date_register
+	        """,(product.ean13, start_date, end_date,))
+
+		if branch and not product:
 			cr.execute(
 			"""
 	          SELECT shop_is_m2o, ean13, name,
@@ -76,6 +90,9 @@ class log_expired_report(osv.TransientModel) :
 	          AND date_register BETWEEN %s and %s
 	          ORDER BY product_list_expired_log.date_register
 	        """,(branch.id, start_date, end_date,))
+
+	   	if not product and not branch:
+	   		raise osv.except_osv(_( 'Warning' ),_( 'You need choose product or branch' ) )
 
 		db_results = cr.fetchall()
 
@@ -112,7 +129,12 @@ class log_expired_report(osv.TransientModel) :
 					branch_name = branch_name[0]
 					ws.write(j, colum, branch_name)
 				else:
-					ws.write(j, colum, result[colum])
+					if colum == 9:
+						date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f") + timedelta(hours=-5)
+						date = date.strftime("%Y-%m-%d %H:%M")
+						ws.write(j, colum, date)
+					else:
+						ws.write(j, colum, result[colum])
 			j = j+1
 
 		date = datetime.today()+timedelta(hours=-5)
