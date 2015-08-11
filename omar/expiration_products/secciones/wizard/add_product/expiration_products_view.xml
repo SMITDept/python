@@ -97,7 +97,7 @@
 		
 		<menuitem icon="STOCK_PRINT"
 			id="menu_expiration_products"
-			name="Register expiration"
+			name="Expiration Register"
 			action="action_expiration_products"
 			parent="expiration_products.top_wizard"/>
 	</data>

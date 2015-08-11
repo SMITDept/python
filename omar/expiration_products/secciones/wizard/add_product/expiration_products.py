@@ -4,6 +4,42 @@ from datetime import datetime, timedelta
 from osv import fields, osv
 from openerp.tools.translate import _
 
+def get_stock(self, cr, uid, ids, product_id):
+	cr.execute(
+		"""
+		with stockmovements as (
+		select sm.location_dest_id as location_id, sl.complete_name, sm.product_qty, pt.standard_price, sl.usage, sm.product_id,
+		case pu.uom_type
+			when 'reference' then sm.product_qty
+			when 'bigger' then round((sm.product_qty / pu.factor),2)
+			when 'smaller' then round((sm.product_qty * pu.factor),2)
+		end as real_qty
+		from stock_move sm, product_template pt, stock_location sl, product_uom pu
+		where pt.id = sm.product_id and sm.product_id = %s and sm.state = 'done' and sl.id = sm.location_dest_id and sm.product_uom = pu.id
+		union all
+		select sm.location_id as location_id, sl.complete_name, sm.product_qty*-1, pt.standard_price, sl.usage, sm.product_id,
+		case pu.uom_type
+			when 'reference' then sm.product_qty*-1
+			when 'bigger' then round((sm.product_qty / pu.factor),2)*-1
+			when 'smaller' then round((sm.product_qty * pu.factor),2)*-1
+		end as real_qty
+		from stock_move sm, product_template pt, stock_location sl, product_uom pu
+		where pt.id = sm.product_id and sm.product_id = %s and sm.state = 'done' and sl.id = sm.location_id and sm.product_uom = pu.id
+		)
+		select  
+		sum(case pu.uom_type
+			when 'reference' then round(stkmvs.real_qty,3)
+			when 'bigger' then round((stkmvs.real_qty * pu.factor),3)
+			when 'smaller' then round((stkmvs.real_qty / pu.factor),3)
+		end) as quantity
+		from stockmovements stkmvs, product_template pt, product_uom pu
+		where stkmvs.product_id = pt.id and pt.uom_id = pu.id
+		group by usage
+		having sum(stkmvs.real_qty) <> 0 and usage='internal'
+		""",(product_id, product_id,))
+	return cr.fetchone()
+
+
 def get_db_data(self, cr, uid, ids, branch, ean13):
 	cr.execute(
         """
@@ -150,13 +186,15 @@ class expiration_product(osv.TransientModel):
 		expired = self.pool.get( self._name ).browse( cr, uid, ids[0] ).expired
 		pieces = self.pool.get( self._name ).browse( cr, uid, ids[0] ).pieces
 
-		#cr.execute(
-	    #    """
-	    #      SELECT prod.name_template,
-	    #      FROM product_product prod
-	    #      WHERE ean13 = %s
-	    #    """,(ean13,))
-		stock_products = 50
+		cr.execute(
+	        """
+	          SELECT prod.id
+	          FROM product_product prod
+	          WHERE ean13 = %s
+	        """,(ean13,))
+		pro = cr.fetchall()
+		total = get_stock(self, cr, uid, ids, pro[0])
+		stock_products = total[0]
 
 		db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
 

@@ -26,7 +26,7 @@
 					<div states="get">
 	                    <h2>Your report has been successfully created!</h2>
 	                    <p>You can download file.</p>
-	                    <p>Auxiliar Report: <field name="report_xls" readonly="1" filename="report_name"/></p>
+	                    <p>Report: <field name="report_xls" readonly="1" filename="report_name"/></p>
 	                </div>
 
 					<separator colspan="4"/>
