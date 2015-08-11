@@ -148,8 +148,8 @@ class wizard_fechas(osv.osv_memory):
       #se eliminan los datos de la tabla listado antes de insertar
       cr.execute(
         """
-        DELETE FROM listado_codigo
-        """
+        DELETE FROM listado_codigo WHERE create_uid=%s
+        """,(uid,)
       )
       #se recorre el listado
       for codigo in listado:
@@ -169,11 +169,11 @@ class wizard_fechas(osv.osv_memory):
         #se crea la imagen y se guarda en la ruta especifica
         almacena = ean.write(f)
         #si no encuentra el producto insertar
-        no_encontrado = (nombre_produc, codigo, 0.0, ruta, fecha, '0.00', str(fecha_imp) )
+        no_encontrado = (nombre_produc, codigo, 0.0, ruta, fecha, '0.00', str(fecha_imp), uid, 'No' )
         #se ejecuta la consulta en la tabla productos
         cr.execute(
         """
-          SELECT upper(name), ean13, list_price  
+          SELECT upper(name), ean13, list_price, default_code  
           FROM product_template t
           INNER JOIN product_product p
           ON t.id = p.product_tmpl_id
@@ -190,7 +190,7 @@ class wizard_fechas(osv.osv_memory):
         valores = (
                     ( resultado[0], resultado[1], (resultado[2]), ruta, fecha,
                      (
-                      ( resultado[2] ) if num == 2 and precio[1] > 9  else (str(resultado[2])+'0')), str(fecha_imp)
+                      ( resultado[2] ) if num == 2 and precio[1] > 9  else (str(resultado[2])+'0')), str(fecha_imp),uid, resultado[3]
                      )
                     if type( resultado ) in ( list, tuple ) and resultado != None else no_encontrado
                   )
@@ -198,8 +198,8 @@ class wizard_fechas(osv.osv_memory):
         cr.execute(
           """
           INSERT INTO listado_codigo
-          (descripcion, cod_barras, precio, ruta_codigo, fecha, precio_str, fecha_str )
-          VALUES (%s::varchar(24), %s, %s, %s, %s, %s, %s)
+          (descripcion, cod_barras, precio, ruta_codigo, fecha, precio_str, fecha_str, create_uid, referencia )
+          VALUES (%s::varchar(24), %s, %s, %s, %s, %s, %s, %s, %s)
           """, valores )
       return True
     else :
@@ -227,7 +227,7 @@ class wizard_fechas(osv.osv_memory):
 
   #Valores por defecto de los elementos del arreglo [_columns]
   _defaults = {
-    # 'agregar': True,
+
   }
    
   #Reestricciones desde código
