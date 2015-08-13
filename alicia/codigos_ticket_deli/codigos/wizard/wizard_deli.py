@@ -36,11 +36,17 @@ class wizard_deli(osv.osv_memory):
     @param : (cr, uid, ids, context) 
     @return dict
     """
-    codigo_deli = self.pool.get( self._name ).browse( cr, uid, ids[0] ).cod_number
-    codigo_deli = str(codigo_deli)
+    codigo_deli = str(self.pool.get( self._name ).browse( cr, uid, ids[0] ).cod_number)
+    codigo_deli2 = str( self.pool.get( self._name ).browse( cr, uid, ids[0] ).cod_number2)
+    codigo_deli3 = str(self.pool.get( self._name ).browse( cr, uid, ids[0] ).cod_number3)
+    divide_etiquetas = self.pool.get( self._name ).browse( cr, uid, ids[0] ).divide_etiquetas
+    
     if len(codigo_deli) < 13:
       raise osv.except_osv(_( 'Avisoo' ),_( 'Debe ingresar un código EAN13' ) )
-    buscar = self._obtener_codigos( cr, uid, codigo_deli)
+    if divide_etiquetas == True:
+      if len(codigo_deli2) < 13 or len(codigo_deli3) < 13:
+        raise osv.except_osv(_( 'Avisoo' ),_( 'Debe ingresar un código EAN13' ) )
+    buscar = self._obtener_codigos( cr, uid, codigo_deli, codigo_deli2, codigo_deli3, divide_etiquetas)
     if buscar == True :
         #imprimir reporte
        if context is None:
@@ -66,7 +72,7 @@ class wizard_deli(osv.osv_memory):
       return { 'value' : {} }
     
   #---------------------------------------------------------------------------------------------------------------------------------------------------
-  def _obtener_codigos( self, cr, uid, codigo_deli ) :
+  def _obtener_codigos( self, cr, uid, codigo_deli, codigo_deli2, codigo_deli3, divide_etiquetas ) :
     """
     Metodo que obtiene la informacion del producto y el codigo de barras apartir del codigo del producto e inserta los datos en la tabla listado.
     * Argumentos OpenERP: [cr]
@@ -75,18 +81,27 @@ class wizard_deli(osv.osv_memory):
     """
     listado = []
     numero=1
-    lista_ean = ' '
-    codigo=codigo_deli
-    while numero <= 30:
-      numero += 1
-      # print numero
-      listado.append(codigo_deli) 
-
     valores = ' '
     fecha = time.strftime("%y%m%d")
     fecha_imp = time.strftime('%d/%m/%y')
-    # print codigo
-    if ( codigo_deli ):
+
+    if divide_etiquetas == False:
+      while numero <= 30:
+        print numero
+        listado.append(codigo_deli)
+        numero += 1
+    else:
+      while numero <= 30:
+        print numero
+        if numero <=10 :
+          listado.append(codigo_deli)
+        elif numero >10 and numero <=20 :
+          listado.append(codigo_deli2)  
+        elif numero >20 :
+          listado.append(codigo_deli3)
+        numero += 1  
+
+    if ( type( listado ) in ( list, tuple ) ):  
       #se eliminan los datos de la tabla listado antes de insertar
       cr.execute(
         """
@@ -103,13 +118,8 @@ class wizard_deli(osv.osv_memory):
             nombre_produc = 'NO ENCONTRADO'
         else :
           raise osv.except_osv(_( 'Aviso!' ),_( 'El código sólo debe contener números' ) )
-        #Crea el codigo de Barras
-        ean = barcode.get('ean13', codigo, writer=barcode.writer.ImageWriter())
         # Genera el archivo
-        ruta = '/tmp/ean_'+ str(codigo)
-        f = open(ruta , 'wb')
-        #se crea la imagen y se guarda en la ruta especifica
-        almacena = ean.write(f)
+        ruta = 'No se genera codigo de barras'
         #si no encuentra el producto insertar
         no_encontrado = (nombre_produc, codigo, 0.0, ruta, fecha, '0.00', str(fecha_imp), uid, 'No' )
         #se ejecuta la consulta en la tabla productos
@@ -163,7 +173,11 @@ class wizard_deli(osv.osv_memory):
   _columns = {
     
   # ==========================  Campos OpenERP Básicos (integer, char, text, float, etc...)  ======================== #
-   'cod_number':fields.char("Codigo", size=13, required=True),
+   'cod_number':fields.char("Código", size=13, required=True),
+   'cod_number2':fields.char("Segundo Código", size=13, required=True),
+   'cod_number3':fields.char("Tercer Código", size=13, required=True),
+   'divide_etiquetas':fields.boolean("Añadir otros códigos en la misma hoja", required=False),
+   
   # ======================================  Relaciones OpenERP [one2many](o2m) ====================================== #
   
   }
