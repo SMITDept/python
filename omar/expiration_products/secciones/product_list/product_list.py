@@ -17,6 +17,7 @@ class product_list_expired(osv.osv):
         'over_12': fields.float('Over 12 months', digits=(12,3), required=True),
         'db_num': fields.float('Product in the database', digits=(12,3), required=True),
         'expired':fields.float('Expired', digits=(12,3)),
+        'date_register': fields.datetime('Registration date', required=True),
     }
 
     _defaults = {

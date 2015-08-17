@@ -59,7 +59,7 @@ class log_expired_report(osv.TransientModel) :
 			"""
 	          SELECT shop_is_m2o, ean13, name,
 	          month0_4, month5_8, month9_12, over_12,
-	          db_num, expired, date_register
+	          expired, db_num, date_register
 	          FROM product_list_expired_log
 	          WHERE shop_is_m2o = %s
 	          AND ean13 = %s 
@@ -72,7 +72,7 @@ class log_expired_report(osv.TransientModel) :
 			"""
 	          SELECT shop_is_m2o, ean13, name,
 	          month0_4, month5_8, month9_12, over_12,
-	          db_num, expired, date_register
+	          expired, db_num, date_register
 	          FROM product_list_expired_log
 	          WHERE ean13 = %s 
 	          AND date_register BETWEEN %s and %s
@@ -84,7 +84,7 @@ class log_expired_report(osv.TransientModel) :
 			"""
 	          SELECT shop_is_m2o, ean13, name,
 	          month0_4, month5_8, month9_12, over_12,
-	          db_num, expired, date_register
+	          expired, db_num, date_register
 	          FROM product_list_expired_log
 	          WHERE shop_is_m2o = %s
 	          AND date_register BETWEEN %s and %s

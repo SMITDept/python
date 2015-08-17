@@ -43,10 +43,6 @@
 									<field name="expired" attrs="{'readonly' : ['|',( 'mon0_4', '=', True), '|', ('mon5_8', '=', True), 
 									('mon9_12', '=', True)]}"/>
 								</group>
-								<separator string="Pieces" colspan="4"/>
-								<group colspan="2" col="4">
-									<field name="pieces"/>
-								</group>
 							</page>
 						</notebook>
 					</div>
@@ -97,7 +93,7 @@
 		
 		<menuitem icon="STOCK_PRINT"
 			id="menu_expiration_products"
-			name="Expiration Register"
+			name="Expiration register"
 			action="action_expiration_products"
 			parent="expiration_products.top_wizard"/>
 	</data>
