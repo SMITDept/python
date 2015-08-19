@@ -18,6 +18,7 @@ class product_list_expired(osv.osv):
         'db_num': fields.float('Product in the database', digits=(12,3), required=True),
         'expired':fields.float('Expired', digits=(12,3)),
         'date_register': fields.datetime('Registration date', required=True),
+        'user_id': fields.many2one('res.users',"User", required=True, help="User who registered the measurement"),
     }
 
     _defaults = {
@@ -41,6 +42,7 @@ class product_list_expired_log(osv.osv):
         'db_num': fields.float('Product in the database', digits=(12,3), required=True),
         'expired':fields.float('Expired', digits=(12,3)),
         'date_register': fields.datetime('Registration date', required=True),
+        'user_id': fields.many2one('res.users',"User", required=True, help="User who registered the measurement"),
     }
 
     _defaults = {

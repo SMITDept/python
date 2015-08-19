@@ -49,7 +49,9 @@ class products_report(osv.TransientModel) :
 		if branch:
 			cr.execute(
 			"""
-	          SELECT shop_is_m2o, ean13, name, month0_4, month5_8, month9_12, over_12, expired, db_num
+	          SELECT shop_is_m2o, ean13, name,
+	          month0_4, month5_8, month9_12,
+	          over_12, expired, db_num, user_id
 	          FROM product_list_expired
 	          WHERE shop_is_m2o = %s
 	        """,(branch.id,))
@@ -67,7 +69,9 @@ class products_report(osv.TransientModel) :
 		else:
 			cr.execute(
 			"""
-	          SELECT shop_is_m2o, ean13, name, month0_4, month5_8, month9_12, over_12, expired, db_num
+	          SELECT shop_is_m2o, ean13, name,
+	          month0_4, month5_8, month9_12,
+	          over_12, expired, db_num, user_id
 	          FROM product_list_expired
 	        """,(branch.id,))
 
@@ -85,12 +89,13 @@ class products_report(osv.TransientModel) :
 			ws.write(0, 0, "Sucursal", style)
 			ws.write(0, 1, "Ean13", style)
 			ws.write(0, 2, "Nombre", style)
-			ws.write(0, 3, "0-4 Meses", style)
+			ws.write(0, 3, "1-4 Meses", style)
 			ws.write(0, 4, "5-8 Mese", style)
 			ws.write(0, 5, "9-12 Meses", style)
-			ws.write(0, 6, "Mas de 12 meses", style)
+			ws.write(0, 6, u"Más de 12 meses", style)
 			ws.write(0, 7, "Caduco", style)
 			ws.write(0, 8, "Total en la BD", style)
+			ws.write(0, 9, "Usuario", style)
 			j=1
 			for data in data_db:
 				for colum in range(len(data)):
@@ -104,7 +109,20 @@ class products_report(osv.TransientModel) :
 						branch_name = cr.fetchone()
 						branch_name = branch_name[0]
 						ws.write(j, colum, branch_name)
-					else:
+					if colum == 9:
+						cr.execute(
+							"""
+					          SELECT pa.name
+					          FROM res_users us
+					          INNER JOIN res_partner pa
+					          ON us.partner_id = pa.id
+					          WHERE us.id = %s
+					        """,(data[9],))
+						user_name = cr.fetchone()
+						user_name = user_name[0]
+						ws.write(j, colum, user_name)
+
+					if colum > 0 and colum < 9:
 						ws.write(j, colum, data[colum])
 				j = j+1
 

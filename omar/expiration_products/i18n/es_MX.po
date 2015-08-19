@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0-20150622\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-09 15:27+0000\n"
-"PO-Revision-Date: 2015-08-09 11:03-0600\n"
+"POT-Creation-Date: 2015-08-18 18:57+0000\n"
+"PO-Revision-Date: 2015-08-18 14:30-0600\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,12 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 
 #. module: expiration_products
-#: code:addons/expiration_products/secciones/wizard/log_report/log_report.py:95
-#, python-format
-msgid "You need choose product or branch"
-msgstr "Usted necesita elegir producto o sucursal"
-
-#. module: expiration_products
-#: selection:expiration.product,state:0
-msgid "Save"
-msgstr "Guardar"
-
-#. module: expiration_products
 #: view:log.expired.report:0
 msgid "Log Report:"
 msgstr "Reporte de cambios:"
 
 #. module: expiration_products
-#: view:products.report:0
+#: view:next.expire.report:0 view:products.report:0
 msgid "Report:"
 msgstr "Reporte:"
 
@@ -43,9 +32,9 @@ msgid "photo"
 msgstr "Imagen"
 
 #. module: expiration_products
-#: model:ir.ui.menu,name:expiration_products.menu_expiration_products
-msgid "Expiration Register"
-msgstr "Registro de caducidad"
+#: view:expiration.product:0
+msgid "Get product"
+msgstr "Obtener producto"
 
 #. module: expiration_products
 #: field:product.list.expired,over_12:0
@@ -54,23 +43,31 @@ msgid "Over 12 months"
 msgstr "Más de 12 meses"
 
 #. module: expiration_products
-#: field:expiration.product,mon9_12:0
-msgid "9-12 months"
-msgstr "9-12 meses"
+#: view:expiration.product:0
+msgid "Back"
+msgstr "Regresar"
 
 #. module: expiration_products
-#: field:expiration.product,mon5_8:0
-msgid "5-8 months"
-msgstr "5-8 meses"
+#: model:ir.model,name:expiration_products.model_next_expire_report
+#: model:ir.ui.menu,name:expiration_products.menu_next_expire
+msgid "Next products to expire"
+msgstr "Productos próximos a expirar"
 
 #. module: expiration_products
-#: selection:log.expired.report,state:0 selection:products.report,state:0
+#: model:ir.actions.act_window,name:expiration_products.action_next_expire
+msgid "Next product to expire"
+msgstr "Producto próximo a expirar"
+
+#. module: expiration_products
+#: selection:log.expired.report,state:0 selection:next.expire.report,state:0
+#: selection:products.report,state:0
 msgid "Choose"
 msgstr "Seleccionar"
 
 #. module: expiration_products
 #: field:expiration.product,branch:0 selection:expiration.product,state:0
 #: view:log.expired.report:0 field:log.expired.report,location:0
+#: view:next.expire.report:0 field:next.expire.report,branch:0
 #: field:product.list.expired,shop_is_m2o:0
 #: field:product.list.expired.log,shop_is_m2o:0 view:products.report:0
 #: field:products.report,branch:0
@@ -83,9 +80,14 @@ msgid "Start date"
 msgstr "Fecha inicio"
 
 #. module: expiration_products
-#: view:expiration.product:0 field:expiration.product,pieces:0
-msgid "Pieces"
-msgstr "Piezas"
+#: selection:expiration.product,state:0
+msgid "Save"
+msgstr "Guardar"
+
+#. module: expiration_products
+#: help:product.list.expired,user_id:0 help:product.list.expired.log,user_id:0
+msgid "User who registered the measurement"
+msgstr "Usuario que registró la medición"
 
 #. module: expiration_products
 #: field:product.list.expired,db_num:0 field:product.list.expired.log,db_num:0
@@ -105,7 +107,7 @@ msgstr "Producto"
 #. module: expiration_products
 #: view:expiration.product:0
 msgid "Finish"
-msgstr "Final"
+msgstr "Terminar"
 
 #. module: expiration_products
 #: model:ir.model,name:expiration_products.model_product_list_expired_log
@@ -113,7 +115,8 @@ msgid "product.list.expired.log"
 msgstr "product.list.expired.log"
 
 #. module: expiration_products
-#: selection:log.expired.report,state:0 selection:products.report,state:0
+#: selection:log.expired.report,state:0 selection:next.expire.report,state:0
+#: selection:products.report,state:0
 msgid "Get"
 msgstr "Obtener"
 
@@ -124,17 +127,18 @@ msgstr "product.list.expired"
 
 #. module: expiration_products
 #: field:expiration.product,state:0 field:log.expired.report,state:0
-#: field:products.report,state:0
+#: field:next.expire.report,state:0 field:products.report,state:0
 msgid "unknown"
 msgstr "Desconocido"
 
 #. module: expiration_products
-#: help:log.expired.report,report_name:0 help:products.report,report_name:0
+#: help:log.expired.report,report_name:0 help:next.expire.report,report_name:0
+#: help:products.report,report_name:0
 msgid "This is File name"
 msgstr "Este es el nombre del archivo"
 
 #. module: expiration_products
-#: view:log.expired.report:0 view:products.report:0
+#: view:log.expired.report:0 view:next.expire.report:0 view:products.report:0
 msgid "Your report has been successfully created!"
 msgstr "Su reporte ha sido creado con éxito !"
 
@@ -144,7 +148,7 @@ msgid "The Ean13 of the product"
 msgstr "El EAN13 del producto"
 
 #. module: expiration_products
-#: field:product.list.expired,month5_8:0
+#: field:expiration.product,mon5_8:0 field:product.list.expired,month5_8:0
 #: field:product.list.expired.log,month5_8:0
 msgid "5-8 Months"
 msgstr "5-8 meses"
@@ -160,9 +164,9 @@ msgid "Products Report"
 msgstr "Reporte de productos"
 
 #. module: expiration_products
-#: field:expiration.product,mon0_4:0
-msgid "0-4 months"
-msgstr "0-4 meses"
+#: model:ir.actions.act_window,name:expiration_products.action_log_report
+msgid "Log Report"
+msgstr "Reporte de cambios"
 
 #. module: expiration_products
 #: view:expiration.product:0
@@ -183,9 +187,15 @@ msgid "Expired"
 msgstr "Caducos"
 
 #. module: expiration_products
-#: view:products.report:0
+#: view:next.expire.report:0 view:products.report:0
 msgid "Report Options"
 msgstr "Opciones del reporte"
+
+#. module: expiration_products
+#: field:product.list.expired,user_id:0
+#: field:product.list.expired.log,user_id:0
+msgid "User"
+msgstr "Usuario"
 
 #. module: expiration_products
 #: view:expiration.product:0 view:log.expired.report:0
@@ -194,14 +204,8 @@ msgstr "Fechas"
 
 #. module: expiration_products
 #: view:expiration.product:0
-msgid "Get product"
-msgstr "Obtener producto"
-
-#. module: expiration_products
-#: model:ir.actions.act_window,name:expiration_products.action_log_report
-#: model:ir.ui.menu,name:expiration_products.menu_log_report
-msgid "Log Report"
-msgstr "Reporte de cambios"
+msgid "Save Product"
+msgstr "Guardar Producto"
 
 #. module: expiration_products
 #: field:log.expired.report,end_date:0
@@ -209,7 +213,8 @@ msgid "End date"
 msgstr "Fecha final"
 
 #. module: expiration_products
-#: field:log.expired.report,report_name:0 field:products.report,report_name:0
+#: field:log.expired.report,report_name:0
+#: field:next.expire.report,report_name:0 field:products.report,report_name:0
 msgid "File name"
 msgstr "Nombre del archivo"
 
@@ -219,7 +224,13 @@ msgid "Months"
 msgstr "Meses"
 
 #. module: expiration_products
-#: view:expiration.product:0 view:log.expired.report:0 view:products.report:0
+#: field:product.list.expired,ean13:0 field:product.list.expired.log,ean13:0
+msgid "Product id"
+msgstr "Producto id"
+
+#. module: expiration_products
+#: view:expiration.product:0 view:log.expired.report:0
+#: view:next.expire.report:0 view:products.report:0
 msgid "Filter"
 msgstr "Filtro"
 
@@ -229,13 +240,13 @@ msgid "Expiration"
 msgstr "Caducidad"
 
 #. module: expiration_products
-#: field:product.list.expired,month0_4:0
+#: field:expiration.product,mon0_4:0 field:product.list.expired,month0_4:0
 #: field:product.list.expired.log,month0_4:0
 msgid "0-4 Months"
 msgstr "0-4 meses"
 
 #. module: expiration_products
-#: code:addons/expiration_products/secciones/wizard/add_product/expiration_products.py:126
+#: code:addons/expiration_products/secciones/wizard/add_product/expiration_products.py:176
 #, python-format
 msgid "The product does not exist"
 msgstr "El producto no existe"
@@ -246,7 +257,7 @@ msgid "Server changes"
 msgstr "Cambios del servidor"
 
 #. module: expiration_products
-#: view:log.expired.report:0 view:products.report:0
+#: view:log.expired.report:0 view:next.expire.report:0 view:products.report:0
 msgid "Generate report"
 msgstr "Crear reporte"
 
@@ -256,12 +267,13 @@ msgid "Ean13"
 msgstr "Ean13"
 
 #. module: expiration_products
-#: field:product.list.expired,ean13:0 field:product.list.expired.log,ean13:0
-msgid "Product id"
-msgstr "Producto id"
+#: model:ir.ui.menu,name:expiration_products.menu_log_report
+msgid "Log report"
+msgstr "Reporte de cambios"
 
 #. module: expiration_products
-#: help:log.expired.report,report_xls:0 help:products.report,report_xls:0
+#: help:log.expired.report,report_xls:0 help:next.expire.report,report_xls:0
+#: help:products.report,report_xls:0
 msgid "You can export file"
 msgstr "Puede exportar el archivo"
 
@@ -278,17 +290,17 @@ msgid "Image"
 msgstr "Imagen"
 
 #. module: expiration_products
-#: view:log.expired.report:0 view:products.report:0
+#: view:log.expired.report:0 view:next.expire.report:0 view:products.report:0
 msgid "You can download file."
 msgstr "Puede descargar el archivo."
 
 #. module: expiration_products
-#: view:expiration.product:0
-msgid "Back"
-msgstr "Regresar"
+#: model:ir.ui.menu,name:expiration_products.menu_expiration_products
+msgid "Expiration register"
+msgstr "Registro de caducidad"
 
 #. module: expiration_products
-#: field:product.list.expired,month9_12:0
+#: field:expiration.product,mon9_12:0 field:product.list.expired,month9_12:0
 #: field:product.list.expired.log,month9_12:0
 msgid "9-12 Months"
 msgstr "9-12 meses"
@@ -300,8 +312,7 @@ msgid "Expiration of Products"
 msgstr "Caducidad de los productos"
 
 #. module: expiration_products
-#: code:addons/expiration_products/secciones/wizard/add_product/expiration_products.py:126
-#: code:addons/expiration_products/secciones/wizard/log_report/log_report.py:95
+#: code:addons/expiration_products/secciones/wizard/add_product/expiration_products.py:176
 #, python-format
 msgid "Warning"
 msgstr "Advertencia"
@@ -317,17 +328,19 @@ msgid "select Branch"
 msgstr "Seleccione sucursal"
 
 #. module: expiration_products
-#: field:log.expired.report,report_xls:0 field:products.report,report_xls:0
+#: field:log.expired.report,report_xls:0 field:next.expire.report,report_xls:0
+#: field:products.report,report_xls:0
 msgid "File"
 msgstr "Archivo"
 
 #. module: expiration_products
-#: view:expiration.product:0 view:log.expired.report:0 view:products.report:0
+#: view:expiration.product:0 view:log.expired.report:0
+#: view:next.expire.report:0 view:products.report:0
 msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: expiration_products
-#: view:log.expired.report:0 view:products.report:0
+#: view:log.expired.report:0 view:next.expire.report:0 view:products.report:0
 msgid "Close"
 msgstr "Cerrar"
 
@@ -338,11 +351,7 @@ msgid "Product name"
 msgstr "Nombre del producto"
 
 #. module: expiration_products
-#: view:expiration.product:0
-msgid "Save Product"
-msgstr "Guardar Producto"
-
-#. module: expiration_products
+#: field:product.list.expired,date_register:0
 #: field:product.list.expired.log,date_register:0
 msgid "Registration date"
 msgstr "Fecha de registro"

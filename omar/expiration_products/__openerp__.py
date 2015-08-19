@@ -15,6 +15,7 @@
     'base',
     'board',
     'sale',
+    'web',
   ],
   #XML imports
   'data': [

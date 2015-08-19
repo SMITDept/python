@@ -67,7 +67,7 @@ class next_expire_report(osv.TransientModel) :
 			"""
 	          SELECT db_num, ean13, name, date_register,
 	          shop_is_m2o, month0_4, month5_8,
-	          month9_12, over_12, expired
+	          month9_12, over_12, expired, user_id
 	          FROM product_list_expired
 	          WHERE shop_is_m2o = %s
 	        """,(branch.id,))
@@ -87,7 +87,7 @@ class next_expire_report(osv.TransientModel) :
 			"""
 	          SELECT db_num, ean13, name, date_register, 
 	          shop_is_m2o, month0_4, month5_8, month9_12,
-	          over_12, expired
+	          over_12, expired, user_id
 	          FROM product_list_expired
 	        """,(branch.id,))
 
@@ -121,6 +121,7 @@ class next_expire_report(osv.TransientModel) :
 			ws.write(0, 16, "Nombre", style)
 			ws.write(0, 17, "Fecha de registro", style)
 			ws.write(0, 18, "Sucursal", style)
+			ws.write(0, 19, "Usuario", style)
 			j=1
 			for data in data_db:
 				busy = []
@@ -177,6 +178,23 @@ class next_expire_report(osv.TransientModel) :
 							ws.write(j, col, data[colum])
 						busy.append(col)
 
+					if colum == 9:
+							expired = expired + data[colum]
+							ws.write(j, 0, expired)
+							busy.append(0)
+					if colum == 10:
+						cr.execute(
+							"""
+					          SELECT pa.name
+					          FROM res_users us
+					          INNER JOIN res_partner pa
+					          ON us.partner_id = pa.id
+					          WHERE us.id = %s
+					        """,(data[colum],))
+						user_name = cr.fetchone()
+						user_name = user_name[0]
+						ws.write(j, 19, user_name)
+
 					if colum >= 0 and colum < 4:
 						if colum == 3:
 							current_date=datetime.strptime(data[colum], "%Y-%m-%d %H:%M:%S.%f") + timedelta(days=-1)
@@ -193,7 +211,7 @@ class next_expire_report(osv.TransientModel) :
 					if ban == False:
 						ws.write(j, x, 0)
 					
-				ws.write(j, 0, expired)
+				#ws.write(j, 0, expired)
 
 				j = j+1
 

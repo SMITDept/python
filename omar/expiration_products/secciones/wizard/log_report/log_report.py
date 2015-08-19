@@ -59,7 +59,7 @@ class log_expired_report(osv.TransientModel) :
 			"""
 	          SELECT shop_is_m2o, ean13, name,
 	          month0_4, month5_8, month9_12, over_12,
-	          expired, db_num, date_register
+	          expired, db_num, date_register, user_id
 	          FROM product_list_expired_log
 	          WHERE shop_is_m2o = %s
 	          AND ean13 = %s 
@@ -72,7 +72,7 @@ class log_expired_report(osv.TransientModel) :
 			"""
 	          SELECT shop_is_m2o, ean13, name,
 	          month0_4, month5_8, month9_12, over_12,
-	          expired, db_num, date_register
+	          expired, db_num, date_register, user_id
 	          FROM product_list_expired_log
 	          WHERE ean13 = %s 
 	          AND date_register BETWEEN %s and %s
@@ -84,7 +84,7 @@ class log_expired_report(osv.TransientModel) :
 			"""
 	          SELECT shop_is_m2o, ean13, name,
 	          month0_4, month5_8, month9_12, over_12,
-	          expired, db_num, date_register
+	          expired, db_num, date_register, user_id
 	          FROM product_list_expired_log
 	          WHERE shop_is_m2o = %s
 	          AND date_register BETWEEN %s and %s
@@ -92,7 +92,15 @@ class log_expired_report(osv.TransientModel) :
 	        """,(branch.id, start_date, end_date,))
 
 	   	if not product and not branch:
-	   		raise osv.except_osv(_( 'Warning' ),_( 'You need choose product or branch' ) )
+			cr.execute(
+			"""
+	          SELECT shop_is_m2o, ean13, name,
+	          month0_4, month5_8, month9_12, over_12,
+	          expired, db_num, date_register, user_id
+	          FROM product_list_expired_log
+	          WHERE date_register BETWEEN %s and %s
+	          ORDER BY product_list_expired_log.date_register
+	        """,(start_date, end_date,))
 
 		db_results = cr.fetchall()
 
@@ -107,13 +115,14 @@ class log_expired_report(osv.TransientModel) :
 			ws.write(0, 0, "Sucursal", style)
 			ws.write(0, 1, "Ean13", style)
 			ws.write(0, 2, "Nombre", style)
-			ws.write(0, 3, "0-4 Meses", style)
+			ws.write(0, 3, "1-4 Meses", style)
 			ws.write(0, 4, "5-8 Mese", style)
 			ws.write(0, 5, "9-12 Meses", style)
 			ws.write(0, 6, u"Más de 12 meses", style)
 			ws.write(0, 7, "Caduco", style)
 			ws.write(0, 8, "Total en la BD", style)
 			ws.write(0, 9, "Fecha", style)
+			ws.write(0, 10, "Usuario", style)
 
 		j=1
 		for result in db_results:
@@ -128,13 +137,28 @@ class log_expired_report(osv.TransientModel) :
 					branch_name = cr.fetchone()
 					branch_name = branch_name[0]
 					ws.write(j, colum, branch_name)
-				else:
-					if colum == 9:
-						date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f") + timedelta(hours=-5)
-						date = date.strftime("%Y-%m-%d %H:%M")
-						ws.write(j, colum, date)
-					else:
-						ws.write(j, colum, result[colum])
+
+				if colum > 0 and colum < 9:
+					ws.write(j, colum, result[colum])
+
+				if colum == 9:
+					date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f") + timedelta(hours=-5)
+					date = date.strftime("%Y-%m-%d %H:%M")
+					ws.write(j, colum, date)
+
+				if colum == 10:
+					cr.execute(
+						"""
+				          SELECT pa.name
+				          FROM res_users us
+				          INNER JOIN res_partner pa
+				          ON us.partner_id = pa.id
+				          WHERE us.id = %s
+				        """,(result[10],))
+					user_name = cr.fetchone()
+					user_name = user_name[0]
+					ws.write(j, colum, user_name)
+
 			j = j+1
 
 		date = datetime.today()+timedelta(hours=-5)

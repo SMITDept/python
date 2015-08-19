@@ -63,15 +63,17 @@ def update_data(self, cr, uid, ids, over12, id_product):
 		""",(over12, id_product))
 
 def create_log(self, cr, uid, ids, branch, ean13, name, mon0_4, 
-	mon5_8, mon9_12, over12, stock_products, expired):
+	mon5_8, mon9_12, over12, stock_products, expired, current_user):
 	cr.execute(
 		"""
 		INSERT INTO product_list_expired_log 
 		(shop_is_m2o, ean13, name, month0_4, month5_8,
-		month9_12, over_12, db_num, expired, date_register) 
-		VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+		month9_12, over_12, db_num, expired, date_register,
+		user_id) 
+		VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 		""",(branch, ean13, name, mon0_4, mon5_8, 
-			mon9_12, over12, stock_products, expired, datetime.now()))
+			mon9_12, over12, stock_products, expired, datetime.now(),
+			current_user))
 
 #Modelo 
 class expiration_product(osv.TransientModel):
@@ -147,19 +149,8 @@ class expiration_product(osv.TransientModel):
 			AND ean13 = %s
 			""",(branch.id, ean13,))
 
-			#cr.execute(
-	        #"""
-	        #  SELECT month0_4, month5_8, month9_12, expired
-	        #  FROM product_list_expired
-	        #  WHERE ean13 = %s
-	        #  AND shop_is_m2o = %s
-	        #""",(ean13, branch.id,))
-			#db_register = cr.fetchall()
-
 			if product:
 				product = product[0]
-				#if db_register:
-				#db_register = db_register[0]
 				self.write(cr, uid, ids, {
 					'product': product[0],
 					'image': product[1],
@@ -170,17 +161,6 @@ class expiration_product(osv.TransientModel):
 		            'expired': 0,
 		            'state': 'save',
 		        }, context=context)
-				#else:
-				#	self.write(cr, uid, ids, {
-				#		'product': product[0],
-				#		'image': product[1],
-			    #        'code_ean13': ean13,
-			    ##        'mon0_4': 0,
-			    #        'mon5_8': 0,
-			    #        'mon9_12': 0,
-			    #        'expired': 0,
-			    #        'state': 'save',
-			    #    }, context=context)
 
 				this = self.browse(cr, uid, ids)[0]
 				return {
@@ -218,6 +198,7 @@ class expiration_product(osv.TransientModel):
 		mon5_8 = self.pool.get( self._name ).browse( cr, uid, ids[0] ).mon5_8
 		mon9_12 = self.pool.get( self._name ).browse( cr, uid, ids[0] ).mon9_12
 		expired = self.pool.get( self._name ).browse( cr, uid, ids[0] ).expired
+		current_user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
 
 		cr.execute(
 	        """
@@ -255,11 +236,11 @@ class expiration_product(osv.TransientModel):
 				"""
 				INSERT INTO product_list_expired 
 				(shop_is_m2o, ean13, name, month0_4, month5_8,
-				month9_12, over_12, db_num, expired, date_register) 
-				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-				""",(branch.id, ean13, name, mon0_4, mon5_8, mon9_12, over12, stock_products, expired, datetime.now()))
+				month9_12, over_12, db_num, expired, date_register, user_id) 
+				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+				""",(branch.id, ean13, name, mon0_4, mon5_8, mon9_12, over12, stock_products, expired, datetime.now(), current_user.id))
 			create_log(self, cr, uid, ids, branch.id, ean13, name, mon0_4, mon5_8,
-						mon9_12, over12, stock_products, expired)
+						mon9_12, over12, stock_products, expired, current_user.id)
 
 		self.write(cr, uid, ids, {
             'state': 'ean13',

@@ -16,6 +16,7 @@
 					<field name="over_12"/>
 					<field name="expired"/>
 					<field name="db_num"/>
+					<field name="user_id"/>
 				</tree>
 			</field>
 		</record>

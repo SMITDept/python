@@ -72,7 +72,7 @@
 		
 		<menuitem icon="STOCK_PRINT"
 			id="menu_log_report"
-			name="Log Report"
+			name="Log report"
 			action="action_log_report"
 			parent="expiration_products.top_report"/>
 	</data>
