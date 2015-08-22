@@ -1,0 +1,21 @@
+clave,descripcion,activo,openerp_model_m2m
+1,Acta circunstancial de hechos ,TRUE,_ges_compra_adjuntos_documentos
+2,Anexo Técnico,TRUE,_ges_compra_adjuntos_documentos
+3,Calendario estimado del proyecto,TRUE,_ges_compra_adjuntos_documentos
+4,Carta de autorización de inspección de la mercancía para recursos materiales,TRUE,_ges_compra_adjuntos_documentos
+5,Carta de distribuidor único,TRUE,_ges_compra_adjuntos_documentos
+6,Comprobante,TRUE,
+7,Cotización,TRUE,_ges_compra_adjuntos_cotizaciones
+8,Diagrama Conceptual,TRUE,_ges_compra_adjuntos_documentos
+9,Estudio costo / beneficio,TRUE,_ges_compra_adjuntos_documentos
+10,Factura,TRUE,
+11,Ficha técnica de los productos,TRUE,_ges_compra_adjuntos_documentos
+12,Formato para Declaración de Proyectos,TRUE,_ges_compra_adjuntos_documentos
+13,Formato para Estudio de Factibilidad-digital,TRUE,_ges_compra_adjuntos_documentos
+14,Imagen,TRUE,
+15,Justificación de elección del proveedor,TRUE,_ges_compra_adjuntos_documentos
+16,Justificación técnica detallada,TRUE,_ges_compra_adjuntos_documentos
+17,Recibo,TRUE,
+18,Tabla de bienes a adquirir o arrendar (objeto del gasto),TRUE,_ges_compra_adjuntos_documentos
+19,Vale,TRUE,
+20,Licencia de manejo,TRUE,
