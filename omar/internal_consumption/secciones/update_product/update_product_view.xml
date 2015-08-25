@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- XML Módulo -->
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="update_products_list_tree">
+			<field name="name">update_products_list.tree</field>
+			<field name="model">update.product.internal.consumption</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="update_prosucts_list">
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="update_products_list_form">
+			<field name="name">Update products</field>
+			<field name="model">update.product.internal.consumption</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+		    	<form string="Update products" version="7.0">
+					<group string="Stock deparments" colspan='2' col='6' >
+			            <field name="stock_o2m_ids"
+			                   domain="[('stock_o2m_ids.update_m2o_id','=','id')]"
+			                   nolabel="1">
+			            <tree string="Stock departments" version="7.0" editable="bottom"> 
+			            <field name="department_id"/>
+			            <field name="product_id"/>
+			            <field name="quantity"/>
+			            </tree>
+			            </field>  
+			        </group>
+				</form>
+            </field>
+		</record>
+	
+		<!-- Sección de Action(s) Record(s) -->
+		<!-- El prefijo "action_"  y el sufijo "report" es obligatorio -->
+		
+		<record id="action_update_products_list" model="ir.actions.act_window">
+			<field name="name">Update products</field>
+			<field name="res_model">update.product.internal.consumption</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		<!-- Sección de Menu(s) Record(s) -->
+
+		<menuitem name="Update products"
+			parent="internal_consumption.top_update_products"  
+			id="update_products_list_control"
+			action="action_update_products_list"/>
+	</data>
+</openerp>

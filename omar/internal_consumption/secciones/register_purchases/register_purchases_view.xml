@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="purchases_list_tree">
+			<field name="name">purchases_list.tree</field>
+			<field name="model">purchases.internal.consumption</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="purchases_list">
+					<field name="product_id"/>
+					<field name="pieces"/>
+					<field name="price"/>
+					<field name="date_register"/>
+					<field name="user_id"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="purchases_list_form">
+			<field name="name">purchases_list.form</field>
+			<field name="model">purchases.internal.consumption</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="purchases_list">
+					<field name="product_id"/>
+					<field name="pieces"/>
+					<field name="price"/>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_purchases_list" model="ir.actions.act_window">
+			<field name="name">Purchases list</field>
+			<field name="res_model">purchases.internal.consumption</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Purchases"
+			parent="internal_consumption.top_purchases_list"  
+			id="purchases_list_control"
+			action="action_purchases_list"/>
+
+	</data>
+</openerp>

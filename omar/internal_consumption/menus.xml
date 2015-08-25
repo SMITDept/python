@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Menus XML -->
+<openerp>
+  <data>
+        <menuitem id="top_internal_consumption" name="Internal consumption" sequence="100"/>
+        	<menuitem id="top_products_list" name="Products" sequence="050" parent="internal_consumption.top_internal_consumption"/>
+        	<menuitem id="top_departments_list" name="Departments" sequence="040" parent="internal_consumption.top_internal_consumption"/>
+        	<menuitem id="top_purchases_list" name="Register purchases" sequence="060" parent="internal_consumption.top_internal_consumption"/>
+        	<menuitem id="top_stock_departments_list" name="Stock departments" sequence="070" parent="internal_consumption.top_internal_consumption"/>
+        	<menuitem id="top_update_products" name="Update products" sequence="070" parent="internal_consumption.top_internal_consumption"/>
+        	<menuitem id="top_update_stock" name="Update stock" sequence="080" parent="internal_consumption.top_internal_consumption"/>
+        	<menuitem id="top_log_purchases" name="Create reports" sequence="090" parent="internal_consumption.top_internal_consumption"/>
+  </data>
+</openerp>

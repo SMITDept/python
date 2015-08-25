@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="products_list_tree">
+			<field name="name">products_list.tree</field>
+			<field name="model">products.internal.consumption</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="products_list">
+					<field name="name"/>
+					<field name="stock"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="products_list_form">
+			<field name="name">products_list.form</field>
+			<field name="model">products.internal.consumption</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="products_list">
+					<field name="name"/>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_products_list" model="ir.actions.act_window">
+			<field name="name">Products list</field>
+			<field name="res_model">products.internal.consumption</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Products"
+			parent="internal_consumption.top_products_list"  
+			id="products_list_control"
+			action="action_products_list"/>
+
+	</data>
+</openerp>

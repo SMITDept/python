@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="departments_list_tree">
+			<field name="name">departments_list.tree</field>
+			<field name="model">departments.internal.consumption</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="departments_list">
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="departments_list_form">
+			<field name="name">departments_list.form</field>
+			<field name="model">departments.internal.consumption</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="departments_list">
+					<field name="name"/>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_departments_list" model="ir.actions.act_window">
+			<field name="name">Departments list</field>
+			<field name="res_model">departments.internal.consumption</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Departments"
+			parent="internal_consumption.top_departments_list"  
+			id="departments_list_control"
+			action="action_departments_list"/>
+
+	</data>
+</openerp>

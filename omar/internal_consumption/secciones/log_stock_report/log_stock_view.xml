@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+		<record id="log_stock_view" model="ir.ui.view">
+			<field name="name">Changes stock</field>
+			<field name="model">log.stock.internal.consumption</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Report options" version="7.0">
+					<field invisible="1" name="state"/>
+					<div states="choose">
+						<notebook tabpos="up" colspan="2">
+							<page string="Filter" name="filters">
+								<separator string="Dates" colspan="4"/>
+								<group colspan="4" col="4">
+									<group colspan="2" col="2">
+										<field name="start_date"/>
+									</group>
+									<group colspan="2" col="2">
+										<newline/>
+										<field name="end_date"/>
+									</group>
+								</group>
+								<separator string="Department" colspan="4"/>
+								<group colspan="2" col="2">
+									<field name="department"/>
+								</group>
+								<group colspan="2" col="2">
+									<field name="product"/>
+								</group>
+							</page>
+						</notebook>
+					</div>
+					<newline/>
+
+					<div states="get">
+	                    <h2>Your report has been successfully created!</h2>
+	                    <p>You can download file.</p>
+	                    <p>Log Report: <field name="report_xls" readonly="1" filename="report_name"/></p>
+	                </div>
+
+					<separator colspan="4"/>
+					<footer states="choose">
+						<button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
+						<button icon="gtk-print" name="print_report"
+										string="Generate report"
+										type="object"
+										colspan="2"
+										default_focus="1" />
+					</footer>
+	                <footer attrs="{'invisible':[('state','not in', ('get', 'not_file'))]}">
+	                    <button special="cancel" string="Close" class="oe_link" />
+	                </footer>
+				</form>
+			</field>
+		</record>
+	
+		<!-- Sección de Action(s) Record(s) -->
+		<!-- El prefijo "action_"  y el sufijo "report" es obligatorio -->
+		
+		<record id="action_log_stock_report" model="ir.actions.act_window">
+			<field name="name">Changes stock</field>
+			<field name="res_model">log.stock.internal.consumption</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="log_stock_view"/>
+			<field name="target">new</field>
+		</record>
+		<!-- Sección de Menu(s) Record(s) -->
+		
+		<menuitem icon="STOCK_PRINT"
+			id="menu_log_stock"
+			name="Report changes stock"
+			action="action_log_stock_report"
+			parent="internal_consumption.top_log_purchases"/>
+	</data>
+</openerp>

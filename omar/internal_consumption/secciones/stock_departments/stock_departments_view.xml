@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="stock_departments_list_tree">
+			<field name="name">stock_departments_list.tree</field>
+			<field name="model">stock.departments.internal.consumption</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="stock_departments_list">
+					<field name="department_id"/>
+					<field name="product_id"/>
+					<field name="quantity"/>
+					<field name="date_register"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="stock_departments_list_form">
+			<field name="name">stock_departments_list.form</field>
+			<field name="model">stock.departments.internal.consumption</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="stock_departments_list">
+					<field name="department_id"/>
+					<field name="product_id"/>
+					<field name="quantity"/>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_stock_departments_list" model="ir.actions.act_window">
+			<field name="name">Stock departments list</field>
+			<field name="res_model">stock.departments.internal.consumption</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Stock departments"
+			parent="internal_consumption.top_stock_departments_list"  
+			id="stock_departments_list_control"
+			action="action_stock_departments_list"/>
+	</data>
+</openerp>
