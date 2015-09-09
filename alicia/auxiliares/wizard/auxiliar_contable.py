@@ -132,7 +132,7 @@ class auxiliar_contable(osv.osv_memory):
           self.query = self.query + " AND aml.create_date BETWEEN " + "'" + inicio + " 06:00:01"+ "'" + " AND " + "'" + fin + " 05:59:59"+ "'"
           bandera=True
         
-      if bandera == True: 
+      if bandera == True:
         cr.execute(
             """
               SELECT aml.create_date AS create_d,
@@ -146,7 +146,6 @@ class auxiliar_contable(osv.osv_memory):
               ON aml.account_id = acc.id
               WHERE  aml.state = 'valid'
               """+ self.query +"""
-              AND aml.name LIKE 'POS%'
               ORDER BY aml.create_date
             """)
         aux = cr.fetchall()
