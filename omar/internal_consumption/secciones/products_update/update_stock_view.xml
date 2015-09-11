@@ -18,21 +18,31 @@
 
 
 		<record id="update_stock_products_view" model="ir.ui.view">
-			<field name="name">Update stock</field>
+			<field name="name">Products update</field>
 			<field name="model">update.stock.internal.consumption</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
 		    	<form string="Update stock" version="7.0">
 					<field invisible="1" name="state"/>
 					<div states="dep">
-						<group  states="dep" string=" " colspan="4">
-			                <field name="department"/>
-		            	</group>
+						<group states="dep" colspan="4" col="4">
+							<group colspan="2" col="2">
+								<field name="department"/>
+							</group>
+							<group colspan="2" col="2">
+								<newline/>
+							</group>
+						</group>
 		            </div>
 		            <div states="pro">
-		            	<group  states="pro" string=" " colspan="4">
-			                <field name="product"/>
-		            	</group>
+		            	<group states="pro" colspan="4" col="4">
+							<group colspan="2" col="2">
+								<field name="product"/>
+							</group>
+							<group colspan="2" col="2">
+								<newline/>
+							</group>
+						</group>
 		            </div>
 		            <div states="save">
 						<notebook tabpos="up" colspan="2">
@@ -81,7 +91,7 @@
 		<!-- El prefijo "action_"  y el sufijo "report" es obligatorio -->
 		
 		<record id="action_update_stock" model="ir.actions.act_window">
-			<field name="name">Update Stock</field>
+			<field name="name">Products update</field>
 			<field name="res_model">update.stock.internal.consumption</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="view_type">form</field>
@@ -93,8 +103,8 @@
 		
 		<menuitem icon="STOCK_PRINT"
 			id="menu_update_stock"
-			name="Update stock"
+			name="Products update"
 			action="action_update_stock"
-			parent="internal_consumption.top_update_stock"/>
+			parent="internal_consumption.top_products_update"/>
 	</data>
 </openerp>

@@ -104,6 +104,7 @@ class log_purchases_internal_consumption(osv.TransientModel) :
 					ws.write(j, colum, name[0])
 				if colum == 3:
 					date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f")
+					date = date+timedelta(hours=-5)
 					date = date.strftime("%d-%m-%Y %H:%M")
 					ws.write(j, colum, date)
 

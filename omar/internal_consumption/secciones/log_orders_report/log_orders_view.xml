@@ -2,12 +2,12 @@
 
 <openerp>
 	<data>
-		<record id="log_stock_view" model="ir.ui.view">
-			<field name="name">Changes stock</field>
-			<field name="model">log.stock.internal.consumption</field>
+		<record id="log_orders_report_view" model="ir.ui.view">
+			<field name="name">Log orders</field>
+			<field name="model">log.orders.internal.consumption</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="Report options" version="7.0">
+				<form string="Log orders" version="7.0">
 					<field invisible="1" name="state"/>
 					<div states="choose">
 						<notebook tabpos="up" colspan="2">
@@ -26,9 +26,6 @@
 								<group colspan="2" col="2">
 									<field name="department"/>
 								</group>
-								<group colspan="2" col="2">
-									<field name="product"/>
-								</group>
 							</page>
 						</notebook>
 					</div>
@@ -37,7 +34,7 @@
 					<div states="get">
 	                    <h2>Your report has been successfully created!</h2>
 	                    <p>You can download file.</p>
-	                    <p>Log Report: <field name="report_xls" readonly="1" filename="report_name"/></p>
+	                    <p>Log orders: <field name="report_xls" readonly="1" filename="report_name"/></p>
 	                </div>
 
 					<separator colspan="4"/>
@@ -59,21 +56,21 @@
 		<!-- Sección de Action(s) Record(s) -->
 		<!-- El prefijo "action_"  y el sufijo "report" es obligatorio -->
 		
-		<record id="action_log_stock_report" model="ir.actions.act_window">
-			<field name="name">Changes stock</field>
-			<field name="res_model">log.stock.internal.consumption</field>
+		<record id="action_log_orders_report" model="ir.actions.act_window">
+			<field name="name">Log orders</field>
+			<field name="res_model">log.orders.internal.consumption</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
-			<field name="view_id" ref="log_stock_view"/>
+			<field name="view_id" ref="log_orders_report_view"/>
 			<field name="target">new</field>
 		</record>
 		<!-- Sección de Menu(s) Record(s) -->
 		
 		<menuitem icon="STOCK_PRINT"
-			id="menu_log_stock"
-			name="Report stock change"
-			action="action_log_stock_report"
+			id="menu_log_orders"
+			name="Orders report"
+			action="action_log_orders_report"
 			parent="internal_consumption.top_log_purchases"/>
 	</data>
 </openerp>

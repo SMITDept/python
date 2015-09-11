@@ -9,6 +9,10 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 				<tree string="update_prosucts_list">
+					<field name="department"/>
+					<field name="date_register"/>
+					<field name="state"/>
+					<field name="user_id"/>
 				</tree>
 			</field>
 		</record>
@@ -19,17 +23,37 @@
 			<field name="type">form</field>
 			<field name="arch" type="xml">
 		    	<form string="Update products" version="7.0">
-					<group string="Stock deparments" colspan='2' col='6' >
-			            <field name="stock_o2m_ids"
-			                   domain="[('stock_o2m_ids.update_m2o_id','=','id')]"
-			                   nolabel="1">
-			            <tree string="Stock departments" version="7.0" editable="bottom"> 
-			            <field name="department_id"/>
-			            <field name="product_id"/>
-			            <field name="quantity"/>
-			            </tree>
-			            </field>  
-			        </group>
+		    		<header>
+
+		    			<button name="validate_order"
+										string="Validate"
+										type="object"
+										colspan="2"
+										default_focus="1" states="draft"/>
+		    		<field name="state" widget="statusbar" statusbar_visible="draft,approved" statusbar_colors='{"cancel":"red"}'/>
+		    		</header>
+		    		<sheet>
+						<group colspan="4" col="4">
+							<group colspan="2" col="2">
+								<field name="department"/>
+							</group>
+							<group colspan="2" col="2">
+								<newline/>
+							</group>
+						</group>
+			    		
+						<group string="Add products" colspan='2' col='6' >
+				            <field name="stock_o2m_ids"
+				                   domain="[('stock_o2m_ids.update_m2o_id','=','id')]"
+				                   nolabel="1">
+				            <tree string="Stock departments" version="7.0" editable="bottom"> 
+
+				            <field name="product_id"/>
+				            <field name="quantity"/>
+				            </tree>
+				            </field>  
+				        </group>
+				    </sheet>
 				</form>
             </field>
 		</record>
@@ -45,8 +69,8 @@
 		</record>
 		<!-- Sección de Menu(s) Record(s) -->
 
-		<menuitem name="Update products"
-			parent="internal_consumption.top_update_products"  
+		<menuitem name="Create order"
+			parent="internal_consumption.top_order_products"  
 			id="update_products_list_control"
 			action="action_update_products_list"/>
 	</data>

@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 from osv import fields, osv
 from openerp.tools.translate import _
+from openerp.exceptions import Warning
 
 def create_log(self, cr, uid, ids, department, product, stock, context=None):
 	current_user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
@@ -68,20 +69,22 @@ class update_stock_internal_consumption(osv.TransientModel):
 	          AND department_id = %s
 	        """,(product.id, department.id,))
 		products = cr.fetchone()
-		if product and products[0] >= quantity:
-			cr.execute(
-				"""
-				UPDATE stock_departments_internal_consumption SET quantity = %s,
-				date_register = %s
-				WHERE product_id = %s
-				AND department_id = %s
-				""",(quantity, datetime.now(), product.id, department.id,))
-			create_log(self, cr, uid, ids, department.id, product.id, quantity)
+		if product:
+			if products[0] >= quantity:
+				cr.execute(
+					"""
+					UPDATE stock_departments_internal_consumption SET quantity = %s,
+					date_register = %s
+					WHERE product_id = %s
+					AND department_id = %s
+					""",(quantity, datetime.now(), product.id, department.id,))
+				create_log(self, cr, uid, ids, department.id, product.id, quantity)
+			else:
+				raise Warning(_('You can not add products'))
 		else:
-			raise osv.except_osv(_( 'Warning' ),_( 'The product does not exist or ' ) )
+			raise Warning(_('The product does not exist'))
 
 		self.write(cr, uid, ids, {
-            'department': 0,
     		'product': 0,
     		'quantity': 0,
             'state': 'dep',
@@ -102,38 +105,42 @@ class update_stock_internal_consumption(osv.TransientModel):
   		context = ""
   		department = self.pool.get( self._name ).browse( cr, uid, ids[0] ).department
   		product = self.pool.get( self._name ).browse( cr, uid, ids[0] ).product
-		"""
-		Metodo obtener el producto
-		"""
-		cr.execute(
-        """
-          SELECT quantity, product_id, department_id
-          FROM stock_departments_internal_consumption
-          WHERE product_id = %s
-          AND department_id = %s
-        """,(product.id, department.id,))
-		product = cr.fetchone()
 
-		if product:
-			self.write(cr, uid, ids, {
-				'product_id': product[1],
-				'department_id': product[2],
-	            'quantity': product[0],
-	            'state': 'save',
-	        }, context=context)
+  		if product:
+			"""
+			Metodo obtener el producto
+			"""
+			cr.execute(
+	        """
+	          SELECT quantity, product_id, department_id
+	          FROM stock_departments_internal_consumption
+	          WHERE product_id = %s
+	          AND department_id = %s
+	        """,(product.id, department.id,))
+			product = cr.fetchone()
 
-			this = self.browse(cr, uid, ids)[0]
-			return {
-	            'type': 'ir.actions.act_window',
-	            'view_type': 'form',
-	            'view_mode': 'form',
-	            'res_id': this.id,
-	            'views': [(False, 'form')],
-	            'res_model': 'update.stock.internal.consumption',
-	            'target': 'new',
-	         }
+			if product:
+				self.write(cr, uid, ids, {
+					'product_id': product[1],
+					'department_id': product[2],
+		            'quantity': product[0],
+		            'state': 'save',
+		        }, context=context)
+
+				this = self.browse(cr, uid, ids)[0]
+				return {
+		            'type': 'ir.actions.act_window',
+		            'view_type': 'form',
+		            'view_mode': 'form',
+		            'res_id': this.id,
+		            'views': [(False, 'form')],
+		            'res_model': 'update.stock.internal.consumption',
+		            'target': 'new',
+		         }
+			else:
+				raise Warning(_('The product does not exist'))
 		else:
-			raise osv.except_osv(_( 'Warning' ),_( 'The product does not exist' ) )
+				raise Warning(_('Select the product'))
 
   	def get_department(self, cr, uid, ids,context = { }):
 		"""

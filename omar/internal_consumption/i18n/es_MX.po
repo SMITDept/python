@@ -1,0 +1,536 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# 	* internal_consumption
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0-20140616-231123\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-10 23:35+0000\n"
+"PO-Revision-Date: 2015-09-10 19:18-0600\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_log_orders_internal_consumption
+msgid "orders repost"
+msgstr "Reporte de órdenes"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.top_log_purchases
+msgid "Create reports"
+msgstr "Crear reportes"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.top_order_products
+msgid "Order of internal products"
+msgstr "Orden de productos internos"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_temporary_orders_internal_consumption
+msgid "temporary.orders.internal.consumption"
+msgstr "temporary.orders.internal.consumption"
+
+#. module: internal_consumption
+#: field:products.internal.consumption,name:0
+msgid "Product name"
+msgstr "Nombre del producto"
+
+#. module: internal_consumption
+#: view:log.orders.internal.consumption:0
+#: field:log.orders.internal.consumption,department:0
+#: field:log.stock.departments.internal.consumption,department_id:0
+#: view:log.stock.internal.consumption:0
+#: field:log.stock.internal.consumption,department:0
+#: field:stock.departments.internal.consumption,department_id:0
+#: field:update.product.internal.consumption,department:0
+#: field:update.stock.internal.consumption,department:0
+msgid "Department"
+msgstr "Departamento"
+
+#. module: internal_consumption
+#: view:update.stock.internal.consumption:0
+msgid "Finish"
+msgstr "Finalizar"
+
+#. module: internal_consumption
+#: view:purchases.internal.consumption:0
+msgid "purchases_list"
+msgstr "purchases_list"
+
+#. module: internal_consumption
+#: help:log.orders.internal.consumption,report_name:0
+#: help:log.purchases.internal.consumption,report_name:0
+#: help:log.stock.internal.consumption,report_name:0
+msgid "This is File name"
+msgstr "Este es el nombre del archivo"
+
+#. module: internal_consumption
+#: view:log.orders.internal.consumption:0
+#: view:log.purchases.internal.consumption:0
+#: view:log.stock.internal.consumption:0
+msgid "Your report has been successfully created!"
+msgstr "Su reporte ha sido creada con éxito !"
+
+#. module: internal_consumption
+#: view:log.orders.internal.consumption:0
+msgid "Log orders:"
+msgstr "Cambio en las órdenes:"
+
+#. module: internal_consumption
+#: view:update.product.internal.consumption:0
+msgid "Validate"
+msgstr "Validar"
+
+#. module: internal_consumption
+#: view:update.stock.internal.consumption:0
+msgid "Get product"
+msgstr "Obtener producto"
+
+#. module: internal_consumption
+#: field:log.orders.internal.consumption,end_date:0
+#: field:log.purchases.internal.consumption,end_date:0
+#: field:log.stock.internal.consumption,end_date:0
+msgid "End date"
+msgstr "Fecha final"
+
+#. module: internal_consumption
+#: field:log.orders.internal.consumption,report_name:0
+#: field:log.purchases.internal.consumption,report_name:0
+#: field:log.stock.internal.consumption,report_name:0
+msgid "File name"
+msgstr "Nombre del archivo"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.products_list_control
+#: model:ir.ui.menu,name:internal_consumption.top_products_list
+#: field:purchases.internal.consumption,product_id:0
+msgid "Products"
+msgstr "Productos"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_update_stock_internal_consumption
+#: view:update.stock.internal.consumption:0
+msgid "Update stock"
+msgstr "Actualización de stock"
+
+#. module: internal_consumption
+#: selection:update.product.internal.consumption,state:0
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_log_stock_departments_internal_consumption
+msgid "log.stock.departments.internal.consumption"
+msgstr "log.stock.departments.internal.consumption"
+
+#. module: internal_consumption
+#: view:log.orders.internal.consumption:0
+#: view:log.purchases.internal.consumption:0
+#: view:log.stock.internal.consumption:0
+msgid "You can download file."
+msgstr "Puede descargar el archivo."
+
+#. module: internal_consumption
+#: field:purchases.internal.consumption,price:0
+msgid "Unit price"
+msgstr "Precio unitario"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_users_internal_consumption
+msgid "users.internal.consumption"
+msgstr "users.internal.consumption"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_products_internal_consumption
+msgid "products.internal.consumption"
+msgstr "products.internal.consumption"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_update_stock
+#: model:ir.ui.menu,name:internal_consumption.menu_update_stock
+#: model:ir.ui.menu,name:internal_consumption.top_products_update
+msgid "Products update"
+msgstr "Actualizar productos"
+
+#. module: internal_consumption
+#: field:update.product.internal.consumption,state:0
+msgid "State"
+msgstr "Estado"
+
+#. module: internal_consumption
+#: selection:log.orders.internal.consumption,state:0
+#: selection:log.purchases.internal.consumption,state:0
+#: selection:log.stock.internal.consumption,state:0
+msgid "Choose"
+msgstr "Seleccionar"
+
+#. module: internal_consumption
+#: selection:update.product.internal.consumption,state:0
+msgid "New"
+msgstr "Nuevo"
+
+#. module: internal_consumption
+#: field:log.orders.internal.consumption,start_date:0
+#: field:log.purchases.internal.consumption,start_date:0
+#: field:log.stock.internal.consumption,start_date:0
+msgid "Start date"
+msgstr "Fecha de inicio"
+
+#. module: internal_consumption
+#: selection:update.stock.internal.consumption,state:0
+msgid "Save"
+msgstr "Guardar"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.menu_log_orders
+msgid "Orders report"
+msgstr "Reporte de órdenes"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_departments_list
+msgid "Departments list"
+msgstr "Lista de departamentos"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.top_admin_user
+#: model:ir.ui.menu,name:internal_consumption.validate_users_control
+msgid "Administrators"
+msgstr "Administradores"
+
+#. module: internal_consumption
+#: view:update.product.internal.consumption:0
+msgid "update_prosucts_list"
+msgstr "update_prosucts_list"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.top_purchases_list
+msgid "Register purchases"
+msgstr "Registrar las compras"
+
+#. module: internal_consumption
+#: view:log.orders.internal.consumption:0
+#: view:log.purchases.internal.consumption:0
+#: view:log.stock.internal.consumption:0
+msgid "Dates"
+msgstr "Fechas"
+
+#. module: internal_consumption
+#: field:temporary.orders.internal.consumption,order_m2o_id:0
+msgid "Update key"
+msgstr "Clave de actualización"
+
+#. module: internal_consumption
+#: view:departments.internal.consumption:0
+msgid "departments_list"
+msgstr "departments_list"
+
+#. module: internal_consumption
+#: view:update.stock.internal.consumption:0
+msgid "Select department"
+msgstr "Seleccione departamento"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.departments_list_control
+#: model:ir.ui.menu,name:internal_consumption.top_departments_list
+msgid "Departments"
+msgstr "Departamentos"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_update_products_list
+#: view:update.product.internal.consumption:0
+msgid "Update products"
+msgstr "Actualizar productos"
+
+#. module: internal_consumption
+#: view:update.product.internal.consumption:0
+msgid "Add products"
+msgstr "Añadir productos"
+
+#. module: internal_consumption
+#: view:update.stock.internal.consumption:0
+msgid "Back"
+msgstr "Atrás"
+
+#. module: internal_consumption
+#: field:purchases.internal.consumption,pieces:0
+msgid "Pieces"
+msgstr "Piezas"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.stock_departments_list_control
+#: model:ir.ui.menu,name:internal_consumption.top_stock_departments_list
+#: view:update.product.internal.consumption:0
+msgid "Stock departments"
+msgstr "Stock en los departamentos"
+
+#. module: internal_consumption
+#: field:update.product.internal.consumption,stock_o2m_ids:0
+msgid "Stock product"
+msgstr "Stock de producto"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.update_products_list_control
+msgid "Create order"
+msgstr "Crear pedido"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.menu_log_stock
+msgid "Report stock change"
+msgstr "Reporte de cambios en stock"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.top_internal_consumption
+msgid "Internal consumption"
+msgstr "Consumo interno"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_stock_departments_list
+msgid "Stock departments list"
+msgstr "Lista de stock en los departamentos"
+
+#. module: internal_consumption
+#: help:log.stock.departments.internal.consumption,user_id:0
+#: help:purchases.internal.consumption,user_id:0
+#: help:update.product.internal.consumption,user_id:0
+#: help:users.internal.consumption,user_id:0
+msgid "User who registered the measurement"
+msgstr "Usuario que registró la medición"
+
+#. module: internal_consumption
+#: selection:log.orders.internal.consumption,state:0
+#: selection:log.purchases.internal.consumption,state:0
+#: selection:log.stock.internal.consumption,state:0
+msgid "Get"
+msgstr "Obtener"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_log_stock_report
+msgid "Changes stock"
+msgstr "Cambios en el stock"
+
+#. module: internal_consumption
+#: field:log.orders.internal.consumption,state:0
+#: field:log.purchases.internal.consumption,state:0
+#: field:log.stock.internal.consumption,state:0
+#: field:update.stock.internal.consumption,state:0
+msgid "unknown"
+msgstr "Desconocido"
+
+#. module: internal_consumption
+#: field:log.stock.departments.internal.consumption,date_register:0
+#: field:stock.departments.internal.consumption,date_register:0
+#: field:temporary.orders.internal.consumption,date_register:0
+msgid "Date register"
+msgstr "Fecha de registro"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_stock_departments_internal_consumption
+msgid "stock.departments.internal.consumption"
+msgstr "stock.departments.internal.consumption"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_products_list
+msgid "Products list"
+msgstr "Lista de productos"
+
+#. module: internal_consumption
+#: field:log.stock.departments.internal.consumption,user_id:0
+#: field:purchases.internal.consumption,user_id:0
+#: field:update.product.internal.consumption,user_id:0
+#: view:users.internal.consumption:0
+#: field:users.internal.consumption,user_id:0
+msgid "User"
+msgstr "Usuario"
+
+#. module: internal_consumption
+#: view:log.orders.internal.consumption:0
+#: view:log.purchases.internal.consumption:0
+#: view:log.stock.internal.consumption:0
+msgid "Generate report"
+msgstr "Generar reporte"
+
+#. module: internal_consumption
+#: view:log.orders.internal.consumption:0
+#: view:log.purchases.internal.consumption:0
+#: view:log.stock.internal.consumption:0
+#: view:update.stock.internal.consumption:0
+msgid "Filter"
+msgstr "Filtro"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_log_purchases_report
+#: model:ir.ui.menu,name:internal_consumption.menu_log_report
+msgid "Purchases report"
+msgstr "Informe de compras"
+
+#. module: internal_consumption
+#: view:update.stock.internal.consumption:0
+msgid "Save Product"
+msgstr "Guardar producto"
+
+#. module: internal_consumption
+#: field:log.stock.departments.internal.consumption,quantity:0
+#: field:stock.departments.internal.consumption,quantity:0
+#: field:temporary.orders.internal.consumption,quantity:0
+#: field:update.stock.internal.consumption,quantity:0
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.purchases_list_control
+msgid "Purchases"
+msgstr "Compras"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_log_orders_report
+#: view:log.orders.internal.consumption:0
+msgid "Log orders"
+msgstr "Cambios en los pedidos"
+
+#. module: internal_consumption
+#: field:departments.internal.consumption,name:0
+msgid "Department name"
+msgstr "Nombre de departamento"
+
+#. module: internal_consumption
+#: view:update.stock.internal.consumption:0
+msgid "values"
+msgstr "Valores"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_log_purchases_internal_consumption
+msgid "Changes in the register of purchases"
+msgstr "Cambios en el registro de las compras"
+
+#. module: internal_consumption
+#: view:log.orders.internal.consumption:0
+#: view:log.purchases.internal.consumption:0
+#: view:log.stock.internal.consumption:0
+#: view:update.stock.internal.consumption:0
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: internal_consumption
+#: view:log.orders.internal.consumption:0
+#: view:log.purchases.internal.consumption:0
+#: view:log.stock.internal.consumption:0
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: internal_consumption
+#: field:purchases.internal.consumption,date_register:0
+#: field:update.product.internal.consumption,date_register:0
+msgid "Registration date"
+msgstr "Fecha de registro"
+
+#. module: internal_consumption
+#: view:log.purchases.internal.consumption:0
+#: view:log.stock.internal.consumption:0
+msgid "Log Report:"
+msgstr "Reporte de cambios:"
+
+#. module: internal_consumption
+#: view:log.purchases.internal.consumption:0
+#: field:log.purchases.internal.consumption,product:0
+#: field:log.stock.departments.internal.consumption,product_id:0
+#: field:log.stock.internal.consumption,product:0
+#: field:stock.departments.internal.consumption,product_id:0
+#: field:temporary.orders.internal.consumption,product_id:0
+#: field:update.stock.internal.consumption,product:0
+msgid "Product"
+msgstr "Producto"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_purchases_internal_consumption
+msgid "purchases.internal.consumption"
+msgstr "purchases.internal.consumption"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_validate_users
+msgid "Users"
+msgstr "Usuarios"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_departments_internal_consumption
+msgid "departments.internal.consumption"
+msgstr "departments.internal.consumption"
+
+#. module: internal_consumption
+#: field:products.internal.consumption,stock:0
+msgid "Stock products"
+msgstr "Stock en los departamentos"
+
+#. module: internal_consumption
+#: view:log.purchases.internal.consumption:0
+msgid "Report of the purchases log"
+msgstr "Reporte de las compras"
+
+#. module: internal_consumption
+#: selection:update.stock.internal.consumption,state:0
+msgid "product"
+msgstr "Producto"
+
+#. module: internal_consumption
+#: model:ir.actions.act_window,name:internal_consumption.action_purchases_list
+msgid "Purchases list"
+msgstr "Lista de compras"
+
+#. module: internal_consumption
+#: view:products.internal.consumption:0
+msgid "products_list"
+msgstr "products_list"
+
+#. module: internal_consumption
+#: view:update.stock.internal.consumption:0
+msgid "update_stock_list"
+msgstr "update_stock_list"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_log_stock_internal_consumption
+msgid "Server changes"
+msgstr "Cambios en el servidor"
+
+#. module: internal_consumption
+#: selection:update.product.internal.consumption,state:0
+msgid "approved"
+msgstr "Aprobado"
+
+#. module: internal_consumption
+#: view:log.stock.internal.consumption:0
+msgid "Report options"
+msgstr "Opciones del reporte"
+
+#. module: internal_consumption
+#: help:log.orders.internal.consumption,report_xls:0
+#: help:log.purchases.internal.consumption,report_xls:0
+#: help:log.stock.internal.consumption,report_xls:0
+msgid "You can export file"
+msgstr "Puede exportar el archivo"
+
+#. module: internal_consumption
+#: view:stock.departments.internal.consumption:0
+msgid "stock_departments_list"
+msgstr "stock_departments_list"
+
+#. module: internal_consumption
+#: field:log.orders.internal.consumption,report_xls:0
+#: field:log.purchases.internal.consumption,report_xls:0
+#: field:log.stock.internal.consumption,report_xls:0
+msgid "File"
+msgstr "Archivo"
+
+#. module: internal_consumption
+#: selection:update.stock.internal.consumption,state:0
+msgid "departmenta"
+msgstr "Departmento"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_update_product_internal_consumption
+msgid "update_product"
+msgstr "update_product"

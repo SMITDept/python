@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="validate_users_tree">
+			<field name="name">Users</field>
+			<field name="model">users.internal.consumption</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="User">
+					<field name="user_id"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="validate_users_form">
+			<field name="name">User</field>
+			<field name="model">users.internal.consumption</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="User">
+					<group colspan="4" col="4">
+						<group colspan="2" col="2">
+							<field name="user_id"/>
+						</group>
+						<group colspan="2" col="2">
+							<newline/>
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_validate_users" model="ir.actions.act_window">
+			<field name="name">Users</field>
+			<field name="res_model">users.internal.consumption</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Administrators"
+			parent="internal_consumption.top_admin_user"  
+			id="validate_users_control"
+			action="action_validate_users"/>
+
+	</data>
+</openerp>
+

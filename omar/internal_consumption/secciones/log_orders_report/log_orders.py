@@ -11,17 +11,16 @@ from datetime import datetime, timedelta, date
 from osv import fields, osv
 from openerp.tools.translate import _
 #Modelo 
-class log_stock_internal_consumption(osv.TransientModel) :	
+class log_orders_internal_consumption(osv.TransientModel) :	
 
 	#Descripcion 
-	_description = 'Server changes'
+	_description = 'orders repost'
 
 	#Nombre del Modelo
-	_name = 'log.stock.internal.consumption'
+	_name = 'log.orders.internal.consumption'
 
 	_columns = {
 		'department': fields.many2one('departments.internal.consumption', 'Department'),
-		'product': fields.many2one('products.internal.consumption', 'Product'),
 		'start_date': fields.date("Start date"),
 		'end_date': fields.date("End date"),
 		'state': fields.selection([('choose', 'Choose'),
@@ -39,6 +38,8 @@ class log_stock_internal_consumption(osv.TransientModel) :
 		'end_date': ((datetime.now() + relativedelta(day=1, months=+1, days=-1)).date()).strftime('%Y-%m-%d'),
 	}
 
+	#Reestricciones desde código
+	_constraints = [ ]
 
 	#Reestricciones desde BD
 	_sql_constraints = [ ]
@@ -50,50 +51,26 @@ class log_stock_internal_consumption(osv.TransientModel) :
 		start_date = self.pool.get( self._name ).browse( cr, uid, ids[0] ).start_date
 		end_date = self.pool.get( self._name ).browse( cr, uid, ids[0] ).end_date
 		department = self.pool.get( self._name ).browse( cr, uid, ids[0] ).department
-		product = self.pool.get( self._name ).browse( cr, uid, ids[0] ).product
 
-		if department and product:
+		if department:
 			cr.execute(
 			"""
-	          SELECT department_id, product_id, quantity,
+	          SELECT department, id, state, 
 	          date_register, user_id
-	          FROM log_stock_departments_internal_consumption
-	          WHERE department_id = %s
-	          AND product_id = %s 
+	          FROM update_product_internal_consumption
+	          WHERE department = %s 
 	          AND date_register BETWEEN %s and %s
-	          ORDER BY log_stock_departments_internal_consumption.date_register
-	        """,(department.id, product.id, start_date, end_date,))
-
-		if product and not department:
-			cr.execute(
-			"""
-	          SELECT department_id, product_id, quantity,
-	          date_register, user_id
-	          FROM log_stock_departments_internal_consumption
-	          WHERE product_id = %s 
-	          AND date_register BETWEEN %s and %s
-	          ORDER BY log_stock_departments_internal_consumption.date_register
-	        """,(product.id, start_date, end_date,))
-
-		if department and not product:
-			cr.execute(
-			"""
-	          SELECT department_id, product_id, quantity,
-	          date_register, user_id
-	          FROM log_stock_departments_internal_consumption
-	          WHERE department_id = %s 
-	          AND date_register BETWEEN %s and %s
-	          ORDER BY log_stock_departments_internal_consumption.date_register
+	          ORDER BY update_product_internal_consumption.date_register
 	        """,(department.id, start_date, end_date,))
 
-	   	if not product and not department:
+		else:
 			cr.execute(
 			"""
-	          SELECT department_id, product_id, quantity,
+	          SELECT department, id, state, 
 	          date_register, user_id
-	          FROM log_stock_departments_internal_consumption
+	          FROM update_product_internal_consumption
 	          WHERE date_register BETWEEN %s and %s
-	          ORDER BY log_stock_departments_internal_consumption.date_register
+	          ORDER BY update_product_internal_consumption.date_register
 	        """,(start_date, end_date,))
 
 		db_results = cr.fetchall()
@@ -109,58 +86,69 @@ class log_stock_internal_consumption(osv.TransientModel) :
 			ws.write(0, 0, "Departamento", style)
 			ws.write(0, 1, "Producto", style)
 			ws.write(0, 2, "Cantidad", style)
-			ws.write(0, 3, "Fecha de registro", style)
-			ws.write(0, 4, "Usuario", style)
+			ws.write(0, 3, "Estado", style)
+			ws.write(0, 4, "Fecha de la orden", style)
+			ws.write(0, 5, "Usuario", style)
 
 		j=1
 		for result in db_results:
-			for colum in range(len(result)):
-				if colum == 0:
-					cr.execute(
-						"""
-				          SELECT name
-				          FROM departments_internal_consumption
-				          WHERE id = %s
-				        """,(result[colum],))
-					name = cr.fetchone()
-					ws.write(j, colum, name[0])
+			cr.execute(
+				"""
+				SELECT product_id, quantity
+				FROM temporary_orders_internal_consumption 
+				WHERE order_m2o_id = %s
+				""",(result[1],))
+			productos = cr.fetchall()
+			for producto in productos:
 
-				if colum == 1:
-					cr.execute(
-						"""
-				          SELECT name
-				          FROM products_internal_consumption
-				          WHERE id = %s
-				        """,(result[colum],))
-					name = cr.fetchone()
-					ws.write(j, colum, name[0])
+				cr.execute(
+					"""
+			          SELECT name
+			          FROM products_internal_consumption
+			          WHERE id = %s
+			        """,(producto[0],))
+				name = cr.fetchone()
+				ws.write(j, 1, name[0])
+				ws.write(j, 2, producto[1])
 
-				if colum == 2:
-					ws.write(j, colum, result[colum])
+				for colum in range(len(result)):
+					if colum == 0:
+						cr.execute(
+							"""
+					          SELECT name
+					          FROM departments_internal_consumption
+					          WHERE id = %s
+					        """,(result[colum],))
+						name = cr.fetchone()
+						ws.write(j, colum, name[0])
 
-				if colum == 3:
-					date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f")
-					date = date+timedelta(hours=-5)
-					date = date.strftime("%d-%m-%Y %H:%M")
-					ws.write(j, colum, date)
+					if colum == 2:
+						ws.write(j, 3, result[colum])
 
-				if colum == 4:
-					cr.execute(
-						"""
-				          SELECT pa.name
-				          FROM res_users us
-				          INNER JOIN res_partner pa
-				          ON us.partner_id = pa.id
-				          WHERE us.id = %s
-				        """,(result[colum],))
-					user_name = cr.fetchone()
-					ws.write(j, colum, user_name[0])
 
-			j = j+1
+					if colum == 3:
+						date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f")
+						date = date+timedelta(hours=-5)
+						date = date.strftime("%d-%m-%Y %H:%M")
+						ws.write(j, 4, date)
+
+					if colum == 4:
+						cr.execute(
+							"""
+					          SELECT pa.name
+					          FROM res_users us
+					          INNER JOIN res_partner pa
+					          ON us.partner_id = pa.id
+					          WHERE us.id = %s
+					        """,(result[colum],))
+						user_name = cr.fetchone()
+						user_name = user_name[0]
+						ws.write(j, 5, user_name)
+				j = j+1
 
 		date = datetime.today()+timedelta(hours=-5)
 		date = date.strftime("%d-%m-%Y %H:%M")
-		repo_name = "Cambios en stock " + " - " + date +".xls"
+		repo_name = "Reporte de ordenes " + " - " + date +".xls"
 
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			wb.save(fcsv.name)
@@ -180,10 +168,10 @@ class log_stock_internal_consumption(osv.TransientModel) :
             'view_mode': 'form',
             'res_id': this.id,
             'views': [(False, 'form')],
-            'res_model': 'log.stock.internal.consumption',
+            'res_model': 'log.orders.internal.consumption',
             'target': 'new',
         }
 
 			
-log_stock_internal_consumption()
+log_orders_internal_consumption()
 
