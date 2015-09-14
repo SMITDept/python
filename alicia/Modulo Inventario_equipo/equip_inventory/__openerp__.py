@@ -13,9 +13,7 @@
   #This model depends of BASE OpenERP model...
   'depends': [
     'base',
-    'board',
-    'hr',
-    'account',
+    'hardware_inventory',
   ],
   #XML imports
   'data': [
@@ -29,7 +27,6 @@
      'secciones/administracion/catalogos/cat_tipo_equipo/cat_equipo.xml',
      'secciones/inventory_equip/equipo_views.xml',
      'secciones/maintenance_equip/maintenance_equip.xml',
-     # 'secciones/administracion/adjuntos_maintenance/adjuntos_maintenance.xml',
 
   ],
   'demo_xml': [
