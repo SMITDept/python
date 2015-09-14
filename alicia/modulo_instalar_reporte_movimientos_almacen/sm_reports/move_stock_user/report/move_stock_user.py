@@ -47,7 +47,7 @@ class move_stock_user(report_sxw.rml_parse):
             "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
     if data.get('form', False) and data['form'].get('month', False):
         mes=int(data['form'].get('month',False))
-        nombre_mes = 'del Mes de ' + str(Mes[mes])
+        nombre_mes = 'del Mes de ' + str(Mes[mes-1])
     return nombre_mes     
 
   #----------------------------------------------------------------------------------------------------------------------
@@ -58,67 +58,79 @@ class move_stock_user(report_sxw.rml_parse):
     self.query = ""
     fecha=''
     mes=''
+    day=''
     ean=''
     resultado =''
     
     if data.get('form', False) and data['form'].get('ean13', False):
-       ean=data['form'].get('ean13',False)
-       self.query = self.query + "and p.ean13='"+ean+"'"
-    
-    if data.get('form', False) and data['form'].get('month', False):
-        mes=data['form'].get('month',False)
-
-        if data.get('form', False) and data['form'].get('year_previous', False):
-          year_bool = data['form'].get('year_previous',False)
-          print year_bool
-          if year_bool==False :
-            year=current_date.year
-          else:
-            year=current_date.year -1
- 
-        self.query = self.query + " and TO_CHAR(s.create_date,'YYYY-MM')='"+str(year)+"-"+str(mes)+"'"
-    
-    self.cr.execute(
-      """
-      SELECT
-      TO_CHAR(s.create_date,'DD-MM-YYYY') AS fecha_creacion,
-      pa.name AS name_login,
-      s.name AS name_move, 
-      s.picking_id AS referencia,
-      s.origin AS origen,
-      p.name_template AS producto,
-      s.product_qty AS cantidad,
-      p.ean13 AS ean, 
-      l.name AS localizacion,
-      ls.name AS destino,
-      CASE WHEN s.state='done' THEN 'Realizado'
-           WHEN s.state='assigned' THEN 'Reservado'
-           WHEN s.state='confirmed' THEN 'Confirmado'
-           WHEN s.state='waiting' THEN 'Esperando'
-           WHEN s.state='cancel' THEN 'cancelado'
-           ELSE 'Nuevo'
-      END As estado
-      from stock_move s
-      INNER JOIN product_product p
-      ON s.product_id = p.id
-      INNER JOIN res_users u
-      ON s.create_uid = u.id
-      INNER JOIN res_partner pa
-      ON u.partner_id = pa.id
-      INNER JOIN stock_location l
-      ON s.location_id = l.id
-      INNER JOIN stock_location ls
-      ON s.location_dest_id = ls.id
-      WHERE s.name = 'In Store Movement'
-      %s
-      ORDER BY s.create_date
-      """%(self.query,)
-    )
-    resultado = self.cr.dictfetchall()
-    if ( len( resultado ) > 0 ):
-      return resultado
+      ean=data['form'].get('ean13',False)
+      self.query = self.query + "and p.ean13='"+ean+"'"
+      if data.get('form', False) and data['form'].get('select_option', False):
+         opcion=data['form'].get('select_option', False)
+         if opcion == 'x_month':
+            if data.get('form', False) and data['form'].get('month', False):
+              mes=data['form'].get('month',False)
+      
+              if data.get('form', False) and data['form'].get('year_previous', False):
+                year_bool = data['form'].get('year_previous',False)
+                print year_bool
+                if year_bool==False :
+                  year=current_date.year
+                else:
+                  year=current_date.year -1
+     
+              self.query = self.query + " and TO_CHAR(s.create_date,'YYYY-MM')='"+str(year)+"-"+str(mes)+"'"
+        
+         if opcion == 'x_day':  
+            if data.get('form', False) and data['form'].get('date_now', False):
+               day=data['form'].get('date_now',False)
+               print day
+               self.query = self.query + " and TO_CHAR(s.create_date,'YYYY-MM-DD')='"+str(day)+"'"   
+               print self.query
+      #consulta a la base de datos
+      self.cr.execute(
+        """
+        SELECT
+        TO_CHAR(s.create_date,'DD-MM-YYYY') AS fecha_creacion,
+        pa.name AS name_login,
+        s.name AS name_move, 
+        s.picking_id AS referencia,
+        s.origin AS origen,
+        p.name_template AS producto,
+        s.product_qty AS cantidad,
+        p.ean13 AS ean, 
+        l.name AS localizacion,
+        ls.name AS destino,
+        CASE WHEN s.state='done' THEN 'Realizado'
+             WHEN s.state='assigned' THEN 'Reservado'
+             WHEN s.state='confirmed' THEN 'Confirmado'
+             WHEN s.state='waiting' THEN 'Esperando'
+             WHEN s.state='cancel' THEN 'Cancelado'
+             ELSE 'Nuevo'
+        END As estado
+        from stock_move s
+        INNER JOIN product_product p
+        ON s.product_id = p.id
+        INNER JOIN res_users u
+        ON s.create_uid = u.id
+        INNER JOIN res_partner pa
+        ON u.partner_id = pa.id
+        INNER JOIN stock_location l
+        ON s.location_id = l.id
+        INNER JOIN stock_location ls
+        ON s.location_dest_id = ls.id
+        WHERE s.name = 'In Store Movement'
+        %s
+        ORDER BY s.create_date
+        """%(self.query,)
+      )
+      resultado = self.cr.dictfetchall()
+      if ( len( resultado ) > 0 ):
+        return resultado
+      else:
+        return { 'value' : {} }
     else:
-      return { 'value' : {} } 
+        return { 'value' : {} }  
 
 #########################################################################################################################
 #------------------------------------------------------------------------------------------------------------------------

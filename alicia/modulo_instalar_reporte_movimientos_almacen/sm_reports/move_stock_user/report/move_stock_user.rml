@@ -140,31 +140,31 @@
     <blockTable colWidths="60.0, 90.0, 60.0, 80.0, 100.0, 60.0, 110.0, 110.0, 50.0" style="Table1">
       <tr>
         <td>[[ repeatIn(get_datos(data['form']), 'ref') ]]
-          <para style="terp_default_Centre_8">[[ (  ref['fecha_creacion'] and  ref['fecha_creacion'] ) or '--' ]]</para>
+          <para style="terp_default_Centre_8">[[ ref['fecha_creacion'] ]]</para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ( ref['name_login'] and ref['name_login'] ) or '--' ]] </para>
+          <para style="terp_default_Centre_8">[[ ref['name_login'] ]] </para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ( ref['origen'] and ref['origen'] ) or '--' ]] </para>
+          <para style="terp_default_Centre_8">[[ ref['origen'] ]] </para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ( ref['ean'] and ref['ean'] ) or '--' ]]</para>
+          <para style="terp_default_Centre_8">[[ ref['ean'] ]]</para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ( ref['producto'] and ref['producto'] ) or '--' ]] </para>
+          <para style="terp_default_Centre_8">[[ ref['producto'] ]] </para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ( ref['cantidad'] and ref['cantidad'] ) or '--' ]]</para>
+          <para style="terp_default_Centre_8">[[ ref['cantidad'] ]]</para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ( ref['localizacion'] and ref['localizacion'] ) or '--' ]] </para>
+          <para style="terp_default_Centre_8">[[ ref['localizacion'] ]] </para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ( ref['destino'] and ref['destino'] ) or '--' ]] </para>
+          <para style="terp_default_Centre_8">[[ ref['destino'] ]] </para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ( ref['estado'] and ref['estado'] ) or '--' ]] </para>
+          <para style="terp_default_Centre_8">[[ ref['estado'] ]] </para>
         </td>
       </tr>
     </blockTable>

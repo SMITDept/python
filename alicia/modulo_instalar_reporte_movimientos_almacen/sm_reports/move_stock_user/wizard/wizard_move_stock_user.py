@@ -44,9 +44,9 @@ class wizard_move_stock_user(osv.osv_memory):
     data = {}
     data['ids'] = context.get( 'active_ids', [] )
     data['model'] = context.get( 'active_model', 'ir.ui.menu' )
-    data['form'] = self.read( cr, uid, ids, ['ean13', 'month', 'year_previous', 'date_now'] )[0]
+    data['form'] = self.read( cr, uid, ids, ['ean13', 'month', 'year_previous', 'date_now','select_option'] )[0]
     
-    data['form'].update( self.read( cr, uid, ids, ['ean13', 'month','year_previous', 'date_now'], context = context )[0])
+    data['form'].update( self.read( cr, uid, ids, ['ean13', 'month','year_previous', 'date_now','select_option'], context = context )[0])
     
     #Inicializando la variable datas, con el modelo del catalogo
     datas = {
@@ -74,18 +74,26 @@ class wizard_move_stock_user(osv.osv_memory):
   _columns = {
     
   # ==========================  Campos OpenERP Básicos (integer, char, text, float, etc...)  ======================== #
-   'date_now':fields.date("day", required=False),
+   'date_now':fields.date("Day", required=False),
    'ean13': fields.char('Ean13', size=13, required=True),
+   'select_option' : fields.selection(
+      (
+        ('x_month','Month'),
+        ( 'x_day', 'Day' ),
+      ),
+      'Search for', required=True
+    ),
    'month':fields.selection([('01','January'), ('02','February'), ('03','March'), ('04','April'),
             ('05','May'), ('06','June'), ('07','July'), ('08','August'), ('09','September'),
-            ('10','October'), ('11','November'), ('12','December')], 'Month', required=True),
+            ('10','October'), ('11','November'), ('12','December')], 'Month'),
    'year_previous': fields.boolean("last year?"),
 
   }
 
   #Valores por defecto de los elementos del arreglo [_columns]
   _defaults = {
-  # 'date_now': lambda *a: time.strftime('%Y-%d-%m'), 
+   # 'date_now': lambda *a: time.strftime('%Y-%m-%d'),
+   # 'select_option':lambda *a: 'x_month'
   }
    
   #Reestricciones desde código

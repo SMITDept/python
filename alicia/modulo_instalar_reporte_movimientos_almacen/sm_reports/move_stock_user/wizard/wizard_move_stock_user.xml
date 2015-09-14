@@ -14,11 +14,12 @@
 			<field name="arch" type="xml">
 				<form string="Movement of Stock">
           <group string="select the search options" colspan='2' col='2'>
-
-							<field name="ean13"/>
+							<field name="ean13" colspan="2"/>
 							<label string=" " colspan="2"/>
-							<field name="month"/>
-							<field name="year_previous"/>
+							<field name="select_option" colspan="2"/>
+							<field name="date_now" colspan="2" attrs="{'invisible' : [ ( 'select_option', '!=', 'x_day' )], 'required': [['select_option', '=', 'x_day']]}"/>
+							<field name="month" attrs="{'invisible' : [ ( 'select_option', '!=', 'x_month' )] ,'required': [['select_option', '=', 'x_month']]}"/>
+							<field name="year_previous" attrs="{'invisible' : [ ( 'select_option', '!=', 'x_month' )] }"/>
 							<label string=" " colspan="2"/>
           </group>
 					<group col="4" colspan="4">

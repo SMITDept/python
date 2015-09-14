@@ -130,7 +130,7 @@
 		</record>
 
 		<!-- Menu Items -->	
-		<menuitem name="Maintenance Management"
+		<menuitem name="Hardware Maintenance"
 							parent="hardware_inventory.top_hardware"  
 							id="list_maintenance"
 							action="action_maintenance"/> 
