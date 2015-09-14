@@ -13,6 +13,8 @@
   #This model depends of BASE OpenERP model...
   'depends': [
     'base',
+    'board',
+    'hr',
   ],
   #XML imports
   'data': [
