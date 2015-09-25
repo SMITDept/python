@@ -7,7 +7,7 @@
   'author': 'SUPERMAS',
   'maintainer': 'SUPERMAS',
   'website': 'http://www.supermas.mx',
-  'installable': True, 
+  'installable': True,
   'active': False,
   'description': 'Módulo Hardware - Modulo para el inventario de hardware y mantenimiento',
   #This model depends of BASE OpenERP model...
@@ -18,11 +18,11 @@
   ],
   #XML imports
   'data': [
-    
+
     #------------------------------------------------------------------------------------------------------------------------------------------------#
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::: XML PARA MODELOS DEL SISTEMA ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
     #------------------------------------------------------------------------------------------------------------------------------------------------#
-    
+
     #Archivo principal de menús
     'menus.xml',
      'secciones/hardware/hardware_views.xml',

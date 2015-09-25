@@ -64,7 +64,7 @@
 		<!-- Menu Items -->	
 		
 		<menuitem name="Lista de Dispositivos"
-							parent="hardware_inventory.top_catalogos"
+							parent="hardware_inventory.top_administracion"
 							id="lista_cat_dispositivos"
 							action="action_cat_dispositivos"/>
 		

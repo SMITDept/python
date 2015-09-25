@@ -99,7 +99,7 @@
       <field name="model">maintenance</field>
       <field name="priority" eval="2"/>
       <field name="arch" type="xml">
-        <calendar string="Calendar" date_start="date" color="show_as" date_delay="duration">
+        <calendar string="Calendar" date_start="date" color="hardware_m2o_id" date_delay="duration">
            <field name="hardware_m2o_id"/>
            <field name="responsible_m2o_id"/>
            <field name="type_maint"/>
@@ -130,7 +130,7 @@
 		</record>
 
 		<!-- Menu Items -->	
-		<menuitem name="Hardware Maintenance"
+		<menuitem name="Maintenance Management"
 							parent="hardware_inventory.top_hardware"  
 							id="list_maintenance"
 							action="action_maintenance"/> 

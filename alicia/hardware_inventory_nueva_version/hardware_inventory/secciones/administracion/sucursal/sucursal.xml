@@ -68,7 +68,7 @@
 		<!-- Menu Items -->	
 		
 		<menuitem name="Lista de Sucursales"
-							parent="hardware_inventory.top_sucursales"
+							parent="hardware_inventory.top_administracion"
 							id="list_sucursales"
 							action="action_sucursal"/>
 		
