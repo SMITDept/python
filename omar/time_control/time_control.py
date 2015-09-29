@@ -7,7 +7,7 @@ from openerp.exceptions import Warning
 from openerp.tools.translate import _
 
 def get_datetime():
-	date = datetime.now(timezone( 'America/Mexico_City' )).strftime('%d/%m/%y %H:%M')
+	date = datetime.now(timezone( 'America/Mexico_City' )).strftime('%Y/%m/%d %H:%M')
 	return date
 
 def get_date():
