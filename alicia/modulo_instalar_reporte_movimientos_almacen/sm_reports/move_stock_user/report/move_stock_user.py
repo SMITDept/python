@@ -64,7 +64,7 @@ class move_stock_user(report_sxw.rml_parse):
     
     if data.get('form', False) and data['form'].get('ean13', False):
       ean=data['form'].get('ean13',False)
-      self.query = self.query + "and p.ean13='"+ean+"'"
+      self.query = self.query + "p.ean13='"+ean+"'"
       if data.get('form', False) and data['form'].get('select_option', False):
          opcion=data['form'].get('select_option', False)
          if opcion == 'x_month':
@@ -84,9 +84,9 @@ class move_stock_user(report_sxw.rml_parse):
          if opcion == 'x_day':  
             if data.get('form', False) and data['form'].get('date_now', False):
                day=data['form'].get('date_now',False)
-               print day
+               # print day
                self.query = self.query + " and TO_CHAR(s.create_date,'YYYY-MM-DD')='"+str(day)+"'"   
-               print self.query
+               # print self.query
       #consulta a la base de datos
       self.cr.execute(
         """
@@ -119,7 +119,7 @@ class move_stock_user(report_sxw.rml_parse):
         ON s.location_id = l.id
         INNER JOIN stock_location ls
         ON s.location_dest_id = ls.id
-        WHERE s.name = 'In Store Movement'
+        WHERE 
         %s
         ORDER BY s.create_date
         """%(self.query,)
