@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: OpenERP Server 7.0-20150622\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-06-23 21:05+0000\n"
-"PO-Revision-Date: 2015-06-23 16:13-0600\n"
+"PO-Revision-Date: 2015-09-29 20:53-0600\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -160,7 +160,7 @@ msgstr "Hora de comida"
 #. module: users_control
 #: selection:schedule_users,payroll:0
 msgid "Fortnight"
-msgstr "Qincenal"
+msgstr "Quincenal"
 
 #. module: users_control
 #: view:schedule.report:0
