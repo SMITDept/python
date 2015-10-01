@@ -1,13 +1,13 @@
 # Translation of OpenERP Server.
 # This file contains the translation of the following modules:
-# 	* inventory_software
+# 	* software_inventory
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenERP Server 7.0-20150511\n"
+"Project-Id-Version: OpenERP Server 7.0-20140616-231123\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-13 15:56+0000\n"
-"PO-Revision-Date: 2015-05-13 11:16-0600\n"
+"POT-Creation-Date: 2015-10-01 22:27+0000\n"
+"PO-Revision-Date: 2015-10-01 17:37-0600\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,69 +16,114 @@ msgstr ""
 "Plural-Forms: \n"
 "X-Generator: Poedit 1.5.4\n"
 
-#. module: inventory_software
-#: model:ir.actions.act_window,name:inventory_software.software_action
-#: model:ir.model,name:inventory_software.model_software
-#: model:ir.ui.menu,name:inventory_software.ctrl_software_menu view:software:0
-msgid "Software"
-msgstr "Software"
-
-#. module: inventory_software
-#: field:software,installation:0
-msgid "Installation"
-msgstr "Instalación "
-
-#. module: inventory_software
-#: field:software,description:0
-msgid "Description"
-msgstr "Descripción"
-
-#. module: inventory_software
-#: field:software,license:0
-msgid "License"
-msgstr "Licencia"
-
-#. module: inventory_software
-#: field:software,name_software:0
-msgid "Name software"
+#. module: software_inventory
+#: field:software.detail,name_software:0
+msgid "name software"
 msgstr "Nombre del software"
 
-#. module: inventory_software
-#: field:software,free:0
-msgid "Lree"
-msgstr "Libres"
-
-#. module: inventory_software
-#: field:software,used:0
-msgid "Used"
-msgstr "Usados"
-
-#. module: inventory_software
-#: field:software,expiration:0
-msgid "Expiration"
-msgstr "Expiración"
-
-#. module: inventory_software
-#: field:software,version:0
-msgid "Version"
-msgstr "Versión"
-
-#. module: inventory_software
-#: field:software,cost_software:0
-msgid "Cost software"
+#. module: software_inventory
+#: field:software.detail,cost_software:0
+msgid "cost software"
 msgstr "Costo del software"
 
-#. module: inventory_software
-#: model:ir.ui.menu,name:inventory_software.software_menu
+#. module: software_inventory
+#: field:software,software_o2m_ids:0
+msgid "Software detail"
+msgstr "Detalle del software"
+
+#. module: software_inventory
+#: model:ir.model,name:software_inventory.model_software_detail
+msgid "software.detail"
+msgstr "software.detail"
+
+#. module: software_inventory
+#: selection:software.detail,architecture:0
+msgid "64 bits"
+msgstr "64 bits"
+
+#. module: software_inventory
+#: selection:software.detail,architecture:0
+msgid "32 bits"
+msgstr "32 bits"
+
+#. module: software_inventory
+#: field:software.detail,version:0
+msgid "version"
+msgstr "versión"
+
+#. module: software_inventory
+#: field:software.detail,architecture:0
+msgid "architecture"
+msgstr "Arquitectura"
+
+#. module: software_inventory
+#: field:software.detail,used:0
+msgid "used"
+msgstr "Usados"
+
+#. module: software_inventory
+#: field:software.detail,detail_m2o_id:0
+msgid "Update key"
+msgstr "Clave de actualización"
+
+#. module: software_inventory
+#: field:software.detail,description:0
+msgid "description"
+msgstr "Descripción"
+
+#. module: software_inventory
+#: field:software.detail,free:0
+msgid "free"
+msgstr "Libres"
+
+#. module: software_inventory
+#: view:software:0
+msgid "Add software"
+msgstr "Añadir software"
+
+#. module: software_inventory
+#: model:ir.ui.menu,name:software_inventory.software_menu
 msgid "Software"
 msgstr "Software"
 
-#. module: inventory_software
-#: model:ir.ui.menu,name:inventory_software.software_menu_general
-msgid "General data"
-msgstr "Datos generales"
+#. module: software_inventory
+#: field:software.detail,installation:0
+msgid "installation"
+msgstr "Instalación"
 
-#. module: inventory_software
-#: field:software,architecture:0
-msgid "Architecture"
-msgstr "Arquitectura"
+#. module: software_inventory
+#: field:software.detail,license:0
+msgid "license"
+msgstr "Licencia"
+
+#. module: software_inventory
+#: field:software,hardware_id:0
+msgid "Hardware"
+msgstr "Hardware"
+
+#. module: software_inventory
+#: view:software:0
+msgid "List software"
+msgstr "Lista de software"
+
+#. module: software_inventory
+#: field:software.detail,expiration:0
+msgid "expiration"
+msgstr "Caducidad"
+
+#. module: software_inventory
+#: model:ir.ui.menu,name:software_inventory.software_menu_general
+msgid "General data"
+msgstr "Información general"
+
+#. module: software_inventory
+#: field:software,date_register:0
+msgid "Date register"
+msgstr "Fecha de registro"
+
+#. module: software_inventory
+#: model:ir.actions.act_window,name:software_inventory.software_action
+#: model:ir.model,name:software_inventory.model_software
+#: model:ir.ui.menu,name:software_inventory.ctrl_software_menu view:software:0
+msgid "software"
+msgstr "Software"

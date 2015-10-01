@@ -7,16 +7,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 				<tree string="software">
-					<field name="name_software"/>
-					<field name="architecture"/>
-					<field name="license"/>
-					<field name="version"/>
-					<field name="expiration"/>
-					<field name="used"/>
-					<field name="installation"/>
-					<field name="free"/>
-					<field name="cost_software"/>
-					<field name="description"/>
+					<field name="hardware_id"/>
+					<field name="date_register"/>
 				</tree>
 			</field>
 		</record>
@@ -26,29 +18,50 @@
 			<field name="model">software</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="software">
-					<field name="name_software"/>
-					<field name="architecture"/>
-					<field name="license"/>
-					<field name="version"/>
-					<field name="expiration"/>
-					<field name="used"/>
-					<field name="installation"/>
-					<field name="free"/>
-					<field name="cost_software"/>
-					<field name="description"/>
-					<field name="hardware_id"/>
+				<form string="software" version="7.0">
+					<sheet>
+						<group colspan="4" col="4">
+							<group colspan="2" col="2">
+								<field name="hardware_id"/>
+							</group>
+							<group colspan="2" col="2">
+								<newline/>
+							</group>
+						</group>
+			    		
+						<group string="Add software" colspan='2' col='6' >
+				            <field name="software_o2m_ids"
+				                   domain="[('software_o2m_ids.update_m2o_id','=','id')]"
+				                   nolabel="1">
+					            <tree string="List software" version="7.0" editable="bottom"> 
+					            	<field name="name_software"/>
+									<field name="architecture"/>
+									<field name="license"/>
+									<field name="version"/>
+									<field name="expiration"/>
+									<field name="used"/>
+									<field name="installation"/>
+									<field name="free"/>
+									<field name="cost_software"/>
+									<field name="description"/>
+					            </tree>
+				            </field>  
+				        </group>
+				    </sheet>
 				</form>
 			</field>
 		</record>
+
 		<record id="software_action" model="ir.actions.act_window">
 			<field name="name">software</field>
 			<field name="res_model">software</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 		</record>
+
 		<menuitem name="Software" id="software_menu" sequence="90"/>
 		<menuitem name="General data" id="software_menu_general" parent="software_menu"/>
 		<menuitem action="software_action" id="ctrl_software_menu" sequence="1" parent="software_menu_general"/>
+
 	</data>
 </openerp>
