@@ -38,17 +38,23 @@ class move_stock_user(report_sxw.rml_parse):
   #----------------------------------------------------------------------------------------------------------------------
   def nombre_mes( self, data ) :
     """
-    Método que obtiene el nombre del mes
+    Método que obtiene el nombre del reporte
     @return (str)
     """        
     mes=''
     nombre_mes=''
+    codigo=''
     Mes = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
             "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    
     if data.get('form', False) and data['form'].get('month', False):
         mes=int(data['form'].get('month',False))
-        nombre_mes = 'del Mes de ' + str(Mes[mes-1])
-    return nombre_mes     
+        nombre = 'del Mes de ' + str(Mes[mes-1]) 
+    if data.get('form', False) and data['form'].get('ean13', False):
+        codigo=int(data['form'].get('ean13',False))
+        nombre = nombre + ' del Producto con codigo ' + str(codigo)
+
+    return nombre   
 
   #----------------------------------------------------------------------------------------------------------------------
   def get_datos(self, data) :
@@ -99,8 +105,8 @@ class move_stock_user(report_sxw.rml_parse):
         p.name_template AS producto,
         s.product_qty AS cantidad,
         p.ean13 AS ean, 
-        l.name AS localizacion,
-        ls.name AS destino,
+        l.complete_name AS localizacion,
+        ls.complete_name AS destino,
         CASE WHEN s.state='done' THEN 'Realizado'
              WHEN s.state='assigned' THEN 'Reservado'
              WHEN s.state='confirmed' THEN 'Confirmado'

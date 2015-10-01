@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0-20140616-231123\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-12 21:52+0000\n"
-"PO-Revision-Date: 2015-09-12 17:01-0600\n"
+"POT-Creation-Date: 2015-09-29 20:39+0000\n"
+"PO-Revision-Date: 2015-09-29 15:43-0600\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -37,6 +37,11 @@ msgid "Print"
 msgstr "Imprimir"
 
 #. module: sm_reports
+#: field:wizard_move_stock_user,select_option:0
+msgid "Search for"
+msgstr "Buscar por"
+
+#. module: sm_reports
 #: selection:wizard_move_stock_user,month:0
 msgid "March"
 msgstr "Marzo"
@@ -64,8 +69,14 @@ msgstr "Movimientos de Almacen"
 
 #. module: sm_reports
 #: selection:wizard_move_stock_user,month:0
-msgid "July"
-msgstr "Julio"
+msgid "November"
+msgstr "Noviembre"
+
+#. module: sm_reports
+#: field:wizard_move_stock_user,date_now:0
+#: selection:wizard_move_stock_user,select_option:0
+msgid "Day"
+msgstr "Dia"
 
 #. module: sm_reports
 #: selection:wizard_move_stock_user,month:0
@@ -81,11 +92,6 @@ msgstr "Octubre"
 #: selection:wizard_move_stock_user,month:0
 msgid "January"
 msgstr "Enero"
-
-#. module: sm_reports
-#: selection:wizard_move_stock_user,month:0
-msgid "November"
-msgstr "Noviembre"
 
 #. module: sm_reports
 #: field:wizard_move_stock_user,year_previous:0
@@ -109,9 +115,9 @@ msgid "April"
 msgstr "Abril"
 
 #. module: sm_reports
-#: field:wizard_move_stock_user,date_now:0
-msgid "day"
-msgstr "dia"
+#: selection:wizard_move_stock_user,month:0
+msgid "July"
+msgstr "Julio"
 
 #. module: sm_reports
 #: field:wizard_move_stock_user,ean13:0
@@ -130,6 +136,7 @@ msgstr "Diciembre"
 
 #. module: sm_reports
 #: field:wizard_move_stock_user,month:0
+#: selection:wizard_move_stock_user,select_option:0
 msgid "Month"
 msgstr "Mes"
 

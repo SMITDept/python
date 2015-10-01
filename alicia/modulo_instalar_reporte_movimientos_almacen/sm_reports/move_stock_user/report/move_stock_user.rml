@@ -34,6 +34,7 @@
       <blockValign value="TOP"/>
       <lineStyle kind="LINEBELOW" colorName="#999999" start="0,-1" stop="0,-1"/>
       <lineStyle kind="LINEBELOW" colorName="#999999" start="1,-1" stop="9,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#999999" start="0,0" stop="9,-1"/>
     </blockTableStyle>
     
     <initialize>
@@ -105,7 +106,7 @@
    <para style="Caption"><b>Movimientos de Almacen [[ nombre_mes(data['form']) ]]</b></para>
     <spacer length="0.5cm"/>
     <!-- #tabla de relacion a account_move_line-->
-    <blockTable colWidths="60.0, 90.0, 60.0, 80.0, 100.0, 60.0, 110.0, 110.0, 50.0" style="Tabla_header">
+    <blockTable colWidths="60.0, 90.0, 60.0, 100.0, 50.0, 150.0, 150.0, 50.0" style="Tabla_header">
       <tr>
         <td>
           <para style="terp_tblheader_General_Centre">Fecha</para>
@@ -115,9 +116,6 @@
         </td>
         <td>
           <para style="terp_tblheader_General_Centre">Origen</para>
-        </td>
-        <td>
-          <para style="terp_tblheader_General_Centre">Ean 13</para>
         </td>
         <td>
           <para style="terp_tblheader_General_Centre">Producto</para>
@@ -137,7 +135,7 @@
       </tr>
     </blockTable>
     <!--[[ repeatIn(get_datos(), 'ref') ]]-->
-    <blockTable colWidths="60.0, 90.0, 60.0, 80.0, 100.0, 60.0, 110.0, 110.0, 50.0" style="Table1">
+    <blockTable colWidths="60.0, 90.0, 60.0, 100.0, 50.0, 150.0, 150.0, 50.0" style="Table1">
       <tr>
         <td>[[ repeatIn(get_datos(data['form']), 'ref') ]]
           <para style="terp_default_Centre_8">[[ ref['fecha_creacion'] ]]</para>
@@ -147,9 +145,6 @@
         </td>
         <td>
           <para style="terp_default_Centre_8">[[ ref['origen'] ]] </para>
-        </td>
-        <td>
-          <para style="terp_default_Centre_8">[[ ref['ean'] ]]</para>
         </td>
         <td>
           <para style="terp_default_Centre_8">[[ ref['producto'] ]] </para>
