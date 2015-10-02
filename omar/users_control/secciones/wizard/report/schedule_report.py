@@ -62,7 +62,10 @@ class schedule_report(osv.TransientModel) :
 	        """,(sucursal.id,))
 
 		sucursal_name = cr.fetchone()
-		sucursal_name = sucursal_name[0]
+		if sucursal_name:
+			sucursal_name = sucursal_name[0]
+		else:
+			sucursal_name = " "
 
 		if sucursal:
 			cr.execute(
@@ -125,7 +128,6 @@ class schedule_report(osv.TransientModel) :
 						hour = report[i][j]
 						if hour:
 							hour = str(hour).split(' ')
-							print hour[1]
 							ws.write(i+1, j, hour[1])
 						else:
 							ws.write(i+1, j, hour)
@@ -142,7 +144,9 @@ class schedule_report(osv.TransientModel) :
 								tim_ext = str(hour) + ":" + minute
 								ws.write(i+1, j+1, tim_ext)
 					if j == 2:
-						ws.write(i+1, j, report[i][j])
+						date_us = report[i][j].split('-')
+						fomat = date_us[2] + "/" + date_us[1] + "/" + date_us[0]
+						ws.write(i+1, j, fomat)
 			#raise Warning(_('Reporte generado.'))
 		#else:
 			#raise Warning(_('No se encontraron resultados.'))
