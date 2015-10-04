@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 from osv import fields, osv
 from openerp.tools.translate import _
+from openerp.exceptions import Warning
 
 def get_stock(self, cr, uid, ids, product_id):
 	cr.execute(
@@ -173,7 +174,7 @@ class expiration_product(osv.TransientModel):
 		            'target': 'new',
 		         }
 			else:
-				raise osv.except_osv(_( 'Warning' ),_( 'The product does not exist' ) )
+				raise Warning(_('El producto no existe'))
 				
 		else:
 			this = self.browse(cr, uid, ids)[0]
@@ -208,7 +209,10 @@ class expiration_product(osv.TransientModel):
 	        """,(ean13,))
 		pro = cr.fetchall()
 		total = get_stock(self, cr, uid, ids, pro[0])
-		stock_products = total[0]
+		if total and total[0] > 0:
+			stock_products = total[0]
+		else:
+			raise Warning(_('No hay producto en existencia'))
 
 		db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
 
