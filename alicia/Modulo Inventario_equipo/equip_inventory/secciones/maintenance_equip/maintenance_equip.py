@@ -78,7 +78,7 @@ class maintenance_equip(osv.osv):
       model = ''
       serial = ''
       if (record.equipo_m2o_id) != 0:
-        equipo = str( record.cat_equipo_m2o_id.descripcion)
+        equipo = str( record.equipo_m2o_id.cat_equipo_m2o_id.descripcion)
         brad = str( record.equipo_m2o_id.brad )
         model = str( record.equipo_m2o_id.model )
         serial = str( record.equipo_m2o_id.serial_number)
