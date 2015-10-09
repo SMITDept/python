@@ -6,6 +6,7 @@ import base64
 import tempfile
 import time
 
+from pytz import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
 from osv import fields, osv
@@ -36,7 +37,7 @@ class log_expired_report(osv.TransientModel) :
 	_defaults = {
 		'state': 'choose',
 		'start_date': lambda *a: time.strftime('%Y-%m-01'),
-		'end_date': ((datetime.now() + relativedelta(day=1, months=+1, days=-1)).date()).strftime('%Y-%m-%d'),
+		'end_date': ((datetime.now(timezone( 'America/Mexico_City' )) + relativedelta(day=1, months=+1, days=-1)).date()).strftime('%Y-%m-%d'),
 	}
 
 	#Reestricciones desde código
@@ -142,8 +143,8 @@ class log_expired_report(osv.TransientModel) :
 					ws.write(j, colum, result[colum])
 
 				if colum == 9:
-					date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f") + timedelta(hours=-5)
-					date = date.strftime("%Y-%m-%d %H:%M")
+					date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f")
+					date = date.strftime("%d-%m-%Y %H:%M")
 					ws.write(j, colum, date)
 
 				if colum == 10:
@@ -161,9 +162,8 @@ class log_expired_report(osv.TransientModel) :
 
 			j = j+1
 
-		date = datetime.today()+timedelta(hours=-5)
-		date = date.strftime("%d-%m-%Y %H:%M")
-		repo_name = "Reporte de cambios " + " - " + date +".xls"
+		date = datetime.now(timezone( 'America/Mexico_City' )).strftime("%d-%m-%Y %H:%M")
+		repo_name = "Reporte de cambios " + " " + date +".xls"
 
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			wb.save(fcsv.name)

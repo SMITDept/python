@@ -1,6 +1,6 @@
 from openerp.osv import osv,fields
 from datetime import datetime, date
-
+from pytz import timezone
 
 ARCHITECTURE = [
     ('32', '32 bits'),
@@ -12,11 +12,10 @@ class software(osv.osv):
     _columns = {
         'hardware_id': fields.many2one('hardware', 'Hardware', required=True),
         'software_o2m_ids': fields.one2many('software.detail', 'detail_m2o_id', 'Software detail'),
-        'date_register': fields.datetime('Date register', required=False),
 	}
 
     _defaults = {
-        'date_register': datetime.now(),
+
     }
 
 software()

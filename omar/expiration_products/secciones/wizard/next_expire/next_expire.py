@@ -6,14 +6,14 @@ import time
 import base64
 import tempfile
 
+from pytz import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
 from osv import fields, osv
 #Modelo
 
 def comparision_dates(date_register):
-	date = datetime.today()
-	date = date.strftime("%d-%m-%Y %H:%M")
+	date = datetime.now(timezone( 'America/Mexico_City' )).strftime("%d-%m-%Y %H:%M")
 	date = date.split(" ")
 	date = date[0].split("-")
 	month1 = int(date[1])
@@ -197,7 +197,7 @@ class next_expire_report(osv.TransientModel) :
 
 					if colum >= 0 and colum < 4:
 						if colum == 3:
-							current_date=datetime.strptime(data[colum], "%Y-%m-%d %H:%M:%S.%f") + timedelta(days=-1)
+							current_date=datetime.strptime(data[colum], "%Y-%m-%d %H:%M:%S.%f")
 							dt = current_date.strftime("%d-%m-%Y %H:%M")
 							ws.write(j, 14+colum, dt)
 						else:
@@ -215,9 +215,8 @@ class next_expire_report(osv.TransientModel) :
 
 				j = j+1
 
-		date = datetime.today()+timedelta(hours=-5)
-		date = date.strftime("%d-%m-%Y %H:%M")
-		repo_name = u"Próximos a caducar " + choose_branch + " - " + date +".xls"
+		date = datetime.now(timezone( 'America/Mexico_City' )).strftime("%d-%m-%Y %H:%M")
+		repo_name = u"Próximos a caducar " + choose_branch + " " + date +".xls"
 
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			wb.save(fcsv.name)

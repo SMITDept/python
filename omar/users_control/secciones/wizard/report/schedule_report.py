@@ -6,6 +6,7 @@ import time
 import base64
 import tempfile
 
+from pytz import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
 from openerp.osv import fields, osv
@@ -133,15 +134,17 @@ class schedule_report(osv.TransientModel) :
 							ws.write(i+1, j, hour)
 						
 					if j == 7:
-						if report[i][j] == "0:0":
-							ws.write(i+1, j, report[i][j], style0)
+						hours = report[i][j].split(" ")
+						hours = hours[1]
+						if hours == "00:00:00":
+							ws.write(i+1, j, hours, style0)
 						else:
-							ws.write(i+1, j, report[i][j])
-							time = report[i][j].split(':')
+							ws.write(i+1, j, hours)
+							time = hours.split(':')
 							if int(time[0]) >7:
 								hour = int(time[0])-8
 								minute = time[1]
-								tim_ext = str(hour) + ":" + minute
+								tim_ext = str(hour) + ":" + minute + ":" + time[2]
 								ws.write(i+1, j+1, tim_ext)
 					if j == 2:
 						date_us = report[i][j].split('-')
@@ -150,9 +153,8 @@ class schedule_report(osv.TransientModel) :
 			#raise Warning(_('Reporte generado.'))
 		#else:
 			#raise Warning(_('No se encontraron resultados.'))
-		date = datetime.today()+timedelta(hours=-5)
-		date = date.strftime("%d-%m-%Y %H:%M")
-		repo_name = "Reporte de horario " + sucursal_name +" - " + date +".xls"
+		date = datetime.now(timezone('America/Mexico_City')).strftime("%d-%m-%Y %H:%M")
+		repo_name = "Reporte de horario " + sucursal_name +" " + date +".xls"
 
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			wb.save(fcsv.name)

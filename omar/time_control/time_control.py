@@ -7,7 +7,7 @@ from openerp.exceptions import Warning
 from openerp.tools.translate import _
 
 def get_datetime():
-	date = datetime.now(timezone( 'America/Mexico_City' )).strftime('%Y/%m/%d %H:%M')
+	date = datetime.now(timezone( 'America/Mexico_City' )).strftime('%Y-%m-%d %H:%M:%S')
 	return date
 
 def get_date():
@@ -24,34 +24,9 @@ def update_schedule(cr, campo, datetime_register):
 	cr.execute('UPDATE time_control SET %s = %s', (campo, datetime_register, total_hours))
 
 def total_hours(hour_start, hour_end, total_db):
-	hour_s = hour_start.split(' ')
-	hour_s = hour_s[1]
-	hour_s= hour_s.split(':')
-	hour_start = hour_s[0]
-	minutes_start = hour_s[1]
-
-	hour_e = hour_end.split(' ')
-	hour_e = hour_e[1]
-	hour_e= hour_e.split(':')
-	hour_end = hour_e[0]
-	minutes_end = hour_e[1]
-
-	total_hour = int(hour_end) - int(hour_start) 
-	total_minutes = int(minutes_end) - int(minutes_start)
-	if total_minutes < 0:
-		total_minutes = total_minutes + 60
-		if total_hour > 0:
-			total_hour = total_hour -1
-
-	hour_split= total_db.split(':')
-	hour_db = hour_split[0]
-	minutes_db = hour_split[1]
-
-	total_hour = total_hour + int(hour_db)
-	total_minutes = total_minutes + int(minutes_db)
-	total = str(total_hour) + ":" + str(total_minutes)
-
-	return total
+	resta = datetime.strptime(hour_end, '%Y-%m-%d %H:%M:%S') - datetime.strptime(hour_start, '%Y-%m-%d %H:%M:%S')
+	suma = datetime.strptime(total_db, '%Y-%m-%d %H:%M:%S') + resta
+	return suma
 
 class time_control(osv.osv):
 	_name = 'time_control'
@@ -61,7 +36,7 @@ class time_control(osv.osv):
 	    'start_food': fields.datetime("start of food", required=False),
 	    'end_food': fields.datetime("end of food", required=False),
 	    'end_time': fields.datetime('end time', required=False),
-	    'total_hours': fields.char("total hours", required=True),
+	    'total_hours': fields.datetime("total hours", required=True),
 	    'date_register': fields.date("date", required = True),
 	    'user_m2o_id': fields.many2one('schedule_users', 'schedule_users', required=True),
 	    'location_m2o_id': fields.many2one('location_user', 'location_user', required=True),
@@ -116,7 +91,7 @@ class time_control(osv.osv):
 						return"Registro guardado"
 			else:
 				user = employee[2]
-				cr.execute('INSERT INTO time_control (employee, start_time, total_hours, date_register, user_m2o_id, location_m2o_id) VALUES (%s, %s, %s, %s, %s, %s)', (employee[0], datetime_register, "0:00", date_register, user, employee[3]))
+				cr.execute('INSERT INTO time_control (employee, start_time, total_hours, date_register, user_m2o_id, location_m2o_id) VALUES (%s, %s, %s, %s, %s, %s)', (employee[0], datetime_register, datetime(9999, 01, 01, 00, 00, 00), date_register, user, employee[3]))
 				return"Registro guardado"
 				
 		else:

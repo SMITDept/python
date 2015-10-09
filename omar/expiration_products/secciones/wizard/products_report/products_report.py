@@ -6,8 +6,9 @@ import time
 import base64
 import tempfile
 
+from pytz import timezone
 from dateutil.relativedelta import relativedelta
-from datetime import datetime, timedelta, date
+from datetime import datetime
 from osv import fields, osv
 #Modelo 
 class products_report(osv.TransientModel) :	
@@ -126,9 +127,8 @@ class products_report(osv.TransientModel) :
 						ws.write(j, colum, data[colum])
 				j = j+1
 
-		date = datetime.today()+timedelta(hours=-5)
-		date = date.strftime("%d-%m-%Y %H:%M")
-		repo_name = "Reporte de caducidades " + choose_branch + " - " + date +".xls"
+		date = datetime.now(timezone( 'America/Mexico_City' )).strftime("%d-%m-%Y %H:%M")
+		repo_name = "Reporte de caducidades " + choose_branch + " " + date +".xls"
 
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			wb.save(fcsv.name)

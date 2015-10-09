@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from datetime import datetime, timedelta
+from pytz import timezone
 from osv import fields, osv
 from openerp.tools.translate import _
 from openerp.exceptions import Warning
@@ -12,7 +13,7 @@ def create_log(self, cr, uid, ids, department, product, stock, context=None):
 		INSERT INTO log_stock_departments_internal_consumption 
 		(department_id, product_id, quantity, date_register, user_id) 
 		VALUES (%s, %s, %s, %s, %s)
-		""",(department, product, stock, datetime.now(), current_user.id))
+		""",(department, product, stock, datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5), current_user.id))
 #Modelo 
 class update_stock_internal_consumption(osv.TransientModel):
 
@@ -77,7 +78,7 @@ class update_stock_internal_consumption(osv.TransientModel):
 					date_register = %s
 					WHERE product_id = %s
 					AND department_id = %s
-					""",(quantity, datetime.now(), product.id, department.id,))
+					""",(quantity, datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5), product.id, department.id,))
 				create_log(self, cr, uid, ids, department.id, product.id, quantity)
 			else:
 				raise Warning(_('You can not add products'))

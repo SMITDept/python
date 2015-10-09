@@ -6,6 +6,7 @@ import base64
 import tempfile
 import time
 
+from pytz import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
 from osv import fields, osv
@@ -35,7 +36,7 @@ class log_purchases_internal_consumption(osv.TransientModel) :
 	_defaults = {
 		'state': 'choose',
 		'start_date': lambda *a: time.strftime('%Y-%m-01'),
-		'end_date': ((datetime.now() + relativedelta(day=1, months=+1, days=-1)).date()).strftime('%Y-%m-%d'),
+		'end_date': ((datetime.now(timezone('America/Mexico_City'))+ relativedelta(day=1, months=+1, days=-1)).date()).strftime('%Y-%m-%d'),
 	}
 
 	#Reestricciones desde código
@@ -88,6 +89,7 @@ class log_purchases_internal_consumption(osv.TransientModel) :
 			ws.write(0, 2, "Precio por pieza", style)
 			ws.write(0, 3, "Fecha de la compra", style)
 			ws.write(0, 4, "Usuario", style)
+			ws.write(0, 5, "Total de la compra", style)
 
 		j=1
 		for result in db_results:
@@ -104,7 +106,7 @@ class log_purchases_internal_consumption(osv.TransientModel) :
 					ws.write(j, colum, name[0])
 				if colum == 3:
 					date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f")
-					date = date+timedelta(hours=-5)
+					date = date + timedelta(hours=-5)
 					date = date.strftime("%d-%m-%Y %H:%M")
 					ws.write(j, colum, date)
 
@@ -122,12 +124,14 @@ class log_purchases_internal_consumption(osv.TransientModel) :
 					ws.write(j, colum, user_name)
 				if colum > 0 and colum <= 2:
 					ws.write(j, colum, result[colum])
+			total_buy = result[1] * result[2]
+			ws.write(j, 5, total_buy)
 
 			j = j+1
 
-		date = datetime.today()+timedelta(hours=-5)
+		date = datetime.now(timezone('America/Mexico_City'))
 		date = date.strftime("%d-%m-%Y %H:%M")
-		repo_name = "Reporte de compras " + " - " + date +".xls"
+		repo_name = "Reporte de compras " + " " + date +".xls"
 
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			wb.save(fcsv.name)

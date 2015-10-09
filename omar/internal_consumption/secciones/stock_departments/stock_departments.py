@@ -1,6 +1,7 @@
 
 from openerp.osv import osv,fields
-from datetime import datetime
+from datetime import datetime, timedelta
+from pytz import timezone
 
 
 class stock_departments_internal_consumption(osv.osv):
@@ -15,7 +16,7 @@ class stock_departments_internal_consumption(osv.osv):
     }
 
     _defaults = {
-        'date_register': datetime.now(),
+        'date_register': datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5),
     }
 
 stock_departments_internal_consumption()
@@ -34,7 +35,7 @@ class log_stock_departments_internal_consumption(osv.osv):
     }
 
     _defaults = {
-        'date_register': datetime.now(),
+        'date_register': datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5),
     }
 
 log_stock_departments_internal_consumption()
@@ -51,7 +52,7 @@ class temporary_orders_internal_consumption(osv.osv):
     }
 
     _defaults = {
-        'date_register': datetime.now(),
+        'date_register': datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5),
     }
 
 temporary_orders_internal_consumption()

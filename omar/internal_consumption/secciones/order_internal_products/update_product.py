@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from datetime import datetime, timedelta
+from pytz import timezone
 from osv import fields, osv
 from openerp.tools.translate import _
 from openerp.exceptions import Warning
@@ -12,7 +13,7 @@ def create_log(self, cr, uid, department, product, stock, context=None):
 		INSERT INTO log_stock_departments_internal_consumption 
 		(department_id, product_id, quantity, date_register, user_id) 
 		VALUES (%s, %s, %s, %s, %s)
-		""",(department, product, stock, datetime.now(), current_user.id))
+		""",(department, product, stock, datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5), current_user.id))
 
 #Modelo 
 class upadate_product_consumption(osv.osv):
@@ -22,8 +23,6 @@ class upadate_product_consumption(osv.osv):
 
 	#Nombre del Modelo
 	_name = 'update.product.internal.consumption'
-
-	date = datetime.now().strftime("%d-%m-%Y %H:%M:%S.%f")
 
 	def current_user(self, cr, uid, ids, context = None):
 		current_user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
@@ -79,10 +78,11 @@ class upadate_product_consumption(osv.osv):
 						new_stock = product[1] + stock_dep[1]
 						cr.execute(
 				            """
-				            UPDATE stock_departments_internal_consumption SET quantity = %s
+				            UPDATE stock_departments_internal_consumption SET quantity = %s,
+				            date_register = %s
 				            WHERE product_id = %s
 				            AND department_id = %s
-				            """,(new_stock, product[0], department.id,))
+				            """,(new_stock, datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5), product[0], department.id,))
 						create_log(self, cr, uid, department.id, product[0], new_stock)
 					else:
 						cr.execute(
@@ -90,7 +90,7 @@ class upadate_product_consumption(osv.osv):
 							INSERT INTO stock_departments_internal_consumption 
 							(department_id, product_id, quantity, date_register) 
 							VALUES (%s, %s, %s, %s)
-							""",(department.id, product[0], product[1], datetime.now()))
+							""",(department.id, product[0], product[1], datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5)))
 						create_log(self, cr, uid, department.id, product[0], product[1])
 
 					cr.execute(
@@ -128,7 +128,7 @@ class upadate_product_consumption(osv.osv):
 
 	#Valores por defecto de los elementos del arreglo [_columns]
 	_defaults = {
-		'date_register': datetime.strptime(date, "%d-%m-%Y %H:%M:%S.%f"),
+		'date_register': datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5),
         'user_id': current_user,
         'state': 'draft',
   	}

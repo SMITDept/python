@@ -1,5 +1,5 @@
 # coding: utf-8
-
+from pytz import timezone
 from datetime import datetime, timedelta
 from osv import fields, osv
 from openerp.tools.translate import _
@@ -73,7 +73,7 @@ def create_log(self, cr, uid, ids, branch, ean13, name, mon0_4,
 		user_id) 
 		VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 		""",(branch, ean13, name, mon0_4, mon5_8, 
-			mon9_12, over12, stock_products, expired, datetime.now(),
+			mon9_12, over12, stock_products, expired, datetime.now(timezone( 'America/Mexico_City' )),
 			current_user))
 
 #Modelo 
@@ -207,13 +207,19 @@ class expiration_product(osv.TransientModel):
 	          FROM product_product prod
 	          WHERE ean13 = %s
 	        """,(ean13,))
+		total_income = mon0_4 + mon5_8 + mon9_12 + expired
+		print total_income
 		pro = cr.fetchall()
 		total = get_stock(self, cr, uid, ids, pro[0])
 		if total and total[0] > 0:
-			stock_products = total[0]
+			if total_income > total[0]:
+				message = "Solo tienes " + str(total[0]) + " productos disponibles"
+				raise Warning(_(message))
+			else:
+				stock_products = total[0]
 		else:
 			raise Warning(_('No hay producto en existencia'))
-
+		
 		db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
 
 		if db_expired:
@@ -242,7 +248,7 @@ class expiration_product(osv.TransientModel):
 				(shop_is_m2o, ean13, name, month0_4, month5_8,
 				month9_12, over_12, db_num, expired, date_register, user_id) 
 				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-				""",(branch.id, ean13, name, mon0_4, mon5_8, mon9_12, over12, stock_products, expired, datetime.now(), current_user.id))
+				""",(branch.id, ean13, name, mon0_4, mon5_8, mon9_12, over12, stock_products, expired, datetime.now(timezone( 'America/Mexico_City' )), current_user.id))
 			create_log(self, cr, uid, ids, branch.id, ean13, name, mon0_4, mon5_8,
 						mon9_12, over12, stock_products, expired, current_user.id)
 
