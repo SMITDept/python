@@ -150,6 +150,16 @@ class equipo(osv.osv):
       }
     return { 'value' : {} }
   #---------------------------------------------------------------------------------------------------------------------------------------------------
+  def onchange_func(self, cr, uid, ids, cat_equipo_m2o_id):
+    if cat_equipo_m2o_id:
+      for obj in self.pool.get('cat_equipo').browse(cr, uid, [cat_equipo_m2o_id]):
+        return {
+          'value': {
+            'descripcion': obj.descripcion
+          }
+        }
+    
+    return { 'value': { 'descripcion': '' } }
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
   ###                                                                 METODOS ORM                                                                  ###
@@ -190,22 +200,21 @@ class equipo(osv.osv):
         
     # 'key':fields.char("Key", size=10, required=False),
     'key_number':fields.integer("Key Number", size=4 ),
-    'brad':fields.char("Brand", size=50, required=True),
+    'brad':fields.char("Brand", size=50),
     'model':fields.char("Model", size=50, required=False),
-    'serial_number':fields.char("Serial Number", size=50, required=True),
-    'description':fields.text("Description"),
-    'status_dic':fields.selection(STATUS, 'Status', required =True ),
-    'cost_equipo':fields.float('cost of equipment', required=False),
-    # 'Type':fields.char("Type", size=50, required=False),
-    # 'Engine':fields.char("Engine", size=50, required=False),
-    # 'color':fields.char("Engine", size=50, required=False),
+    'serial_number':fields.char("Serial Number", size=50),
+    'description':fields.text("Description", required=True),
+    'status_dic':fields.selection(STATUS, 'Status'),
+    'cost_equipo':fields.float('Cost of equipment', required=False),
+    'name_equip':fields.char("Name", size=50, required=True),
+    'descripcion': fields.related('cat_equipo_m2o_id', 'descripcion', type="char", relation='cat_equipo', readonly=True, string="descripcion"),
     
     #Este campo contiene la imagen utilizada como imagen para el producto, limitado a 1024x1024px
     'image': fields.binary("Image"),
   # ================================ Relaciones [one2many](o2m) =====================================================================================#
     'cat_equipo_m2o_id': fields.many2one(
       'cat_equipo',
-      'Type of Equipment',
+      'Maintenance Group',
       required = True
     ),
 

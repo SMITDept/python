@@ -223,6 +223,24 @@ class maintenance_equip(osv.osv):
       }
     
     return { 'value' : {} }
+  #---------------------------------------------------------------------------------------------------------------------------------------------------
+  def onchange_func(self, cr, uid, ids, equipo_m2o_id):
+    if equipo_m2o_id:
+      for obj in self.pool.get('equipo').browse(cr, uid, [equipo_m2o_id]):
+        return {
+          'value': {
+            'descripcion': obj.descripcion,
+            'nombre_equipo': obj.name_equip,
+            'serie_equipo': obj.serial_number,
+          }
+        }
+    return {
+          'value': {
+            'descripcion': '',
+            'nombre_equipo': '' ,
+            'descripcion':''
+          }
+    }
  #--------------------------------------------------------------------------------------------------------------------------------------------------- 
   def create(self, cr, uid, vals, context = None ):
     """   
@@ -268,11 +286,10 @@ class maintenance_equip(osv.osv):
     'allday': fields.boolean('All Day'),
     #----------------------------------------------
     'responsible': fields.char('Responsible', size=100, required=False ),
-    'cost_repair': fields.float('Total Cost'),
+    'cost_repair': fields.float('Previsto Coste'),
     # SERVICE PERFORMED
     'type_maint' : fields.selection(
       (
-        ('cleaning','Cleaning'),
         ( 'preventive', 'Preventive' ),
         ( 'corrective', 'Corrective' ),
       ),
@@ -280,17 +297,24 @@ class maintenance_equip(osv.osv):
     ),
 
     'maintenance_date':fields.date("Maintenance Date", required=False),
-    # 'next_maintenance_date':fields.date("Next Maintenance", required=False),
     'delivery_date':fields.date("Delivery date", required=False),
     'causes':fields.text("Defects according to the user"),
     'diagnostic':fields.text("Diagnostic"),
     'solution':fields.text("Solution"),
     'piece_change':fields.text("Piece to change"),
-    # 'note':fields.text("Note"),
+    
+  # ================================ Relaciones [related] =====================================================================================#
+  
+    'descripcion': fields.related('equipo_m2o_id', 'descripcion', type="char", relation='equipo', readonly=True, string="Maintenance Group"),
+    'nombre_equipo': fields.related('equipo_m2o_id', 'name_equip', type="char", relation='equipo', readonly=True, string="Name"),
+    'serie_equipo': fields.related('equipo_m2o_id', 'serial_number', type="char", relation='equipo', readonly=True, string="Serial"),
+    'fac_costo_total': fields.related('invoice_m2o_id', 'amount_total', type="float", relation='account.invoice', readonly=True, string="Total Cost"),
+    # 'provedor': fields.related('invoice_m2o_id', 'partner_id', type="many2one", relation='account.invoice', readonly=True, string="Provedor"),
+    
   # ================================ Relaciones [one2many](o2m) =====================================================================================#
     'equipo_m2o_id': fields.many2one(
       'equipo',
-      'Equipament key',
+      'Registration Key',
       required = False
     ),
     'invoice_m2o_id': fields.many2one(
@@ -298,21 +322,17 @@ class maintenance_equip(osv.osv):
       'Invoice',
       required = False
     ),
-    
-    
-   
-    
 
   # ================================== Campos Function ==============================================================================================#  
-    'equipo_info' : fields.function(
-      _func_obtener_informe,
-      type = 'char',
-      size = 80,
-      method = True,
-      string = 'Device',
-      store = False,
-      readonly = True,
-    ),
+    # 'equipo_info' : fields.function(
+    #   _func_obtener_informe,
+    #   type = 'char',
+    #   size = 80,
+    #   method = True,
+    #   string = 'Device',
+    #   store = False,
+    #   readonly = True,
+    # ),
   }
     
   #Valores por defecto de los campos del diccionario [_columns]

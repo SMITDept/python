@@ -12,7 +12,7 @@
 			<field name="model">cat_equipo</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
-				<tree string="Equipo">
+				<tree string="Grupos de Mantenimiento">
 					<field name="descripcion"/>
 					<field name="codigo"/>
 					<field name="activo"/>
@@ -27,11 +27,12 @@
 			<field name="model">cat_equipo</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="Equipo">
+				<form string="Grupo de Mantenimiento">
 					<group col="2" colspan="2">
 						<field name="clave"/>
 						<field name="descripcion"/>
 						<field name="codigo"/>
+						<field name="detalle"/>
 						<field name="activo"/>
 					</group>
 				</form>
@@ -45,7 +46,7 @@
 			<field name="model">cat_equipo</field>
 			<field name="type">search</field>
 			<field name="arch" type="xml">					
-				<search string="Equipo">
+				<search string="Grupo">
 					<field name="descripcion"/>
 					<field name="codigo"/>
 					<field name="activo"/>
@@ -56,14 +57,14 @@
 		<!-- Action Records -->	
 	
 		<record model="ir.actions.act_window" id="action_cat_equipo">
-			<field name="name">Equipo</field>
+			<field name="name">Grupo</field>
 			<field name="view_id" ref="view_cat_equipo_tree"/>
 			<field name="res_model">cat_equipo</field>
 		</record>
 		
 		<!-- Menu Items -->	
 		
-		<menuitem name="Lista de Equipo SM"
+		<menuitem name="Lista de Grupos"
 							parent="equip_inventory.top_catalogos"
 							id="lista_cat_equipo"
 							action="action_cat_equipo"/>

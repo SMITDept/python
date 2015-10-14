@@ -40,8 +40,9 @@ class cat_equipo( osv.osv ) :
 		# =========================================  OpenERP Campos Basicos (integer, char, text, float, etc...)  ====================================== #
 		
 		'clave':fields.integer("Clave", required=False),
-		'descripcion' : fields.char( 'Nombre', size = 255, required = True ),
-		'codigo' : fields.char( 'Código', size = 3, required = True  ),
+		'descripcion' : fields.char( 'Nombre de Grupo', size = 255, required = True ),
+		'detalle' : fields.text( 'Descripcion del Grupo' ),
+		'codigo' : fields.char( 'Código', size = 4, required = True  ),
 		'activo' : fields.boolean( 'Activo(a)' ),
 	}
 	

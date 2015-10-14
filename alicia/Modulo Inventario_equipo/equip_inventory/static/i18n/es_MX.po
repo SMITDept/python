@@ -1,13 +1,13 @@
 # Translation of OpenERP Server.
 # This file contains the translation of the following modules:
-# 	* equip_inventory
+#	* equip_inventory
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0-20140616-231123\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-10 14:37+0000\n"
-"PO-Revision-Date: 2015-09-10 09:49-0600\n"
+"POT-Creation-Date: 2015-09-19 21:59+0000\n"
+"PO-Revision-Date: 2015-09-19 17:09-0600\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,8 @@ msgstr ""
 "Language: es_MX\n"
 
 #. module: equip_inventory
-#: view:equipo:0 view:maintenance_equip:0
+#: view:equipo:0
+#: view:maintenance_equip:0
 msgid "Information"
 msgstr "Información"
 
@@ -32,23 +33,20 @@ msgid "Administration"
 msgstr "Administración"
 
 #. module: equip_inventory
-#: model:ir.model,name:equip_inventory.model_cat_sucursal
-msgid "cat_sucursal"
-msgstr "cat_sucursal"
-
-#. module: equip_inventory
 #: model:ir.ui.menu,name:equip_inventory.top_equipo
 #: model:ir.ui.menu,name:equip_inventory.top_equipo_lista
+#, fuzzy
 msgid "Equipment"
 msgstr "Equipo"
 
 #. module: equip_inventory
 #: field:equipo,sucursales_m2o_id:0
 msgid "Location"
-msgstr "Location"
+msgstr "Localizacion"
 
 #. module: equip_inventory
-#: view:equipo:0 model:ir.ui.menu,name:equip_inventory.list_equip_maintenance
+#: view:equipo:0
+#: model:ir.ui.menu,name:equip_inventory.list_equip_maintenance
 #: view:maintenance_equip:0
 msgid "Maintenance"
 msgstr "Mantenimiento"
@@ -57,7 +55,7 @@ msgstr "Mantenimiento"
 #: view:cat_equipo:0
 #: model:ir.actions.act_window,name:equip_inventory.action_cat_equipo
 msgid "Equipo"
-msgstr "Equipo"
+msgstr "Equipment"
 
 #. module: equip_inventory
 #: view:equipo:0
@@ -88,19 +86,14 @@ msgstr "Defectos de Acuerdo al Usuario"
 
 #. module: equip_inventory
 #: model:ir.model,name:equip_inventory.model_equipo
-msgid "equipo"
+#, fuzzy
+msgid "Equipment"
 msgstr "Equipo"
 
 #. module: equip_inventory
 #: model:ir.model,name:equip_inventory.model_cat_equipo
 msgid "cat_equipo"
 msgstr "cat_equipo"
-
-#. module: equip_inventory
-#: view:adjuntos_maintenance:0
-#: model:ir.actions.act_window,name:equip_inventory.action_adjuntos_maintenance
-msgid "Facturas"
-msgstr "Facturas"
 
 #. module: equip_inventory
 #: view:maintenance_equip:0
@@ -119,13 +112,8 @@ msgstr "Servicio Realizado"
 
 #. module: equip_inventory
 #: model:ir.ui.menu,name:equip_inventory.lista_cat_equipo
-msgid "Lista de Equipo SM"
+msgid "Equipment List SM"
 msgstr "Lista de Equipo SM"
-
-#. module: equip_inventory
-#: model:ir.model,name:equip_inventory.model_adjuntos_maintenance
-msgid "adjuntos_maintenance"
-msgstr "adjuntos_maintenance"
 
 #. module: equip_inventory
 #: model:ir.ui.menu,name:equip_inventory.top_inventario
@@ -159,9 +147,9 @@ msgid "Equipment Maintenance"
 msgstr "Mantenimiento de Equipo"
 
 #. module: equip_inventory
-#: view:adjuntos_maintenance:0
-msgid "Archivo"
-msgstr "Archivo"
+#: field:maintenance_equip,invoice_m2o_id:0
+msgid "Invoice"
+msgstr "Factura"
 
 #. module: equip_inventory
 #: view:maintenance_equip:0
@@ -172,3 +160,4 @@ msgstr "Calendario"
 #: model:ir.model,name:equip_inventory.model_maintenance_equip
 msgid "maintenance_equip"
 msgstr "maintenance_equip"
+
