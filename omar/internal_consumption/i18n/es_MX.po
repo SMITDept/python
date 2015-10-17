@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0-20140616-231123\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-10 23:35+0000\n"
-"PO-Revision-Date: 2015-09-10 19:18-0600\n"
+"POT-Creation-Date: 2015-10-17 00:31+0000\n"
+"PO-Revision-Date: 2015-10-16 19:55-0600\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,12 @@ msgstr "Reporte de órdenes"
 #: model:ir.ui.menu,name:internal_consumption.top_log_purchases
 msgid "Create reports"
 msgstr "Crear reportes"
+
+#. module: internal_consumption
+#: code:addons/internal_consumption/secciones/products_update/update_stock.py:144
+#, python-format
+msgid "Select the product"
+msgstr "Seleccione el producto"
 
 #. module: internal_consumption
 #: model:ir.ui.menu,name:internal_consumption.top_order_products
@@ -83,6 +89,11 @@ msgid "Log orders:"
 msgstr "Cambio en las órdenes:"
 
 #. module: internal_consumption
+#: model:ir.ui.menu,name:internal_consumption.menu_log_stock
+msgid "Report stock change"
+msgstr "Reporte de cambios en stock"
+
+#. module: internal_consumption
 #: view:update.product.internal.consumption:0
 msgid "Validate"
 msgstr "Validar"
@@ -109,7 +120,6 @@ msgstr "Nombre del archivo"
 #. module: internal_consumption
 #: model:ir.ui.menu,name:internal_consumption.products_list_control
 #: model:ir.ui.menu,name:internal_consumption.top_products_list
-#: field:purchases.internal.consumption,product_id:0
 msgid "Products"
 msgstr "Productos"
 
@@ -145,6 +155,11 @@ msgstr "Precio unitario"
 #: model:ir.model,name:internal_consumption.model_users_internal_consumption
 msgid "users.internal.consumption"
 msgstr "users.internal.consumption"
+
+#. module: internal_consumption
+#: model:ir.model,name:internal_consumption.model_log_purchases_internal_consumption
+msgid "Changes in the register of purchases"
+msgstr "Cambios en el registro de las compras"
 
 #. module: internal_consumption
 #: model:ir.model,name:internal_consumption.model_products_internal_consumption
@@ -209,6 +224,12 @@ msgid "update_prosucts_list"
 msgstr "update_prosucts_list"
 
 #. module: internal_consumption
+#: code:addons/internal_consumption/secciones/order_internal_products/update_product.py:116
+#, python-format
+msgid "You do not have permissions to validate the order"
+msgstr "Usted no tiene permisos para validar la orden"
+
+#. module: internal_consumption
 #: model:ir.ui.menu,name:internal_consumption.top_purchases_list
 msgid "Register purchases"
 msgstr "Registrar las compras"
@@ -258,11 +279,6 @@ msgid "Back"
 msgstr "Atrás"
 
 #. module: internal_consumption
-#: field:purchases.internal.consumption,pieces:0
-msgid "Pieces"
-msgstr "Piezas"
-
-#. module: internal_consumption
 #: model:ir.ui.menu,name:internal_consumption.stock_departments_list_control
 #: model:ir.ui.menu,name:internal_consumption.top_stock_departments_list
 #: view:update.product.internal.consumption:0
@@ -272,7 +288,7 @@ msgstr "Stock en los departamentos"
 #. module: internal_consumption
 #: field:update.product.internal.consumption,stock_o2m_ids:0
 msgid "Stock product"
-msgstr "Stock de producto"
+msgstr "Stock del producto"
 
 #. module: internal_consumption
 #: model:ir.ui.menu,name:internal_consumption.update_products_list_control
@@ -280,9 +296,9 @@ msgid "Create order"
 msgstr "Crear pedido"
 
 #. module: internal_consumption
-#: model:ir.ui.menu,name:internal_consumption.menu_log_stock
-msgid "Report stock change"
-msgstr "Reporte de cambios en stock"
+#: selection:products.internal.consumption,measure:0
+msgid "Caja"
+msgstr "Caja"
 
 #. module: internal_consumption
 #: model:ir.ui.menu,name:internal_consumption.top_internal_consumption
@@ -376,6 +392,7 @@ msgstr "Guardar producto"
 
 #. module: internal_consumption
 #: field:log.stock.departments.internal.consumption,quantity:0
+#: field:purchases.internal.consumption,pieces:0
 #: field:stock.departments.internal.consumption,quantity:0
 #: field:temporary.orders.internal.consumption,quantity:0
 #: field:update.stock.internal.consumption,quantity:0
@@ -386,6 +403,11 @@ msgstr "Cantidad"
 #: model:ir.ui.menu,name:internal_consumption.purchases_list_control
 msgid "Purchases"
 msgstr "Compras"
+
+#. module: internal_consumption
+#: selection:products.internal.consumption,measure:0
+msgid "Paquete"
+msgstr "Paquete"
 
 #. module: internal_consumption
 #: model:ir.actions.act_window,name:internal_consumption.action_log_orders_report
@@ -404,9 +426,9 @@ msgid "values"
 msgstr "Valores"
 
 #. module: internal_consumption
-#: model:ir.model,name:internal_consumption.model_log_purchases_internal_consumption
-msgid "Changes in the register of purchases"
-msgstr "Cambios en el registro de las compras"
+#: field:products.internal.consumption,measure:0
+msgid "Measure"
+msgstr "Medida"
 
 #. module: internal_consumption
 #: view:log.orders.internal.consumption:0
@@ -436,10 +458,17 @@ msgid "Log Report:"
 msgstr "Reporte de cambios:"
 
 #. module: internal_consumption
+#: code:addons/internal_consumption/secciones/products_update/update_stock.py:84
+#, python-format
+msgid "You can not add products"
+msgstr "No puedes agregar productos"
+
+#. module: internal_consumption
 #: view:log.purchases.internal.consumption:0
 #: field:log.purchases.internal.consumption,product:0
 #: field:log.stock.departments.internal.consumption,product_id:0
 #: field:log.stock.internal.consumption,product:0
+#: field:purchases.internal.consumption,product_id:0
 #: field:stock.departments.internal.consumption,product_id:0
 #: field:temporary.orders.internal.consumption,product_id:0
 #: field:update.stock.internal.consumption,product:0
@@ -492,6 +521,13 @@ msgid "update_stock_list"
 msgstr "update_stock_list"
 
 #. module: internal_consumption
+#: code:addons/internal_consumption/secciones/products_update/update_stock.py:86
+#: code:addons/internal_consumption/secciones/products_update/update_stock.py:142
+#, python-format
+msgid "The product does not exist"
+msgstr "El producto no existe"
+
+#. module: internal_consumption
 #: model:ir.model,name:internal_consumption.model_log_stock_internal_consumption
 msgid "Server changes"
 msgstr "Cambios en el servidor"
@@ -512,6 +548,11 @@ msgstr "Opciones del reporte"
 #: help:log.stock.internal.consumption,report_xls:0
 msgid "You can export file"
 msgstr "Puede exportar el archivo"
+
+#. module: internal_consumption
+#: selection:products.internal.consumption,measure:0
+msgid "Piezas"
+msgstr "Piezas"
 
 #. module: internal_consumption
 #: view:stock.departments.internal.consumption:0

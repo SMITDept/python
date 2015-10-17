@@ -9,6 +9,7 @@
 				<tree string="products_list">
 					<field name="name"/>
 					<field name="stock"/>
+					<field name="measure"/>
 				</tree>
 			</field>
 		</record>
@@ -20,6 +21,7 @@
 			<field name="arch" type="xml">
 				<form string="products_list">
 					<field name="name"/>
+					<field name="measure"/>
 				</form>
 			</field>
 		</record>

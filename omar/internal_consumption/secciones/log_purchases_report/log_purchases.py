@@ -87,9 +87,10 @@ class log_purchases_internal_consumption(osv.TransientModel) :
 			ws.write(0, 0, "Producto", style)
 			ws.write(0, 1, "Piezas", style)
 			ws.write(0, 2, "Precio por pieza", style)
-			ws.write(0, 3, "Fecha de la compra", style)
-			ws.write(0, 4, "Usuario", style)
-			ws.write(0, 5, "Total de la compra", style)
+			ws.write(0, 3, "Unidad de medida", style)
+			ws.write(0, 4, "Fecha de la compra", style)
+			ws.write(0, 5, "Usuario", style)
+			ws.write(0, 6, "Total de la compra", style)
 
 		j=1
 		for result in db_results:
@@ -104,11 +105,12 @@ class log_purchases_internal_consumption(osv.TransientModel) :
 				        """,(result[colum],))
 					name = cr.fetchone()
 					ws.write(j, colum, name[0])
+
 				if colum == 3:
 					date = datetime.strptime(str(result[colum]), "%Y-%m-%d %H:%M:%S.%f")
 					date = date + timedelta(hours=-5)
 					date = date.strftime("%d-%m-%Y %H:%M")
-					ws.write(j, colum, date)
+					ws.write(j, colum+1, date)
 
 				if colum == 4:
 					cr.execute(
@@ -121,12 +123,22 @@ class log_purchases_internal_consumption(osv.TransientModel) :
 				        """,(result[colum],))
 					user_name = cr.fetchone()
 					user_name = user_name[0]
-					ws.write(j, colum, user_name)
+					ws.write(j, colum+1, user_name)
+
 				if colum > 0 and colum <= 2:
 					ws.write(j, colum, result[colum])
-			total_buy = result[1] * result[2]
-			ws.write(j, 5, total_buy)
 
+			total_buy = result[1] * result[2]
+			ws.write(j, 6, total_buy)
+
+			cr.execute(
+			"""
+	          SELECT measure
+	          FROM products_internal_consumption
+	          WHERE id = %s
+	        """,(result[0],))
+			name = cr.fetchone()
+			ws.write(j, 3, name[0])
 			j = j+1
 
 		date = datetime.now(timezone('America/Mexico_City'))

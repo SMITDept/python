@@ -31,8 +31,8 @@ class purchases_internal_consumption(osv.osv):
 
 
     _columns = {
-    	'product_id': fields.many2one('products.internal.consumption', 'Products', required=True),
-    	'pieces': fields.float("Pieces", digits=(12,3), required=True),
+    	'product_id': fields.many2one('products.internal.consumption', 'Product', required=True),
+    	'pieces': fields.float("Quantity", digits=(12,3), required=True),
         'date_register': fields.datetime('Registration date', required=True),
         'price': fields.float("Unit price", digits=(12,3), required=True),
         'user_id': fields.many2one('res.users',"User", required=True, help="User who registered the measurement"),
