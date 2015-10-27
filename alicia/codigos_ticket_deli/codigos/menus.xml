@@ -3,7 +3,7 @@
 <!-- Menus XML -->
 <openerp>
   <data>
-        <menuitem id="top_codigo" name="SM Códigos" sequence="1000"/>
+        <menuitem id="top_codigo" name="SM Etiquetas" sequence="1000"/>
           <menuitem id="top_lista" name="Generador" sequence="300" parent="codigos.top_codigo"/>
   </data>
 </openerp>

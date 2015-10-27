@@ -133,7 +133,10 @@ class wizard_deli(osv.osv_memory):
         """,(codigo,)
         )
         resultado = cr.fetchone()
-        #se valida que el precio tenga decimales 
+        #se valida que el precio tenga decimales
+        num = 0
+        decimales =''
+        precio=[]
         if resultado != None and type( resultado ) in ( list, tuple ) and resultado[2] != 0 :
           p = str(resultado[2])
           precio=p.split(".")
