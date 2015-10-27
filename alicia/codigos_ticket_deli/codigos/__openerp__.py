@@ -2,7 +2,7 @@
 
 {
   'name': 'SM Etiquetas',
-  'version': '0.6.0',
+  'version': '0.6.1',
   'category': 'SUPERMAS',
   'author': 'SUPERMAS',
   'maintainer': 'SUPERMAS',
