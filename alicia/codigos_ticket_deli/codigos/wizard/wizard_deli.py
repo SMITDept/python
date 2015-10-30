@@ -87,12 +87,12 @@ class wizard_deli(osv.osv_memory):
 
     if divide_etiquetas == False:
       while numero <= 30:
-        print numero
+        # print numero
         listado.append(codigo_deli)
         numero += 1
     else:
       while numero <= 30:
-        print numero
+        # print numero
         if numero <=10 :
           listado.append(codigo_deli)
         elif numero >10 and numero <=20 :
@@ -177,8 +177,8 @@ class wizard_deli(osv.osv_memory):
     
   # ==========================  Campos OpenERP Básicos (integer, char, text, float, etc...)  ======================== #
    'cod_number':fields.char("Código", size=13, required=True),
-   'cod_number2':fields.char("Segundo Código", size=13, required=True),
-   'cod_number3':fields.char("Tercer Código", size=13, required=True),
+   'cod_number2':fields.char("Segundo Código", size=13, required=False),
+   'cod_number3':fields.char("Tercer Código", size=13, required=False),
    'divide_etiquetas':fields.boolean("Añadir otros códigos en la misma hoja", required=False),
    
   # ======================================  Relaciones OpenERP [one2many](o2m) ====================================== #
