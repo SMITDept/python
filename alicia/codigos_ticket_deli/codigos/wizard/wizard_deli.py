@@ -37,13 +37,16 @@ class wizard_deli(osv.osv_memory):
     @return dict
     """
     codigo_deli = str(self.pool.get( self._name ).browse( cr, uid, ids[0] ).cod_number)
-    codigo_deli2 = str( self.pool.get( self._name ).browse( cr, uid, ids[0] ).cod_number2)
-    codigo_deli3 = str(self.pool.get( self._name ).browse( cr, uid, ids[0] ).cod_number3)
     divide_etiquetas = self.pool.get( self._name ).browse( cr, uid, ids[0] ).divide_etiquetas
-    
+    codigo_deli2 = ''
+    codigo_deli3 = ''
+    print divide_etiquetas
+
     if len(codigo_deli) < 13:
       raise osv.except_osv(_( 'Avisoo' ),_( 'Debe ingresar un código EAN13' ) )
     if divide_etiquetas == True:
+      codigo_deli2 = str(self.pool.get( self._name ).browse( cr, uid, ids[0] ).cod_number2)
+      codigo_deli3 = str(self.pool.get( self._name ).browse( cr, uid, ids[0] ).cod_number3)
       if len(codigo_deli2) < 13 or len(codigo_deli3) < 13:
         raise osv.except_osv(_( 'Avisoo' ),_( 'Debe ingresar un código EAN13' ) )
     buscar = self._obtener_codigos( cr, uid, codigo_deli, codigo_deli2, codigo_deli3, divide_etiquetas)
@@ -92,7 +95,7 @@ class wizard_deli(osv.osv_memory):
         numero += 1
     else:
       while numero <= 30:
-        # print numero
+
         if numero <=10 :
           listado.append(codigo_deli)
         elif numero >10 and numero <=20 :
@@ -177,8 +180,8 @@ class wizard_deli(osv.osv_memory):
     
   # ==========================  Campos OpenERP Básicos (integer, char, text, float, etc...)  ======================== #
    'cod_number':fields.char("Código", size=13, required=True),
-   'cod_number2':fields.char("Segundo Código", size=13, required=False),
-   'cod_number3':fields.char("Tercer Código", size=13, required=False),
+   'cod_number2':fields.char("Segundo Código", size=13),
+   'cod_number3':fields.char("Tercer Código", size=13),
    'divide_etiquetas':fields.boolean("Añadir otros códigos en la misma hoja", required=False),
    
   # ======================================  Relaciones OpenERP [one2many](o2m) ====================================== #
