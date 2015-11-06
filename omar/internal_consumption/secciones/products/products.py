@@ -1,11 +1,16 @@
+# coding: utf-8
+
+#Importando las clases necesarias para construir un modelo OpenERP
 
 from openerp.osv import osv,fields
 
-
+#Modelo
 class products_internal_consumption(osv.osv):
 
+    #Nombre del Modelo
     _name = 'products.internal.consumption'
 
+    #Diccionario de medidas de los productos
     MEASURE = [
     ('Piezas', 'Piezas'),
     ('Caja', 'Caja'),
@@ -18,6 +23,7 @@ class products_internal_consumption(osv.osv):
         'measure': fields.selection(MEASURE, 'Measure', required=True),
     }
 
+    #Valores por defecto de los elementos del arreglo [_columns]
     _defaults = {
         'stock': 0,
     }

@@ -1,15 +1,21 @@
+# coding: utf-8
 
+#Importando las clases necesarias para construir un modelo OpenERP
 from datetime import datetime, date
 from pytz import timezone
 from openerp.osv import osv,fields
 from datetime import date
+
+#Librerías para mostrar mensajes en pantalla
 from openerp.exceptions import Warning
 from openerp.tools.translate import _
 
+#Obtiene la fecha y hora actual
 def get_datetime():
 	date = datetime.now(timezone( 'America/Mexico_City' )).strftime('%Y-%m-%d %H:%M:%S')
 	return date
 
+#Obtiene la fecha actual
 def get_date():
     """
     Devuelve la fecha actual en Mexico
@@ -17,19 +23,21 @@ def get_date():
     """
     return datetime.now( timezone( 'America/Mexico_City' ) ).date()
 
-#def compare date():
-
 
 def update_schedule(cr, campo, datetime_register):
 	cr.execute('UPDATE time_control SET %s = %s', (campo, datetime_register, total_hours))
 
+#Suma las horas para sacar un total
 def total_hours(hour_start, hour_end, total_db):
 	resta = datetime.strptime(hour_end, '%Y-%m-%d %H:%M:%S') - datetime.strptime(hour_start, '%Y-%m-%d %H:%M:%S')
 	suma = datetime.strptime(total_db, '%Y-%m-%d %H:%M:%S') + resta
 	return suma
 
+#Modelo 
 class time_control(osv.osv):
+	#Nombre del Modelo
 	_name = 'time_control'
+
 	_columns = {
 	    'employee': fields.char("employee number", size=10, required=True),
 	    'start_time': fields.datetime("start time", required=True),
@@ -45,19 +53,30 @@ class time_control(osv.osv):
    	_defaults = {
   	}
 
+  	#Registra la hora al momento de checar
 	def search_employee(self, cr, uid, employee, context=None):
+		#Obtiene fecha y hora actual
 		datetime_register = get_datetime()
+
+		#Obtiene fecha actual
 		date_register = get_date()
+
+		#Obtiene el numero del empleado
 		employee_num = employee[0]
+
+		#Realiza una consulta para buscar al empleado
 		cr.execute('SELECT employee_number, lunch_time, id, sucursal FROM schedule_users where md5 = %s', (employee_num,))
 
 		employee = cr.fetchall()
+		#Verifica si existe el empleado
 		if employee:
 			employee = employee[0]
 			cr.execute('SELECT employee, start_time, start_food, end_food, end_time, total_hours FROM time_control where employee = %s and user_m2o_id = %s and date_register = %s', (employee[0], employee[2], date_register,))
 			employee_schedule = cr.fetchall()
+			#Verifica si el empleado ya tiene un registro en la fecha actual
 			if employee_schedule:
 				employee_schedule = employee_schedule[0]
+				#Verifica si el empleado tiene horario de comida
 				if employee[1]:
 					if not employee_schedule[2]:
 						#"Inicio de comida"
@@ -90,6 +109,7 @@ class time_control(osv.osv):
 						cr.execute('UPDATE time_control SET end_time = %s, total_hours = %s where employee = %s and user_m2o_id = %s and date_register = %s', (datetime_register, total_hour, employee[0], employee[2], date_register,))
 						return"Registro guardado"
 			else:
+				#Crea un nuevo registro si el empleado no tiene un registro de la fecha actual
 				user = employee[2]
 				cr.execute('INSERT INTO time_control (employee, start_time, total_hours, date_register, user_m2o_id, location_m2o_id) VALUES (%s, %s, %s, %s, %s, %s)', (employee[0], datetime_register, datetime(9999, 01, 01, 00, 00, 00), date_register, user, employee[3]))
 				return"Registro guardado"

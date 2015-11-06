@@ -1,16 +1,23 @@
+# coding: utf-8
+
+#Importando las clases necesarias para construir un modelo OpenERP
+
+#Librería para generar md5 del numero de empleado
 import hashlib
 
 from openerp.osv import osv,fields
 from datetime import date
-
-
+    
+#Modelo 
 class schedule_users(osv.osv):
 
+    #Diccionario de las formas de pago 
     PAYROLL = [
       ('Q', 'Fortnight'),
       ('S', 'Weekly'),
     ]
 
+    #Genera el md5 con el numero de empleado y la forma de pago
     def md5_number(self, cr, uid, ids, fields, arg, context):
       m = hashlib.md5()
       em = {}
@@ -22,6 +29,7 @@ class schedule_users(osv.osv):
           em[line.id] = m
       return em
 
+    #Convierte el nombre a mayúsculas cuando existe un cambio en la caja de texto
     def onchange_name( self, cr, uid, ids, name ) :
         if name :
           return {
@@ -31,6 +39,7 @@ class schedule_users(osv.osv):
           }
         return { 'value' : {} }
 
+    #Convierte el nombre a mayúsculas cuando existe un cambio en la caja de texto
     def onchange_first_name( self, cr, uid, ids, first_name ) :
         if first_name :
           return {
@@ -40,6 +49,7 @@ class schedule_users(osv.osv):
           }
         return { 'value' : {} }
 
+    #Convierte el nombre a mayúsculas cuando existe un cambio en la caja de texto
     def onchange_second_name( self, cr, uid, ids, second_name ) :
         if second_name :
           return {
@@ -49,6 +59,7 @@ class schedule_users(osv.osv):
           }
         return { 'value' : {} }
 
+    #Convierte el nombre a mayúsculas cuando existe un cambio en la caja de texto
     def onchange_employee_number( self, cr, uid, ids, employee_number ) :
         if employee_number:
           if len(employee_number) < 2:
@@ -66,7 +77,9 @@ class schedule_users(osv.osv):
             }
         return { 'value' : {} }
 
+    #Nombre del Modelo
     _name = 'schedule_users'
+
     _columns = {
         'name': fields.char("Name", size=100, required=True),
         'first_name': fields.char("First name", size=100, required=True),
@@ -83,6 +96,7 @@ class schedule_users(osv.osv):
         
     }
 
+    #Restricciones de BD (constraints)
     _sql_constraints = [
       ('md5_unique', 'unique(md5)', 'MD5 already exists!')
     ]

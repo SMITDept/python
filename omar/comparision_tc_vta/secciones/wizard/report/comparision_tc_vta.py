@@ -1,23 +1,29 @@
 # coding: utf-8
 
 #Importando las clases necesarias para construir un modelo OpenERP
+
+#Librerias para generar archivo excel
 import tempfile
 import xlwt
+
+#Libreria para leer el archivos en formato csv
+import csv
 import base64
 import StringIO
-import time
-import csv
 
+import time
 from datetime import datetime, timedelta, date
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 
+#Devuelve la fecha en formato día/mes/año
 def get_day(date):
 	split = date.split("/")
 	day = str(int(split[0])+1)
 	date = day + "/" + split[1] + "/" + split[2]
 	return date
 
+#Resta un día si la hora de fecha es mayor a "00:00:01"  y menor a "05:59:59"
 def date_time(date):
 	db_date = date.split(" ")
 	hours = db_date[1].split(".")
@@ -31,6 +37,7 @@ def date_time(date):
 #Modelo 
 class comparision_tc_vta(osv.TransientModel):
 
+	#Función que retorna el periodo actual.
 	def _obtener_periodo( self, cr, uid, ids, context = None ):
 	    """
 	    Metodo para obtener por defecto el id del periodo anterior dependiendo de la fecha actual
@@ -68,10 +75,10 @@ class comparision_tc_vta(osv.TransientModel):
 	      per_id_ultimo = (( registro[0] ) if ( len( registro ) > 0 ) else ( None ))
 	      return per_id_ultimo
 
-	#Descripcion 
+	#Descripcion del modulo
 	_description = 'Comparision TC with VTA'
 
-	#Sucursal
+	#Diccionario de sucursales
 	BRANCH = [
       ('1', 'Branch 1 and 2'),
       ('3', 'Branch 3'),
@@ -105,19 +112,22 @@ class comparision_tc_vta(osv.TransientModel):
   	}
 
 
-
+  	#Funciones que genera el reporte en formato excel.
 	def print_report(self, cr, uid, ids,context = { } ):
 		"""
 		Metodo para imprimir el reporte
-		""" 
+		"""
+		#Se obtiene el periodo seleccionado del  wizard.
 		period = self.pool.get( self._name ).browse( cr, uid, ids[0] ).period
 
+		#Creación de variables para generar archivo excel.
 		wb = xlwt.Workbook(encoding="UTF-8")
 		aux = xlwt.Workbook(encoding="UTF-8")
 
 		ws = wb.add_sheet('Concialiacion')
 		ax = aux.add_sheet('Auxiliar')
 
+		#Creación de variables con los estilos para el documento.
 		style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;'
                               'font: colour white, bold True;')
 		red = xlwt.easyxf('pattern: pattern solid, fore_colour red;')
@@ -125,6 +135,7 @@ class comparision_tc_vta(osv.TransientModel):
 		style0 = xlwt.easyxf('font: name Arial, color-index red, bold on', num_format_str='#,##0.00')
 		xlwt.easyxf('font: name Arial')
 
+		#Nombre de las columnas para el archivo excel.
 		ws.write(0, 0, u"ID de Establecimiento", style)
 		ws.write(0, 1, u"Moneda", style)
 		ws.write(0, 2, u"Número de identificación de la Terminal", style)
@@ -148,12 +159,14 @@ class comparision_tc_vta(osv.TransientModel):
 		sucursal = ''
 		num_order = []
 
+		#Variable con el periodo seleccionado.
 		periodo=str(datos.period.id)
 		self.query = self.query + "AND aml.period_id = " + periodo
 
 		for line in self.browse(cr, uid, ids):
 			branch = line.branch
 
+		#SQL que retorna todas la ventas con tarjeta de crédito.
 		if branch == '1':
 			sucursal = "SM1 - SM2"
 			cr.execute(
@@ -191,11 +204,15 @@ class comparision_tc_vta(osv.TransientModel):
 		
 		if db_results:
 			for wiz in self.browse(cr, uid, ids, context=context):
-				# Decode the file data
+
+				#Decodificación del archivo csv.
 				data = base64.b64decode(wiz.file_csv)
-		        # Read the file
+
+		        #Lectura del archivo csv.
 		        csv_results = csv.reader(StringIO.StringIO(data))
 		        fila = 1
+
+		        #Ciclo que recorre la información del archivo csv.
 		        for csv_result in csv_results:
 		        	next_csv_date = get_day(csv_result[9])
 		        	bandera = False
@@ -212,15 +229,12 @@ class comparision_tc_vta(osv.TransientModel):
 			        		year = split[0]
 			        		db_date1 = split[2] + "/" + split[1] + "/" + year
 		        			if csv_result[9] == db_date1 or next_csv_date == db_date1:
-		        				#print csv_result[9], csv_result[4]
 		        				price = csv_result[7].find(".")
 		        				if price < 0:
 		        					price = csv_result[7] + ".0"
 		        				else:
 		        					price = csv_result[7]
-		        				#print price, "==", db_result[1]
 		        				if str(db_result[1]) == price:
-		        					#print repor[2]
 		        					bandera = True
 					    			if bandera2 != True:
 					    				bandera2 = True
@@ -243,11 +257,14 @@ class comparision_tc_vta(osv.TransientModel):
 						else:
 							ws.write(fila, colum, csv_result[colum], red)
 		        	fila = fila+1
+
+		#Información del archivo csv.
 		date = datetime.today()+timedelta(hours=-5)
 		date = date.strftime("%d-%m-%Y %H:%M")
 		aux_na = "Sobrantes Auxiliar " + sucursal + " - " + date +".xls"
-		compa_na = "Comparacion " + sucursal + " - " + date +".xls"
+		compa_na = "Conciliacion " + sucursal + " - " + date +".xls"
 
+		#Ciclo que genera el auxiliar de de las ventas de tarjeta de crédito.
 		fila = 0
 		for db_result in db_results:
 			b =False
@@ -266,14 +283,13 @@ class comparision_tc_vta(osv.TransientModel):
 				ax.write(fila, 2, db_result[2])
 				fila = fila +1
 
+		#Se agrega el nombre de los archivos csv.
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			aux.save(fcsv.name)
 		with open(fcsv.name, 'r') as fname:
 			data1 = fname.read()
-
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			wb.save(fcsv.name)
-
 		with open(fcsv.name, 'r') as fname:
 			data2 = fname.read()
 
@@ -285,6 +301,7 @@ class comparision_tc_vta(osv.TransientModel):
             'compa_xls': base64.encodestring(data2),
         }, context=context)
 
+		#Se cambia el estado de choose a new para abrir wizard de descarga de archivos.
 		this = self.browse(cr, uid, ids)[0]
 		return {
             'type': 'ir.actions.act_window',
@@ -295,4 +312,5 @@ class comparision_tc_vta(osv.TransientModel):
             'res_model': 'comparision.report',
             'target': 'new',
         }
+        
 comparision_tc_vta()

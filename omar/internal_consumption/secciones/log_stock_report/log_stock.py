@@ -1,16 +1,18 @@
 # coding: utf-8
 
 #Importando las clases necesarias para construir un modelo OpenERP
+
+#Librerias para generar archivo excel
 import xlwt
 import base64
 import tempfile
-import time
 
+import time
 from pytz import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
 from osv import fields, osv
-from openerp.tools.translate import _
+
 #Modelo 
 class log_stock_internal_consumption(osv.TransientModel) :	
 
@@ -44,15 +46,18 @@ class log_stock_internal_consumption(osv.TransientModel) :
 	#Reestricciones desde BD
 	_sql_constraints = [ ]
 
+	#Funciones que genera el reporte en formato excel.
 	def print_report(self, cr, uid, ids,context = { } ) :
 		"""
 		Metodo para imprimir el reporte
 		""" 
+		#Se obtiene la información ingresada por el usuario
 		start_date = self.pool.get( self._name ).browse( cr, uid, ids[0] ).start_date
 		end_date = self.pool.get( self._name ).browse( cr, uid, ids[0] ).end_date
 		department = self.pool.get( self._name ).browse( cr, uid, ids[0] ).department
 		product = self.pool.get( self._name ).browse( cr, uid, ids[0] ).product
 
+		#Se realiza la consulta a la base de datos dependiendo de la información proporcionada
 		if department and product:
 			cr.execute(
 			"""
@@ -99,6 +104,7 @@ class log_stock_internal_consumption(osv.TransientModel) :
 
 		db_results = cr.fetchall()
 
+		#Creación de variables con los estilos para el documento.
 		wb = xlwt.Workbook()
 		style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;'
                               'font: colour white, bold True; align: vert centre;')
@@ -106,6 +112,7 @@ class log_stock_internal_consumption(osv.TransientModel) :
 		xlwt.easyxf('font: name Arial')
 		ws = wb.add_sheet('A Test Sheet')
 
+		#Nombre de las columnas para el archivo excel.
 		if db_results:
 			ws.write(0, 0, "Departamento", style)
 			ws.write(0, 1, "Producto", style)
@@ -114,6 +121,7 @@ class log_stock_internal_consumption(osv.TransientModel) :
 			ws.write(0, 4, "Usuario", style)
 
 		j=1
+		#Se recorren los resultados de la consulta a la base de datos y se escriben en el archivo de excel
 		for result in db_results:
 			for colum in range(len(result)):
 				if colum == 0:
@@ -159,6 +167,7 @@ class log_stock_internal_consumption(osv.TransientModel) :
 
 			j = j+1
 
+		#Nombre del archivo de excel
 		date = datetime.now(timezone('America/Mexico_City'))
 		date = date.strftime("%d-%m-%Y %H:%M")
 		repo_name = "Cambios en stock " + " " + date +".xls"
@@ -168,12 +177,14 @@ class log_stock_internal_consumption(osv.TransientModel) :
 		with open(fcsv.name, 'r') as fname:
 			data1 = fname.read()
 
+		#Se crea el archivo de excel
 		self.write(cr, uid, ids, {
             'state': 'get',
             'report_name': repo_name,
             'report_xls': base64.encodestring(data1),
         }, context=context)
 		
+		#Se muestra el wizard para la descarga del archivo de excel
 		this = self.browse(cr, uid, ids)[0]
 		return {
             'type': 'ir.actions.act_window',

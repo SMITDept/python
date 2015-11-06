@@ -1,16 +1,22 @@
+# coding: utf-8
 
+#Importando las clases necesarias para construir un modelo OpenERP
 from openerp.osv import osv,fields
 from datetime import datetime, timedelta
 from pytz import timezone
 
+#Modelo
 class purchases_internal_consumption(osv.osv):
 
+    #Nombre del Modelo
     _name = 'purchases.internal.consumption'
 
+    #Obtiene el usuario logueado
     def current_user(self, cr, uid, ids,context = None):
         current_user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
         return current_user.id
 
+    #Actualiza la cantidad de producto
     def create(self, cr, uid, values, context=None):
         id_product = values.get('product_id')
         pieces = values.get('pieces')
@@ -38,6 +44,7 @@ class purchases_internal_consumption(osv.osv):
         'user_id': fields.many2one('res.users',"User", required=True, help="User who registered the measurement"),
     }
 
+    #Valores por defecto de los elementos del arreglo [_columns]
     _defaults = {
         'date_register': datetime.now(timezone( 'America/Mexico_City' )) + timedelta(hours=5),
         'user_id': current_user,

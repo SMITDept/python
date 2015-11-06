@@ -1,11 +1,13 @@
 # coding: utf-8
 
+#Importando las clases necesarias para construir un modelo OpenERP
 from datetime import datetime, timedelta
 from pytz import timezone
 from osv import fields, osv
 from openerp.tools.translate import _
 from openerp.exceptions import Warning
 
+#Crea un nuevo registro cuando se actualiza un producto
 def create_log(self, cr, uid, ids, department, product, stock, context=None):
 	current_user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
 	cr.execute(
@@ -14,6 +16,7 @@ def create_log(self, cr, uid, ids, department, product, stock, context=None):
 		(department_id, product_id, quantity, date_register, user_id) 
 		VALUES (%s, %s, %s, %s, %s)
 		""",(department, product, stock, datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5), current_user.id))
+
 #Modelo 
 class update_stock_internal_consumption(osv.TransientModel):
 
@@ -37,6 +40,7 @@ class update_stock_internal_consumption(osv.TransientModel):
     	'state': 'dep',
   	}
 
+  	#Retorna al wizard de selección de producto
   	def back_menu(self, cr, uid, ids,context = { }):
 		department = self.pool.get( self._name ).browse( cr, uid, ids[0] ).department
 		self.write(cr, uid, ids, {
@@ -56,12 +60,15 @@ class update_stock_internal_consumption(osv.TransientModel):
             'target': 'new',
             }
 
-
+    #Actualiza la cantidad de producto 
   	def save_product(self, cr, uid, ids,context = { }):
+
+  		#Se obtiene la información ingresada por el usuario
 		department = self.pool.get( self._name ).browse( cr, uid, ids[0] ).department
 		product = self.pool.get( self._name ).browse( cr, uid, ids[0] ).product
 		quantity = self.pool.get( self._name ).browse( cr, uid, ids[0] ).quantity
 
+		#Se obtiene la cantidad de producto
 		cr.execute(
 	        """
 	          SELECT quantity, product_id, department_id
@@ -71,6 +78,7 @@ class update_stock_internal_consumption(osv.TransientModel):
 	        """,(product.id, department.id,))
 		products = cr.fetchone()
 		if product:
+			#Actualiza el stock en el departamento si la cantidad es menor a la de la base de datos
 			if products[0] >= quantity:
 				cr.execute(
 					"""
@@ -85,6 +93,7 @@ class update_stock_internal_consumption(osv.TransientModel):
 		else:
 			raise Warning(_('The product does not exist'))
 
+		#Retorna al menú de selección de departamento
 		self.write(cr, uid, ids, {
     		'product': 0,
     		'quantity': 0,
@@ -101,9 +110,11 @@ class update_stock_internal_consumption(osv.TransientModel):
             'target': 'new',
          }
 
-
+    #Obtiene la cantidad de producto de un departamento
   	def get_product(self, cr, uid, ids, product):
   		context = ""
+
+  		#Se obtiene la información ingresada por el usuario
   		department = self.pool.get( self._name ).browse( cr, uid, ids[0] ).department
   		product = self.pool.get( self._name ).browse( cr, uid, ids[0] ).product
 
@@ -143,10 +154,13 @@ class update_stock_internal_consumption(osv.TransientModel):
 		else:
 				raise Warning(_('Select the product'))
 
+  	#Metodo obtener el departamento
   	def get_department(self, cr, uid, ids,context = { }):
 		"""
 		Metodo obtener el departamento
 		"""
+
+		#Se obtiene la información ingresada por el usuario
 		department = self.pool.get( self._name ).browse( cr, uid, ids[0] ).department
 
 		self.write(cr, uid, ids, {

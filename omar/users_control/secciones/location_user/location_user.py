@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 #OpenERP imports
 from openerp.osv import osv,fields

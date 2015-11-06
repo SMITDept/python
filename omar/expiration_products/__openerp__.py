@@ -2,7 +2,7 @@
 
 {
   'name': 'SM Expiration Products',
-  'version': '0.1.0',
+  'version': '0.2.0',
   'category': 'SUPERMAS',
   'author': 'Omar Pluma Pluma',
   'maintainer': 'SUPERMAS',

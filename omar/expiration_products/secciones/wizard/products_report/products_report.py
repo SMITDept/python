@@ -1,15 +1,18 @@
 # coding: utf-8
 
 #Importando las clases necesarias para construir un modelo OpenERP
+
+#Librerias para generar archivo excel
 import xlwt
-import time
 import base64
 import tempfile
 
+import time
 from pytz import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from osv import fields, osv
+
 #Modelo 
 class products_report(osv.TransientModel) :	
 
@@ -40,13 +43,16 @@ class products_report(osv.TransientModel) :
 	#Reestricciones desde BD
 	_sql_constraints = [ ]
 
+	#Genera el archivo excel
 	def print_report(self, cr, uid, ids,context = { } ) :
 		"""
 		Metodo para imprimir el reporte
 		"""
+		#Obtiene la sucursal ingresada por el usuario
 		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).branch
 		choose_branch = "Todas las sucursales"
-		print branch
+
+		#Obtiene los productos en base a la sucursal
 		if branch:
 			cr.execute(
 			"""
@@ -78,6 +84,7 @@ class products_report(osv.TransientModel) :
 
 			data_db = cr.fetchall()
 
+		#Estilos para el archivo de excel
 		wb = xlwt.Workbook()
 		style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;'
                               'font: colour white, bold True; align: vert centre;')
@@ -86,7 +93,7 @@ class products_report(osv.TransientModel) :
 		ws = wb.add_sheet('A Test Sheet')
 
 		if data_db:
-
+			#Se ingresa el nombre de las columnas del archivo de excel
 			ws.write(0, 0, "Sucursal", style)
 			ws.write(0, 1, "Ean13", style)
 			ws.write(0, 2, "Nombre", style)
@@ -98,6 +105,8 @@ class products_report(osv.TransientModel) :
 			ws.write(0, 8, "Total en la BD", style)
 			ws.write(0, 9, "Usuario", style)
 			j=1
+
+			#Recorre los productos encontrados y escribe la información en el archivo de excel
 			for data in data_db:
 				for colum in range(len(data)):
 					if colum == 0:
@@ -127,6 +136,7 @@ class products_report(osv.TransientModel) :
 						ws.write(j, colum, data[colum])
 				j = j+1
 
+		#Nombre del archivo excel
 		date = datetime.now(timezone( 'America/Mexico_City' )).strftime("%d-%m-%Y %H:%M")
 		repo_name = "Reporte de caducidades " + choose_branch + " " + date +".xls"
 
@@ -135,12 +145,14 @@ class products_report(osv.TransientModel) :
 		with open(fcsv.name, 'r') as fname:
 			data1 = fname.read()
 
+		#Genera el archivo de excel
 		self.write(cr, uid, ids, {
             'state': 'get',
             'report_name': repo_name,
             'report_xls': base64.encodestring(data1),
         }, context=context)
 		
+		#Muestra el wizard del descarga del archivo
 		this = self.browse(cr, uid, ids)[0]
 		return {
             'type': 'ir.actions.act_window',

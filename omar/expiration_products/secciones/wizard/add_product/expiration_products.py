@@ -1,10 +1,15 @@
 # coding: utf-8
+
+#Importando las clases necesarias para construir un modelo OpenERP
 from pytz import timezone
 from datetime import datetime, timedelta
 from osv import fields, osv
+
+#Librerias para mostrar mensajes en pantalla
 from openerp.tools.translate import _
 from openerp.exceptions import Warning
 
+#Función que recibe el id de un producto y retorna el numero total de ese producto
 def get_stock(self, cr, uid, ids, product_id):
 	cr.execute(
 		"""
@@ -40,7 +45,8 @@ def get_stock(self, cr, uid, ids, product_id):
 		""",(product_id, product_id,))
 	return cr.fetchone()
 
-
+#Función que recibe numero de sucursal y código ean13 
+#de un producto y retorna el producto de esa sucursal 
 def get_db_data(self, cr, uid, ids, branch, ean13):
 	cr.execute(
         """
@@ -56,6 +62,7 @@ def get_db_data(self, cr, uid, ids, branch, ean13):
 		db_expired = db_expired[0]
 	return db_expired
 
+#Actualiza el numero de productos mayores a 12 meses
 def update_data(self, cr, uid, ids, over12, id_product):
 	cr.execute(
 		"""
@@ -63,6 +70,7 @@ def update_data(self, cr, uid, ids, over12, id_product):
 		WHERE id = %s
 		""",(over12, id_product))
 
+#Crea un log de los registros en el sistema
 def create_log(self, cr, uid, ids, branch, ean13, name, mon0_4, 
 	mon5_8, mon9_12, over12, stock_products, expired, current_user):
 	cr.execute(
@@ -105,6 +113,7 @@ class expiration_product(osv.TransientModel):
     	'state': 'branch',
   	}
 
+  	#Retorna al menú de selección de un producto
   	def back_menu(self, cr, uid, ids,context = { }):
 		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).branch
 		self.write(cr, uid, ids, {
@@ -127,6 +136,7 @@ class expiration_product(osv.TransientModel):
             'target': 'new',
             }
 
+    #Obtiene un producto en base al código ean13
   	def get_product(self, cr, uid, ids, ean13):
   		context = ""
   		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).branch
@@ -143,6 +153,7 @@ class expiration_product(osv.TransientModel):
 	        """,(ean13,))
 			product = cr.fetchall()
 
+			#Crea un nuevo registro de ese producto
 			cr.execute(
 			"""
 			DELETE FROM product_list_expired
@@ -150,6 +161,7 @@ class expiration_product(osv.TransientModel):
 			AND ean13 = %s
 			""",(branch.id, ean13,))
 
+			#Muestra el wizard de registro de cantidades de productos
 			if product:
 				product = product[0]
 				self.write(cr, uid, ids, {
@@ -175,7 +187,8 @@ class expiration_product(osv.TransientModel):
 		         }
 			else:
 				raise Warning(_('El producto no existe'))
-				
+		
+		#Muestra el wizard de ingreso de ean13
 		else:
 			this = self.browse(cr, uid, ids)[0]
 			return {
@@ -188,10 +201,12 @@ class expiration_product(osv.TransientModel):
 	            'target': 'new',
 	         }
 
+	#Crea un registro de las cantidades en existencia del producto
   	def save_product(self, cr, uid, ids,context = { }):
 		"""
 		Metodo obtener la sucursal
 		"""
+		#Se obtiene la información del producto
 		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).branch
 		ean13 = self.pool.get( self._name ).browse( cr, uid, ids[0] ).code_ean13
 		name = self.pool.get( self._name ).browse( cr, uid, ids[0] ).product
@@ -201,6 +216,7 @@ class expiration_product(osv.TransientModel):
 		expired = self.pool.get( self._name ).browse( cr, uid, ids[0] ).expired
 		current_user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
 
+		#Verifica las cantidades del producto
 		cr.execute(
 	        """
 	          SELECT prod.id
@@ -220,10 +236,13 @@ class expiration_product(osv.TransientModel):
 		else:
 			raise Warning(_('No hay producto en existencia'))
 		
+		#Obtiene el numero de productos
 		db_expired = get_db_data(self, cr, uid, ids, branch.id, ean13)
 
+		#Verifica si existe información del producto en la base de datos
 		if db_expired:
 
+			#Actualiza la información del producto y crea un registro en el log
 			cr.execute(
 				"""
 				UPDATE product_list_expired SET month0_4 = %s,
@@ -242,6 +261,7 @@ class expiration_product(osv.TransientModel):
 
 			over12 = stock_products - (mon0_4 + mon5_8 + mon9_12 + expired)
 
+			#Crea el registro de un producto y crea un registro en el log
 			cr.execute(
 				"""
 				INSERT INTO product_list_expired 
@@ -252,6 +272,7 @@ class expiration_product(osv.TransientModel):
 			create_log(self, cr, uid, ids, branch.id, ean13, name, mon0_4, mon5_8,
 						mon9_12, over12, stock_products, expired, current_user.id)
 
+		#Muestra el wizard de ingreso de ean13
 		self.write(cr, uid, ids, {
             'state': 'ean13',
             'code_ean13': '',

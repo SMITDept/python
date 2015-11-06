@@ -1,16 +1,19 @@
 # coding: utf-8
 
 #Importando las clases necesarias para construir un modelo OpenERP
+
+#Librerias para generar archivo excel
 import xlwt
 import base64
 import tempfile
-import time
 
+import time
 from pytz import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
 from osv import fields, osv
 from openerp.tools.translate import _
+
 #Modelo 
 class log_expired_report(osv.TransientModel) :	
 
@@ -46,15 +49,18 @@ class log_expired_report(osv.TransientModel) :
 	#Reestricciones desde BD
 	_sql_constraints = [ ]
 
+	#Genera el reporte en formato de excel
 	def print_report(self, cr, uid, ids,context = { } ) :
 		"""
 		Metodo para imprimir el reporte
 		""" 
+		#Obtiene los datos ingresados para crear el reporte
 		start_date = self.pool.get( self._name ).browse( cr, uid, ids[0] ).start_date
 		end_date = self.pool.get( self._name ).browse( cr, uid, ids[0] ).end_date
 		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).location
 		product = self.pool.get( self._name ).browse( cr, uid, ids[0] ).product
 
+		#Obtiene la información del producto en base a los datos ingresados por el usuario
 		if branch and product:
 			cr.execute(
 			"""
@@ -105,6 +111,7 @@ class log_expired_report(osv.TransientModel) :
 
 		db_results = cr.fetchall()
 
+		#Se agrega formato par el archivo de excel
 		wb = xlwt.Workbook()
 		style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;'
                               'font: colour white, bold True; align: vert centre;')
@@ -113,6 +120,7 @@ class log_expired_report(osv.TransientModel) :
 		ws = wb.add_sheet('A Test Sheet')
 
 		if db_results:
+			#Se agrega cabeceras para el archivo de excel
 			ws.write(0, 0, "Sucursal", style)
 			ws.write(0, 1, "Ean13", style)
 			ws.write(0, 2, "Nombre", style)
@@ -126,6 +134,7 @@ class log_expired_report(osv.TransientModel) :
 			ws.write(0, 10, "Usuario", style)
 
 		j=1
+		#Recorre los resultados del la base de datos y escribe el archivo de excel
 		for result in db_results:
 			for colum in range(len(result)):
 				if colum == 0:
@@ -162,6 +171,7 @@ class log_expired_report(osv.TransientModel) :
 
 			j = j+1
 
+		#Información para el nombre el archivo de excel
 		date = datetime.now(timezone( 'America/Mexico_City' )).strftime("%d-%m-%Y %H:%M")
 		repo_name = "Reporte de cambios " + " " + date +".xls"
 
@@ -170,12 +180,14 @@ class log_expired_report(osv.TransientModel) :
 		with open(fcsv.name, 'r') as fname:
 			data1 = fname.read()
 
+		#Genera el archivo de excel
 		self.write(cr, uid, ids, {
             'state': 'get',
             'report_name': repo_name,
             'report_xls': base64.encodestring(data1),
         }, context=context)
 		
+		#Muestra el wizard de descarga de los archivos
 		this = self.browse(cr, uid, ids)[0]
 		return {
             'type': 'ir.actions.act_window',

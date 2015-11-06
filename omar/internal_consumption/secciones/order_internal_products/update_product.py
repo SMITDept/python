@@ -1,11 +1,14 @@
 # coding: utf-8
 
+#Importando las clases necesarias para construir un modelo OpenERP
+
 from datetime import datetime, timedelta
 from pytz import timezone
 from osv import fields, osv
 from openerp.tools.translate import _
 from openerp.exceptions import Warning
 
+#Crea un registro en el log de los productos de las sucursales
 def create_log(self, cr, uid, department, product, stock, context=None):
 	current_user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
 	cr.execute(
@@ -24,12 +27,15 @@ class upadate_product_consumption(osv.osv):
 	#Nombre del Modelo
 	_name = 'update.product.internal.consumption'
 
+	#Obtiene el usuario actualmente logueado 
 	def current_user(self, cr, uid, ids, context = None):
 		current_user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
 		return current_user.id
 
+	#Función que realiza los movimientos de los productos al validar la orden 
 	def validate_order(self, cr, uid, ids, context=None):
 		current_user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+		#Verifica si el usuario esta registrado en el modulo de consumo interno
 		cr.execute(
 			"""
 	          SELECT user_id
@@ -39,10 +45,12 @@ class upadate_product_consumption(osv.osv):
 		user = cr.fetchone()
 
 		if user:
+			#Se obtiene la información ingresada por el usuario
 			id_order = self.pool.get( self._name ).browse( cr, uid, ids[0] ).id
 			department = self.pool.get( self._name ).browse( cr, uid, ids[0] ).department
 			bandera = True
 
+			#Se obtiene la orden
 			cr.execute(
 				"""
 		          SELECT product_id, quantity
@@ -52,6 +60,7 @@ class upadate_product_consumption(osv.osv):
 			products = cr.fetchall()
 
 			if products:
+				#Verifica que allá producto en existencia
 				for product in products:
 					cr.execute(
 					"""
@@ -66,6 +75,7 @@ class upadate_product_consumption(osv.osv):
 						raise Warning(_(answer))
 			if bandera and products:
 				for product in products:
+					#Obtiene la cantidad de productos
 					cr.execute(
 						"""
 				          SELECT product_id, quantity
@@ -76,6 +86,7 @@ class upadate_product_consumption(osv.osv):
 					stock_dep = cr.fetchone()
 					if stock_dep:
 						new_stock = product[1] + stock_dep[1]
+						#Actualiza la cantidad de productos
 						cr.execute(
 				            """
 				            UPDATE stock_departments_internal_consumption SET quantity = %s,
@@ -85,6 +96,7 @@ class upadate_product_consumption(osv.osv):
 				            """,(new_stock, datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5), product[0], department.id,))
 						create_log(self, cr, uid, department.id, product[0], new_stock)
 					else:
+						#Crea un registro sin no existiera en ese departamento
 						cr.execute(
 							"""
 							INSERT INTO stock_departments_internal_consumption 
@@ -93,6 +105,7 @@ class upadate_product_consumption(osv.osv):
 							""",(department.id, product[0], product[1], datetime.now(timezone('America/Mexico_City')) + timedelta(hours=5)))
 						create_log(self, cr, uid, department.id, product[0], product[1])
 
+					#Actualiza la cantidad de productos
 					cr.execute(
 					"""
 			          SELECT stock

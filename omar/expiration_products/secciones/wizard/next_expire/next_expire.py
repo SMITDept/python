@@ -1,17 +1,19 @@
 # coding: utf-8
 
 #Importando las clases necesarias para construir un modelo OpenERP
+
+#Librerias para generar archivo excel
 import xlwt
-import time
 import base64
 import tempfile
 
+import time
 from pytz import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
 from osv import fields, osv
-#Modelo
 
+#Resta un mes del registro de la base de datos
 def comparision_dates(date_register):
 	date = datetime.now(timezone( 'America/Mexico_City' )).strftime("%d-%m-%Y %H:%M")
 	date = date.split(" ")
@@ -25,7 +27,7 @@ def comparision_dates(date_register):
 	register = month1 - month2
 	return register
 
-
+#Modelo
 class next_expire_report(osv.TransientModel) :	
 
 	#Descripcion 
@@ -55,13 +57,17 @@ class next_expire_report(osv.TransientModel) :
 	#Reestricciones desde BD
 	_sql_constraints = [ ]
 
+	#Genera el archivo excel
 	def print_report(self, cr, uid, ids,context = { } ) :
 		"""
 		Metodo para imprimir el reporte
 		"""
+		#Obtiene la sucursal ingresada por el usuario
 		branch = self.pool.get( self._name ).browse( cr, uid, ids[0] ).branch
+		
 		choose_branch = "Todas las sucursales"
-		print branch
+
+		#Obtiene los productos en base a la sucursal
 		if branch:
 			cr.execute(
 			"""
@@ -93,6 +99,7 @@ class next_expire_report(osv.TransientModel) :
 
 			data_db = cr.fetchall()
 
+		#Estilos para el archivo de excel
 		wb = xlwt.Workbook()
 		style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;'
                               'font: colour white, bold True; align: vert centre;')
@@ -101,6 +108,7 @@ class next_expire_report(osv.TransientModel) :
 		ws = wb.add_sheet('A Test Sheet')
 
 		if data_db:
+			#Se ingresa el nombre de las columnas del archivo de excel
 			ws.write(0, 0, "Caduco", style)
 			ws.write(0, 1, "1 Mes", style)
 			ws.write(0, 2, "2 Meses", style)
@@ -123,6 +131,8 @@ class next_expire_report(osv.TransientModel) :
 			ws.write(0, 18, "Sucursal", style)
 			ws.write(0, 19, "Usuario", style)
 			j=1
+
+			#Recorre los productos encontrados y escribe la información en el archivo de excel
 			for data in data_db:
 				busy = []
 			 	mon1 = 1
@@ -210,25 +220,25 @@ class next_expire_report(osv.TransientModel) :
 							ban = True
 					if ban == False:
 						ws.write(j, x, 0)
-					
-				#ws.write(j, 0, expired)
 
 				j = j+1
 
+		#Nombre del archivo excel
 		date = datetime.now(timezone( 'America/Mexico_City' )).strftime("%d-%m-%Y %H:%M")
 		repo_name = u"Próximos a caducar " + choose_branch + " " + date +".xls"
-
 		with tempfile.NamedTemporaryFile(delete=False) as fcsv:
 			wb.save(fcsv.name)
 		with open(fcsv.name, 'r') as fname:
 			data1 = fname.read()
 
+		#Genera el archivo de excel
 		self.write(cr, uid, ids, {
             'state': 'get',
             'report_name': repo_name,
             'report_xls': base64.encodestring(data1),
         }, context=context)
 		
+		#Muestra el wizard del descarga del archivo
 		this = self.browse(cr, uid, ids)[0]
 		return {
             'type': 'ir.actions.act_window',

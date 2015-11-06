@@ -1,15 +1,18 @@
 # coding: utf-8
 
 #Importando las clases necesarias para construir un modelo OpenERP
+
+#Librerias para generar archivo excel
 import xlwt
-import time
 import base64
 import tempfile
 
+import time
 from pytz import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta, date
 from openerp.osv import fields, osv
+
 #Modelo 
 class schedule_report(osv.TransientModel) :	
 
@@ -37,7 +40,7 @@ class schedule_report(osv.TransientModel) :
 		'state': 'choose',
 		'rango_fechas': True,
 		'fecha_inicio': lambda *a: time.strftime('%Y-%m-01'),
-		'fecha_fin': ((datetime.now() + relativedelta(day=1, months=+1, days=-1)).date()).strftime('%Y-%m-%d'),
+		'fecha_fin': ((datetime.now(timezone( 'America/Mexico_City' )) + relativedelta(day=1, months=+1, days=-1)).date()).strftime('%Y-%m-%d'),
 	}
 
 	#Reestricciones desde código
@@ -46,14 +49,18 @@ class schedule_report(osv.TransientModel) :
 	#Reestricciones desde BD
 	_sql_constraints = [ ]
 
+	#Funciones que genera el reporte en formato excel.
 	def print_report(self, cr, uid, ids,context = { } ) :
 		"""
 		Metodo para imprimir el reporte
 		""" 
+
+		#Se obtienen los datos del  wizard.
 		inicio = self.pool.get( self._name ).browse( cr, uid, ids[0] ).fecha_inicio
 		fin = self.pool.get( self._name ).browse( cr, uid, ids[0] ).fecha_fin
 		sucursal = self.pool.get( self._name ).browse( cr, uid, ids[0] ).location
 		
+		#
 		if sucursal:
 			cr.execute(
 			"""
@@ -68,6 +75,7 @@ class schedule_report(osv.TransientModel) :
 		else:
 			sucursal_name = " "
 
+		#Obtiene los datos dependiendo de lo que el usuario ingresa
 		if sucursal:
 			cr.execute(
 			"""
@@ -85,6 +93,7 @@ class schedule_report(osv.TransientModel) :
 
 		report = cr.fetchall()
 
+		#Creación de variables con los estilos para el documento.
 		wb = xlwt.Workbook()
 		style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;'
                               'font: colour white, bold True; align: vert centre;')
@@ -93,7 +102,7 @@ class schedule_report(osv.TransientModel) :
 		ws = wb.add_sheet('A Test Sheet')
 
 		if report:
-
+			#Nombre de las columnas para el archivo excel.
 			ws.write(0, 0, "Empleado", style)
 			ws.write(0, 1, "Sucursal", style)
 			ws.write(0, 2, "Fecha", style)
@@ -104,6 +113,7 @@ class schedule_report(osv.TransientModel) :
 			ws.write(0, 7, "Total de tiempo", style)
 			ws.write(0, 8, "Tiempo extra", style)
 
+			#Ciclo que recorre la información obtenida de la base de datos y escribe el archivo de excel
 			for i in range(len(report)):
 				for j in range(len(report[i])):
 					if j == 0:
@@ -153,6 +163,8 @@ class schedule_report(osv.TransientModel) :
 			#raise Warning(_('Reporte generado.'))
 		#else:
 			#raise Warning(_('No se encontraron resultados.'))
+
+		#Nombre del archivo excel
 		date = datetime.now(timezone('America/Mexico_City')).strftime("%d-%m-%Y %H:%M")
 		repo_name = "Reporte de horario " + sucursal_name +" " + date +".xls"
 
@@ -161,12 +173,14 @@ class schedule_report(osv.TransientModel) :
 		with open(fcsv.name, 'r') as fname:
 			data1 = fname.read()
 
+		#Genera el archivo excel
 		self.write(cr, uid, ids, {
             'state': 'get',
             'report_name': repo_name,
             'report_xls': base64.encodestring(data1),
         }, context=context)
 		
+		#Muestra el wizard para descargar el archivo generado
 		this = self.browse(cr, uid, ids)[0]
 		return {
             'type': 'ir.actions.act_window',

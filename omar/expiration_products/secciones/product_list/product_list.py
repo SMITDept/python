@@ -1,10 +1,14 @@
+# coding: utf-8
+
+#Importando las clases necesarias para construir un modelo OpenERP
 
 from openerp.osv import osv,fields
 from datetime import datetime
 
-
+#Modelo 
 class product_list_expired(osv.osv):
 
+    #Nombre del Modelo
     _name = 'product.list.expired'
 
     _columns = {
@@ -27,8 +31,10 @@ class product_list_expired(osv.osv):
 
 product_list_expired()
 
+#Modelo 
 class product_list_expired_log(osv.osv):
 
+     #Nombre del Modelo
     _name = 'product.list.expired.log'
 
     _columns = {
