@@ -177,7 +177,10 @@ class wizard_fechas(osv.osv_memory):
           FROM product_template t
           INNER JOIN product_product p
           ON t.id = p.product_tmpl_id
-          WHERE ean13 =%s
+          WHERE p.active = true and
+          ean13 = %s
+          order by p.id desc
+          limit 1
         """,(codigo,)
         )
         resultado = cr.fetchone()
