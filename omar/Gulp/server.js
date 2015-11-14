@@ -1,3 +1,4 @@
+//Importación de los módulos requeridos
 var http = require("http");
 var url = require("url");
 var queryString = require( "querystring" );
@@ -7,6 +8,7 @@ var path = require("path");
 var fs = require("fs");
 var util = require("util");
 
+//Función que verifica si el usuario se encuentra logueado en la bd
 function login(data){
   var filebuffer = fs.readFileSync('orders_tpv.db');
   var db = new sqlite3.Database(filebuffer);
@@ -23,6 +25,7 @@ function login(data){
   db.close();
 }
 
+//Función que cambia los valores de logueo en la bd
 function logout(){
   var filebuffer = fs.readFileSync('orders_tpv.db');
   var db = new sqlite3.Database(filebuffer);
@@ -34,6 +37,7 @@ function logout(){
   db.close();
 }
 
+//Función que elimina las ordenes de venta y sus productos
 function delete_register(order){
   var filebuffer = fs.readFileSync('orders_tpv.db');
   var db = new sqlite3.Database(filebuffer);
@@ -47,6 +51,7 @@ function delete_register(order){
   db.close();
 }
 
+//Agrega el 0 si la fecha o mes tiene un dígito
 function format_date(data){
   if (data.length === 1){
     data = "0" + data;
@@ -54,6 +59,7 @@ function format_date(data){
   return data;
 }
 
+//Busca las ordenes de venta que tengan 7 días menores a la fecha actual
 function delete_old_orders(){
   var today = new Date();
   today.setDate(today.getDate()-7);
@@ -70,13 +76,14 @@ function delete_old_orders(){
       if (date[1] < month){
         delete_register(orders[i][0]);
       }
-      if (date[0] < day){
+      else if (date[0] < day && date[1] <= month){
         delete_register(orders[i][0]);
       }
   };
   db.close();
 }
 
+//Verifica si ya existe esa orden de venta en la bd
 function check_order(order){
   var number = order['name'];
   var num = ""; 
@@ -93,6 +100,7 @@ function check_order(order){
   return results;
 }
 
+//Selecciona los productos de una orden de venta
 function table_products (product){
   var filebuffer = fs.readFileSync('orders_tpv.db');
   var db = new sqlite3.Database(filebuffer);
@@ -103,6 +111,7 @@ function table_products (product){
   return dataset;
 }
 
+//Selecciona todas las ordenes de venta
 function table_orders (){
   var filebuffer = fs.readFileSync('orders_tpv.db');
   var db = new sqlite3.Database(filebuffer);
@@ -113,8 +122,8 @@ function table_orders (){
   return dataset;
 }
 
+//Función que crea la bd
 function create_db () {
-
   sqlstr = "CREATE TABLE orders (num_order char, total float, paid char, user char, total_paid float, change float, date date, hour char);";
   db.run(sqlstr);
   sqlstr = "CREATE TABLE products (name_product char, quantity float, price float, order_id char, FOREIGN KEY (order_id) REFERENCES orders(num_order));";
@@ -128,6 +137,7 @@ function create_db () {
   db.close();
 }
 
+//Elimina order del nombre de las ordenes de venta
 function get_products(data){
   var results = [];
   var result = {};
@@ -147,6 +157,7 @@ function get_products(data){
   return results;
 }
 
+//Guarda los productos de venta en la bd
 function insert_products(data){
   var number = data['name'];
   var num = ""; 
@@ -174,6 +185,7 @@ function insert_products(data){
   db.close();
 }
 
+//Guarda las ordenes de venta en la bd
 function insert_orders(data){
   var number = data['name'];
   var num = ""; 
@@ -200,7 +212,7 @@ function insert_orders(data){
   db.close();
 }
 
-
+//Función inicial para cargar la vista de login o index
 function onRequest(request, response) {
   var filebuffer = fs.readFileSync('orders_tpv.db');
   var db = new sqlite3.Database(filebuffer);
@@ -227,7 +239,7 @@ function onRequest(request, response) {
     }
 
     fs.readFile(filename, "binary", function(err, file) {
-      if(err) {        
+      if(err) {
         response.writeHead(500, {"Content-Type": "text/plain"});
         response.write(err + "\n");
         response.end();
@@ -242,26 +254,32 @@ function onRequest(request, response) {
   db.close();
 }
 
+
+//Creación del servidor y urls que atenderán las peticiones el usuario
 http.createServer(function(request, response) {
   
   var get_url = url.parse(request.url).pathname;
 
+//Autenticación del usuario
   if (get_url == '/login'){
     var theUrl = url.parse( request.url );
     var queryObj = queryString.parse( theUrl.query );
     login(queryObj);
   }
 
+//Fin de la sesión del usuario
   if (get_url == '/logout'){
     logout();
   }
 
+//Obtiene las ordenes de venta
   if (get_url == '/get_orders'){
     var orders = table_orders();
     var json = JSON.stringify(orders);
     response.end(json);
   }
 
+//Obtiene los productos de la orden de venta 
   if (get_url == '/get_products'){
     var theUrl = url.parse( request.url );
     var queryObj = queryString.parse( theUrl.query );
@@ -270,6 +288,7 @@ http.createServer(function(request, response) {
     response.end(json);
   }
 
+//Guarda las ordenes de venta
   if (get_url == '/pos'){
     var theUrl = url.parse( request.url );
     var queryObj = queryString.parse( theUrl.query );
@@ -282,6 +301,7 @@ http.createServer(function(request, response) {
     delete_old_orders();
   }
 
+//Iniciar con el témplate de index
   if (get_url == '/index.html'){
     url ="http://localhost:8080";
     response.writeHead(301, {
@@ -290,6 +310,7 @@ http.createServer(function(request, response) {
     response.end();
   }
 
+//Cargar los archivos estáticos
   if (get_url != '/get_orders' && get_url != '/pos' && get_url != '/get_products' && get_url != '/index.html'){
     onRequest(request, response);
   }

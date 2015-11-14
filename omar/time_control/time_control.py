@@ -63,13 +63,13 @@ class time_control(osv.osv):
 
 		#Obtiene el numero del empleado
 		employee_num = employee[0]
-		#Verifica si el numero es de una tarjeta de crédito o de la credencial del empleado
+
+		#Verifica si el numero es de una tarjeta de crédito o de la credencial de empleado
 		if employee_num[0] == "%":
 			num_card = employee_num.split("&")
 			num_card = num_card[0]
 			employee_num = num_card[2:17]
 
-		print "numero: ", employee_num
 		#Realiza una consulta para buscar al empleado
 		cr.execute('SELECT employee_number, lunch_time, id, sucursal FROM schedule_users where md5 = %s', (employee_num,))
 
