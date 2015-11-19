@@ -46,7 +46,7 @@ class merma_wizard_productos(osv.TransientModel):
       id_producto=datos.producto_m2o_id.id
       tienda=datos.almacen_m2o_id.id
       destino_id=datos.destino_mov_m2o_id.id
-      muestra=datos.destino_mov_m2o_id.complete_name
+      
       localizacion_id=datos.localizacion_m2o_id.id
       cantidad_mover=datos.cantidad_mover
       cantidad_prod=datos.cantidad_prod
@@ -56,6 +56,11 @@ class merma_wizard_productos(osv.TransientModel):
       empleado_autor=datos.empleado_autor
       name_move=producto
       autor_uid=uid
+      
+      nombre_destino=datos.destino_mov_m2o_id.name
+      clave_sep = nombre_destino.split()
+      nombre_destino = clave_sep[1].lower()
+      print nombre_destino
       print '++++"""""""""""""++++'
       print cantidad_prod
       print cantidad_mover
@@ -68,19 +73,15 @@ class merma_wizard_productos(osv.TransientModel):
       resul=cantidad_prod - cantidad_mover
 
       if resul >= 0:
-        print 'pso validacion resul >= 0 !!'
         #Valores a insertar
         valores = (
                     autor_uid, fecha_x, ide_wizard, clave, fecha_mov_stock, empleado_autor, name_move, cod_ean13, producto, cantidad_mover, 
-                    unidad_med, unidad_med_id, precio, autor_uid, localizacion_id, destino_id, id_producto, tienda
+                    unidad_med, unidad_med_id, precio, autor_uid, localizacion_id, destino_id, id_producto, tienda, nombre_destino
                   )
         print valores
-        cod_ean13='22'
-        print 'hago'
-        print cod_ean13
         this = self.browse(cr, uid, ids)[0]
         self.write(cr, uid, ids, {
-                'code_ean13':cod_ean13,
+                'cod_ean13':'',
                 'cod_ubicacion':'',
                 'state': 'producto',
                 
@@ -90,8 +91,8 @@ class merma_wizard_productos(osv.TransientModel):
           """
           INSERT INTO merma_seleccion
           (create_uid, create_date, ide_wizard, clave_ide, fecha_creacion, name_login, name_move, ean13, producto, cantidad, unidad_med,  
-          product_m2o_med_id, precio_prod, usuario_m2o_id, location_id, destino_id, producto_s_m2o_id, almacen_m2o_id )
-          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+          product_m2o_med_id, precio_prod, usuario_m2o_id, location_id, destino_id, producto_s_m2o_id, almacen_m2o_id, nombre_destino )
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
           """, valores )
         
         
@@ -147,7 +148,7 @@ class merma_wizard_productos(osv.TransientModel):
       id_locali=0
       #valida codigos no sean False
       if cod_ean13 :
-       cod_ean13 = cod_ean13
+        cod_ean13 = cod_ean13
       else:
         cod_ean13 = datos.cod_ean13
       if cod_ubicacion:
@@ -265,7 +266,7 @@ class merma_wizard_productos(osv.TransientModel):
                                   'medida_m2o_id' :producto[5],
                                   'cantidad_prod' : cantidad_en_ubicacion,
                                   'cantidad_mover' : '',
-                                  'code_ean13': cod_ean13,
+                                  'cod_ean13': cod_ean13,
                                   'cod_ubicacion': cod_ubicacion,
                                   'localizacion_m2o_id': id_locali,
                                   'almacen_m2o_id': tienda,
@@ -630,7 +631,6 @@ class merma_wizard_productos(osv.TransientModel):
     * Argumentos OpenERP: [cr, tabla,nombre_campo]
     :return dict
     """ 
-    print device
     #Consultando cuál sería el nuevo numero
     cr.execute( """
                SELECT ( MAX( num_product ) + 1 ) AS next_number
@@ -658,7 +658,7 @@ class merma_wizard_productos(osv.TransientModel):
     #Creando la clave siguiente para este registro
     almacen=vals['almacen_m2o_id']
     destino=vals['destino_mov_m2o_id']
-    vals['cont'] = '1'
+    # vals['cont'] = '1'
     print'++++++++++++++++'
     print almacen
     print destino
@@ -719,7 +719,7 @@ class merma_wizard_productos(osv.TransientModel):
     
   # ==========================  Campos OpenERP Básicos (integer, char, text, float, etc...)  ======================== #
    'cont':fields.char("Contador", size=10, required=False),
-   'clave_ide' : fields.char( 'Clave' ),
+   'clave_ide' : fields.char( 'Clave de Lista' ),
    'cod_ean13':fields.char("Código Producto", size=13, required=False),
    'cod_ubicacion':fields.char("Código Ubicación", size=13, required=False),
    'muestra_destino':fields.char("Destino", required=False),

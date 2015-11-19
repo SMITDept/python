@@ -15,7 +15,11 @@
 			<field name="type">form</field>
 			<field name="arch" type="xml">
 				<form string="Registro de Producto" version="7.0">
-					<field invisible="1" name="state"/>
+					<h1>
+							<field name="state" widget="statusbar"/>
+							<field name="clave_ide" class="oe_inline" readonly="1" nolabel="1"/>
+					</h1>
+					<!--<field invisible="1" name="state"/>-->
 					
 					<div states="tienda">
 						<group states="tienda" string="Seleccionar Tienda y Ubicación Destino" colspan='4' col='4'>
@@ -37,7 +41,7 @@
 					
 					<div states="guardar">
 		        <group  states="guardar" string="Información del Producto" colspan='4' col='4'>
-							<field name="clave_ide" readonly="1" colspan='4'/>
+							<!--<field name="clave_ide" readonly="1" colspan='4'/>-->
 							<field name="imagen" widget="image" nolabel="1" colspan='1'/>
 							<field name="producto" nolabel="1" colspan='3'/>
 							<field name="precio" readonly="1" colspan='4'/>

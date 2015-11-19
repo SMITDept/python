@@ -27,7 +27,7 @@
     
     #Archivo principal de menús
     'menus.xml',
-    'secciones/merma_historico/merma_historico_view.xml',
+    # 'secciones/merma_historico/merma_historico_view.xml',
     'secciones/merma_seleccion/merma_seleccion.xml',
     'secciones/wizard_productos/merma_wizard_productos.xml',
     'secciones/merma/merma.xml',

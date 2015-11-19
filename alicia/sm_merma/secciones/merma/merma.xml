@@ -13,55 +13,57 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 				<tree string="Merma">
+					<field name="clave_numer"/>
 					<field name="fecha_mov"/>
 					<field name="almacen_m2o_id" />
 					<field name="loc_final_dic"/>
-					<field name="empleado_autor"/>
+					<field name="n_usuario"/>
 				</tree>
 			</field>
 		</record>
 	
-		<!-- Form View Records -->	
-	
+		<!-- Form View Records -->
 		<record model="ir.ui.view" id="view_merma_form">
 			<field name="name">merma.form</field>
 			<field name="model">merma</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="Merma" version="7.0">
+				<form string="Control de Desechos" version="7.0">
 					<header>
-						<!--<button name="action_confirm" states="draft" string="Confirm Inventory" type="object" class="oe_highlight" />-->
-						<button name="accion_confirmar" string="Confirm Inventory" type="object" class="oe_highlight" />
-						<!--<button name="action_done" states="confirm" string="Validate Inventory" type="object" class="oe_highlight" />-->
-						<button name="action_done" string="Validate Inventory" type="object" class="oe_highlight" />
-						<!--<button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object"/>-->
-						<button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object"/>
-						<!--<button name="action_cancel_inventory" states="draft,confirm,done" string="Cancel Inventory" type="object"/>-->
-						<button name="action_cancel_inventory"  string="Cancel Inventory" type="object"/>
+						<!--groups="stock.group_stock_user"-->
+						<!--groups="stock.group_stock_manager"-->
+						<button name="accion_confirmar" states="draft" string="Confirmar Movimiento" type="object" class="oe_highlight" />
+						<button name="accion_realizar" states="confirm" string="Validar Movimiento" type="object" class="oe_highlight" />
+						<button name="accion_cancelar_borrador" states="cancel" string="Cancelar Borrador" type="object"/>
+						<button name="accion_cancelar_movimiento" states="draft,confirm,done"  string="Cancelar Movimiento" type="object"/>
 						<field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+						
           </header>
-					<group col="4" colspan="2">
-						<!--<field name="clave"/>-->
-						<!--<field name="ubicaciones_subquery"/>-->
-            <field name="fecha_mov"/>
-						<field name="empleado_autor"/>
-						<!--<field name="tiendas_dic"/>-->
-						<field name="almacen_m2o_id" />
+					<group string="Control de Desechos" col="4" colspan="2">
+						<field name="clave_numer" readonly="1" colspan="2"/>
+						<field name="n_usuario" readonly="1" colspan="2"/>
+            <field name="fecha_mov" colspan="2" attrs="{ 'readonly' : [ ( 'state', '=', 'confirm' ) ]}"/>
+						<field name="consultado" colspan="2" invisible="1"/>
+						<field name="almacen_m2o_id" attrs="{ 'readonly' : [ ( 'consultado', '=', True ) ]}"/>
 						<label string=" " colspan="2"/>
-            <!--<field name="location_id" />   on_change="onchange_filtro_almacen( almacen_m2o_id, ubicaciones_subquery )" -->
-						<field name="loc_final_dic"/>
+						<field name="loc_final_dic" attrs="{ 'readonly' : [ ( 'consultado', '=', True) ]}"/>
 					</group>
-					<group string="Buscar Productos" col="4" colspan="4">
+					<group string="Buscar Productos" col="4" colspan="4" attrs="{ 'invisible' : [ ( 'state', '=', 'confirm' ) ]}">
 					<button name="obtenerProductos"
 											string="Obtener Productos"
 											type="object"
 											class="oe_highlight"/>
 					</group>
-					<group string="Seleccionar Productos" col="4" colspan="4">
-					<!--<field name="selec_merma_o2m_ids" nolabel="1"/>-->
-					<field name="selecc_merma_m2m" nolabel="1"/>
+					<group string="Lista de Productos" col="4" colspan="4">
+					<field name="selecc_merma_m2m" nolabel="1"
+								 attrs="{ 'readonly' : [ ( 'state', '=', 'confirm' ) ]}"/>
 					</group>	
-         
+         <group string="Imprimir Reporte" col="4" colspan="4">
+						<button name="imprimir_reporte_banco"
+										string="Imprimir"
+										type="object"
+										icon="gtk-print" colspan="4"/>
+					</group>
 				</form>
 			</field>
 		</record>
@@ -73,8 +75,11 @@
 			<field name="model">merma</field>
 			<field name="type">search</field>
 			<field name="arch" type="xml">					
-				<search string="Merma">
-          <field name="tiendas_dic"/>
+				<search string="Control de Desechos">
+					<field name="fecha_mov"/>
+					<field name="n_usuario"/>
+					<field name="almacen_m2o_id" />
+					<field name="loc_final_dic"/>
         <!--<field name="clave"/>-->
 				</search>
 			</field>
@@ -90,7 +95,7 @@
 		
 		<!-- Menu Items -->
 		
-		<menuitem name="Control de Merma"
+		<menuitem name="Control de Desechos"
 					parent="sm_merma.seccion_control"
 					id="lista_merma"
 					action="action_merma"/>

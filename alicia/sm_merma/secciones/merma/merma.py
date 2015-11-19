@@ -22,13 +22,6 @@ class merma( osv.osv ) :
     ('caducado', 'Caducado'),
     ('desperdicio', 'Desperdicio'),
   ]
-  
-  TIENDA = [
-    ('sm1', 'SM1 Merma'),
-    ('sm2', 'SM2 Merma'),
-    ('sm3', 'SM3 Merma'),
-    ('smx', 'Todas'),
-  ]
   #---------------------------------------------------------------------------------------------------------------------------------------------------  
   def accion_confirmar(self, cr, uid, ids, context=None):
     """
@@ -38,9 +31,7 @@ class merma( osv.osv ) :
     if context is None:
         context = {}
     id_merma = ids[0]
-    self.write(cr, uid, ids, {
-            'state': 'confirm'
-        }, context=context)
+    self.write(cr, uid, ids, { 'state': 'confirm'}, context=context)
 
     # for inv in self.browse(cr, uid, ids, context=context):
     #     move_ids = []
@@ -50,27 +41,56 @@ class merma( osv.osv ) :
     # self.write(cr, uid, [inv.id], {'state': 'confirm', 'move_ids': [(6, 0, move_ids)]})
     # self.pool.get('stock.move').action_confirm(cr, uid, move_ids, context=context)
     return True
+  #---------------------------------------------------------------------------------------------------------------------------------------------------  
+  def accion_realizar(self, cr, uid, ids, context=None):
+    """
+    Finaliza el inventario
+    @return: True
+    """
+    if context is None:
+        context = {}
+    id_merma = ids[0]
+    self.write(cr, uid, ids, { 'state': 'done'}, context=context)
+
+    return True
+  #---------------------------------------------------------------------------------------------------------------------------------------------------
+  def accion_cancelar_borrador(self, cr, uid, ids, context=None):
+    """ Cancela el stock de movimiento y el estado de modificación de listado para redactar.
+    @return: True
+    """
+    if context is None:
+      context = {}
+    # for inv in self.browse(cr, uid, ids, context=context):
+    #     self.pool.get('stock.move').action_cancel(cr, uid, [x.id for x in inv.move_ids], context=context)
+    self.write(cr, uid, ids, {'state':'draft'}, context=context)
+    return True
+  #---------------------------------------------------------------------------------------------------------------------------------------------------
+  def accion_cancelar_movimiento(self, cr, uid, ids, context=None):
+        """ Cancela el stock move y el listado
+        @return: True
+        """
+        # move_obj = self.pool.get('stock.move')
+        # account_move_obj = self.pool.get('account.move')
+        # for inv in self.browse(cr, uid, ids, context=context):
+        #     move_obj.action_cancel(cr, uid, [x.id for x in inv.move_ids], context=context)
+        #     for move in inv.move_ids:
+        #          account_move_ids = account_move_obj.search(cr, uid, [('name', '=', move.name)])
+        #          if account_move_ids:
+        #              account_move_data_l = account_move_obj.read(cr, uid, account_move_ids, ['state'], context=context)
+        #              for account_move in account_move_data_l:
+        #                  if account_move['state'] == 'posted':
+        #                      raise osv.except_osv(_('User Error!'),
+        #                                           _('In order to cancel this inventory, you must first unpost related journal entries.'))
+        #                  account_move_obj.unlink(cr, uid, [account_move['id']], context=context)
+        #     self.write(cr, uid, [inv.id], {'state': 'cancel'}, context=context)
+        self.write(cr, uid, ids, {'state':'cancel'}, context=context)
+        return True
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
   ###                                                                 METODOS                                                                      ###
   ###                                                                                                                                              ###
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
 
-  #--------------------------------------------------------------------------------------------------------------------------------------------------- 
-  def _obtenerIdLogueado( self, cr, uid, ids = None, field_name = None, arg = None, context = None ) :
-    """
-    Función para el campo "Autor"
-    * Para OpenERP [field.function( empleado_autor )]
-    * Argumentos OpenERP: [cr, uid, ids, field_name, arg, context]
-    @return dict
-    """
-    result = {}
-    for record in self.browse( cr, uid, ids, context ) :
-      obj_user = self.pool.get( 'res.users' ).browse( cr, 1, uid )
-      nombre_empleado=obj_user.partner_id.name
-      result[record.id] = nombre_empleado
-    #Retornando los resultados evaluados
-    return result
   #---------------------------------------------------------------------------------------------------------------------------------------------------  
   def obtenerProductos( self, cr, uid, ids, context = None ):
     """
@@ -82,23 +102,28 @@ class merma( osv.osv ) :
     obj_merma = self.pool.get( self._name ).browse( cr, uid, ids[0] )
     fecha_mov = obj_merma.fecha_mov
     tienda_alm = obj_merma.almacen_m2o_id.id
+    destino = obj_merma.loc_final_dic
+    id_merma = ids[0] 
     autor_uid = uid
-    id_merma = ids[0]
     if obj_merma :
       cr.execute(
       """
       SELECT
       id
       FROM merma_seleccion
-      WHERE almacen_m2o_id=%s AND
-      TO_CHAR(create_date,'YYYY-MM-DD')=%s
-      """,(tienda_alm, fecha_mov,) )
+      WHERE almacen_m2o_id=%s
+      AND
+      TO_CHAR(create_date,'YYYY-MM-DD')= %s
+      AND
+      nombre_destino like %s
+      """,(tienda_alm, fecha_mov, destino,) )
       resultado = cr.fetchall()
       if resultado != None and type( resultado ) in ( list, dict) :
-        obj_selec=self.pool.get( 'merma_seleccion' )
+        self.write(cr, uid, ids, {
+                'consultado': True,   
+        }, context=context)
         for id_selec in resultado:
           id_select = id_selec[0]
-   
           cr.execute(
               """
               INSERT INTO merma_m2m_selec_merma
@@ -108,6 +133,54 @@ class merma( osv.osv ) :
        
     else :
       return { 'value' : {} }
+  #--------------------------------------------------------------------------------------------------------------------------------------------------- 
+  def _obtenerIdLogueado( self, cr, uid ) :
+    """
+    Metodo para obtener el nombre del usuario que realizo el control de merma
+    * Argumentos OpenERP: [cr, uid]
+    @return string
+    """
+    result = {}
+    obj_user = self.pool.get( 'res.users' ).browse( cr, uid, uid )
+    nombre_empleado=obj_user.partner_id.name
+    #Retornando
+    return nombre_empleado  
+  #---------------------------------------------------------------------------------------------------------------------------------------------------
+  def obtenerNumero(self, cr, uid, almacen, destino ) :
+    """
+    Metodo que obtiene el numero siguiente
+    * Para OpenERP [field.function]
+    * Argumentos OpenERP: [cr, tabla,nombre_campo]
+    :return dict
+    """
+    #Consultando cuál sería el nuevo numero
+    cr.execute( """
+               SELECT ( MAX( c_numero ) + 1 ) AS next_number
+               FROM merma
+               WHERE almacen_m2o_id = %s and loc_final_dic = %s
+               """ ,(almacen, destino,) )
+    registro_consultado = cr.fetchone()
+    numero = (1) if (registro_consultado is None) else ( 1 if ( registro_consultado[0] is None ) else ( int( registro_consultado[0] ) ))	 
+    #Retornando el nuevo folio
+    return numero
+  #----------------------------------------------------------------------------------------------------------------------
+  def obtenerClave(self, cr, uid, almacen, destino, numero ) :
+    """
+    Metodo que obtiene la clave siguiente
+    * Para OpenERP [field.function]
+    * Argumentos OpenERP: [cr, tabla,nombre_campo]
+    :return dict
+    """
+    #Se crea clave
+    fecha_realizo = time.strftime("%d%m%y")
+    obj_almacen = self.pool.get('stock.warehouse')
+    tienda_nombre=obj_almacen.browse(cr, uid, almacen).name
+    nombre_sep = tienda_nombre.split()
+    n_tienda = nombre_sep[2] 
+    clave = 'SM'+ n_tienda + destino[:3].upper()+str(numero)+'/'+fecha_realizo
+    #Retornando el nuevo folio
+    return clave
+  #----------------------------------------------------------------------------------------------------------------------
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
   ###                                                             METODOS ORM                                                                      ###
@@ -122,12 +195,32 @@ class merma( osv.osv ) :
     @return bool    
     """
     nuevo_id = None
-    #Asgnando id del empleado Logueado
-    # vals['usuario_m2o_id'] = self.obtenerIdEmpleadoLogueado
+    almacen=vals['almacen_m2o_id']
+    destino=vals['loc_final_dic']
+    vals['c_numero'] = self.obtenerNumero( cr, uid, almacen, destino )
+    numero=vals['c_numero']
+    vals['clave_numer'] = self.obtenerClave( cr, uid, almacen, destino, numero )
+    vals['n_usuario'] = self._obtenerIdLogueado( cr, uid)
+  
     nuevo_id = super( merma, self ).create( cr, uid, vals, context = context )
     return nuevo_id
-
-
+  #---------------------------------------------------------------------------------------------------------------------------------------------------
+  def write( self, cr, uid, ids, vals, context = None) :
+    """
+    Método "write" se ejecuta antes de modificar el registro..
+    * Argumentos OpenERP: [cr, uid, ids, vals, context]
+    @return bool
+    """
+    datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
+    almacen=datos.almacen_m2o_id.id
+    destino=datos.loc_final_dic
+    numero=self.obtenerNumero( cr, uid, almacen, destino )
+    clave = self.obtenerClave( cr, uid, almacen, destino, numero )
+    vals.update({'clave_numer': clave})
+    proceso = super( merma, self ).write( cr, uid, ids, vals, context = context )
+    #Retornando proceso,
+    return proceso
+  #---------------------------------------------------------------------------------------------------------------------------------------------------
   
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
@@ -142,7 +235,7 @@ class merma( osv.osv ) :
   _table = 'merma'
   
   #Nombre de la descripcion al usuario en las relaciones m2o hacia este módulo
-  # _rec_name = 'n_usuario'
+  _rec_name = 'clave_numer'
   
   #Cláusula SQL "ORDER BY"
   _order = 'id DESC'
@@ -151,17 +244,21 @@ class merma( osv.osv ) :
   _columns = {
     
     # =========================================  OpenERP Campos Basicos (integer, char, text, float, etc...)  ====================================== #
-    # 'clave' : fields.integer( 'Clave' ),
-    'loc_final_dic':fields.selection(loc_desechos, 'Ubicación Final'),
-    'tiendas_dic':fields.selection(TIENDA, 'Tienda'),
+    'c_numero' : fields.integer( 'Clave Numero' ),
+    'consultado':fields.boolean('Consultado'),
+    'clave_numer' : fields.char( 'Clave' ),
+    'loc_final_dic':fields.selection(loc_desechos, 'Ubicación Final', required=True),
+    # 'tiendas_dic':fields.selection(TIENDA, 'Tienda'),
     'fecha_mov':fields.date("Fecha de Movimiento", required=True),
     'n_usuario': fields.char("Realizo", required=False),
-    'state': fields.selection( (('draft', 'Borrador'), ('cancel','Cancelado'), ('confirm','Confirmado'), ('done', 'Realizado')), 'Estado', readonly=True, select=True),
-    # 'state': fields.selection([
-    #                           ('borrador', 'Borrador'),
-    #                           ('confirmado', 'Confirmado'),
-    #                           ('realizado', 'Realizado')
-    #                         ]),
+    'state': fields.selection(  ( ('draft', 'Borrador'),
+                                  ('cancel','Cancelado'),
+                                  ('confirm','Confirmado'),
+                                  ('done', 'Realizado')
+                                ),
+                              'Estado', readonly=True,
+                              select=True
+                              ),
     # ========================================================  Relaciones [many2many](m2m) ======================================================== #
     'almacen_m2o_id': fields.many2one('stock.warehouse', 'Tienda', required=True),
 
@@ -180,21 +277,22 @@ class merma( osv.osv ) :
       'Selector Merma',
     ),
     
-    'empleado_autor' : fields.function(
-      _obtenerIdLogueado,
-      type = 'text',
-      method = True,
-      string = 'Autor',
-      change_default = True,
-      store = False,
-      readonly = True,
-      required = False
-    ),
+    # 'empleado_autor' : fields.function(
+    #   _obtenerIdLogueado,
+    #   type = 'text',
+    #   method = True,
+    #   string = 'Autor',
+    #   change_default = True,
+    #   store = False,
+    #   readonly = True,
+    #   required = False
+    # ),
 
   }
   
   #Valores por defecto de los campos del diccionario [_columns]
   _defaults = {
+    'state': 'draft',
     # 'ubicaciones_subquery' : _obtener_ubicaciones_subquery,
 
   }
@@ -205,6 +303,43 @@ class merma( osv.osv ) :
   
   #Restricciones desde codigo
   _constraints = []
+
+
+	### /////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
+	###                                                                                                                 ###
+	###                 Definicion de Funcion para "Imprimir Reporte"                                                   ###
+	###                                                                                                                 ###
+	### /////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
+
+  def imprimir_reporte_banco(self, cr, uid, ids ,context={}):
+    """
+    Metodo para imprimir el reporte en formato PDF
+    * Argumentos OpenERP: [ cr, uid, ids, context ]
+    @return dict 
+    """
+    
+    #imprimir reporte
+    if context is None:
+      context = {}
+    data = {}
+    data['ids'] = context.get('active_ids', [])
+    data['model'] = context.get('active_model', 'ir.ui.menu')
+    data['form'] = self.read(cr, uid, ids,['n_usuario','fecha_mov','loc_final_dic','clave_numer','selecc_merma_m2m',], )[0]
+    #Inicializando la variable datas, con el modelo
+    datas = {
+      'ids': [],
+      'model': 'merma',
+      'form': data,
+    }
+
+    
+    #Return el nombre del reporte que aparece en el service.name y el tipo de datos report.xml	
+    return {
+        'type': 'ir.actions.report.xml',
+        'report_name': 'reporte_banco',
+        'datas': datas,
+        'nodestroy': True,
+    }  
   
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
 
