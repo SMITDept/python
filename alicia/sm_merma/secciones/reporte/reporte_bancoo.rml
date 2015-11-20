@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<document filename="report_movimientos_almacen.pdf">
+<document filename="reporte_bancoo.pdf">
   <template pageSize="(792.0,612.0)"
 						title="stock_move" author="ARC"> 
     
@@ -15,7 +15,7 @@
       <blockAlignment value="LEFT"/>
       <blockValign value="TOP"/>
     </blockTableStyle>
-    <!--#usada en diario, periodo, referencia,fecha-->
+
     <blockTableStyle id="Table_compra">
       <blockAlignment value="LEFT"/>
       <blockValign value="TOP"/>
@@ -79,7 +79,7 @@
         </td>
       </tr>
   </blockTable> 
-  <para style="Caption"><b>Movimientos de Almacen [[ nombre_mes(data['form']) ]]</b></para>
+  <para style="Caption"><b>[[ nombre_reporte(data['form']) ]] [[ clave_registro(data['form']) ]]</b></para>
   <spacer length="0.5cm"/>
   </pto_header>
    <!--#empieza impresion-->
@@ -103,13 +103,31 @@
         </td>
       </tr>
     </blockTable>
-   <para style="Caption"><b> [[ clave_registro(data['form']) ]]</b></para>
+  
+   <para style="Caption"><b> [[ nombre_reporte(data['form']) ]] [[ clave_registro(data['form']) ]]</b></para>
     <spacer length="0.5cm"/>
-    <!-- #tabla de relacion a account_move_line-->
-    <blockTable colWidths="60.0, 90.0, 60.0, 100.0, 50.0, 150.0, 150.0, 50.0" style="Tabla_header">
+    <blockTable colWidths="300.0,80.0,100.0,200.0" style="Table_compra">
       <tr>
         <td>
-          <para style="terp_tblheader_General_Centre">Fecha</para>
+          <para style="terp_default_9">[[ realizo(data['form']) ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_9"><font color="white"></font></para>
+        </td>
+        <td>
+        <para style="terp_default_9"><font color="white"> </font> </para>
+        </td>
+        <td>
+        <para style="terp_default_9">[[ fecha_mov(data['form']) ]]</para>
+        </td>
+      </tr>
+    </blockTable>
+    <spacer length="0.5cm"/>
+    <!-- #tabla de relacion a account_move_line-->
+    <blockTable colWidths="60.0, 100.0, 200.0, 70.0, 100.0, 50.0, 50.0, 50.0" style="Tabla_header">
+      <tr>
+        <td>
+          <para style="terp_tblheader_General_Centre">Captura</para>
         </td>
         <td>
           <para style="terp_tblheader_General_Centre">Usuario</para>
@@ -118,51 +136,52 @@
           <para style="terp_tblheader_General_Centre">Origen</para>
         </td>
         <td>
+          <para style="terp_tblheader_General_Centre">Codigo</para>
+        </td>
+        <td>
           <para style="terp_tblheader_General_Centre">Producto</para>
         </td>
         <td>
           <para style="terp_tblheader_General_Centre">Cantidad</para>
         </td>
         <td>
-          <para style="terp_tblheader_General_Centre">Ubicacion Origen</para>
+          <para style="terp_tblheader_General_Centre">Medida</para>
         </td>
         <td>
-          <para style="terp_tblheader_General_Centre">Ubicacion Destino</para>
-        </td>
-        <td>
-          <para style="terp_tblheader_General_Centre">Estado</para>  
+          <para style="terp_tblheader_General_Centre">Banco</para>  
         </td>
       </tr>
     </blockTable>
-    <!--[[ repeatIn(get_datos(), 'ref') ]]-->
-    <!--<blockTable colWidths="60.0, 90.0, 60.0, 100.0, 50.0, 150.0, 150.0, 50.0" style="Table1">-->
-    <!--  <tr>-->
-    <!--    <td>[[ repeatIn(get_datos(data['form']), 'ref') ]]-->
-    <!--      <para style="terp_default_Centre_8">[[ ref['fecha_creacion'] ]]</para>-->
-    <!--    </td>-->
-    <!--    <td>-->
-    <!--      <para style="terp_default_Centre_8">[[ ref['name_login'] ]] </para>-->
-    <!--    </td>-->
-    <!--    <td>-->
-    <!--      <para style="terp_default_Centre_8">[[ ref['origen'] ]] </para>-->
-    <!--    </td>-->
-    <!--    <td>-->
-    <!--      <para style="terp_default_Centre_8">[[ ref['producto'] ]] </para>-->
-    <!--    </td>-->
-    <!--    <td>-->
-    <!--      <para style="terp_default_Centre_8">[[ ref['cantidad'] ]]</para>-->
-    <!--    </td>-->
-    <!--    <td>-->
-    <!--      <para style="terp_default_Centre_8">[[ ref['localizacion'] ]] </para>-->
-    <!--    </td>-->
-    <!--    <td>-->
-    <!--      <para style="terp_default_Centre_8">[[ ref['destino'] ]] </para>-->
-    <!--    </td>-->
-    <!--    <td>-->
-    <!--      <para style="terp_default_Centre_8">[[ ref['estado'] ]] </para>-->
-    <!--    </td>-->
-    <!--  </tr>-->
-    <!--</blockTable>-->
+    
+    <blockTable colWidths="60.0, 100.0, 200.0, 70.0, 100.0, 50.0, 50.0, 50.0" style="Table1">
+      
+      <tr> [[ repeatIn(get_datos_merma(data['form']), 'ref') ]]
+        <td>
+         <para style="terp_default_Centre_8">[[ ref['fecha_creacion'] ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Centre_8">[[ ref['name_login'] ]] </para>
+        </td>
+        <td>
+         <para style="terp_default_Centre_8">[[ ref['origen'] ]] </para>
+        </td>
+        <td>
+          <para style="terp_default_Centre_8">[[ ref['codigo'] ]] </para>
+        </td>
+        <td>
+          <para style="terp_default_Centre_8">[[ ref['producto'] ]] </para>
+        </td>
+        <td>
+          <para style="terp_default_Centre_8">[[ ref['cantidad'] ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Centre_8">[[ ref['unidad'] ]] </para>
+        </td>
+        <td>
+          <para style="terp_default_Centre_8">[[ ref['cantidad_banco'] ]] </para>
+        </td>
+      </tr>
+    </blockTable>
    
   </pto>
   </story>

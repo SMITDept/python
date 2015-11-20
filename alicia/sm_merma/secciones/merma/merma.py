@@ -32,25 +32,65 @@ class merma( osv.osv ) :
         context = {}
     id_merma = ids[0]
     self.write(cr, uid, ids, { 'state': 'confirm'}, context=context)
-
-    # for inv in self.browse(cr, uid, ids, context=context):
-    #     move_ids = []
-    #     
-    #     move_ids.append(self._inventory_line_hook(cr, uid, line, value))
-    #self.write(cr, uid, [inv.id], {'state': 'confirm', 'move_ids': [(6, 0, move_ids)]})
-    # self.write(cr, uid, [inv.id], {'state': 'confirm', 'move_ids': [(6, 0, move_ids)]})
-    # self.pool.get('stock.move').action_confirm(cr, uid, move_ids, context=context)
     return True
   #---------------------------------------------------------------------------------------------------------------------------------------------------  
-  def accion_realizar(self, cr, uid, ids, context=None):
+  def accion_ejecutar(self, cr, uid, ids, context=None):
     """
-    Finaliza el inventario
+    Finaliza haciendo el movimiento automatico en almacen
     @return: True
     """
     if context is None:
         context = {}
     id_merma = ids[0]
-    self.write(cr, uid, ids, { 'state': 'done'}, context=context)
+    datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
+    seleccion=datos.selecc_merma_m2m
+    for id_selec in seleccion :
+      selec_id=id_selec.id
+      cr.execute(
+      """
+      SELECT 
+        s.destino_id,
+        s.location_id,
+        s.producto_s_m2o_id,
+        s.cantidad,
+        s.product_m2o_med_id, 
+        s.precio_prod,
+        s.name_move
+        FROM merma m
+        INNER JOIN merma_m2m_selec_merma r
+        ON r.merma_m2o_id=m.id
+        INNER JOIN merma_seleccion s
+        ON r.select_merma_m2o_id=s.id
+        WHERE s.id = %s
+        AND m.id = %s
+        order by s.id DESC
+        limit 1
+      """,(selec_id,id_merma,) )
+      resultado = cr.fetchall()
+      if resultado != None and type( resultado ) in ( list, dict) :
+        resultado=resultado[0]
+        valores =    {
+          'company_id': 1,
+          'location_dest_id': resultado[0],
+          'location_id':resultado[1],
+          'product_id':resultado[2],
+          'product_qty':resultado[3],
+          'product_uom':resultado[4],
+          'product_uos':resultado[4],
+          'product_uos_qty':resultado[3],
+          'name':resultado[6],
+          'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
+          'date_expected': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+          'auto_validate': 0,
+          'priority': '1',
+          'partner_id':1,
+          'price_unit':resultado[5],
+          'state':'done',
+          #"type","out"
+          'origin':'AUTOMATIC'
+        }
+        self.write(cr, uid, ids, { 'state': 'done'}, context=context)
+        self.pool.get('stock.move').create(cr, uid, valores)
 
     return True
   #---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -60,31 +100,102 @@ class merma( osv.osv ) :
     """
     if context is None:
       context = {}
-    # for inv in self.browse(cr, uid, ids, context=context):
-    #     self.pool.get('stock.move').action_cancel(cr, uid, [x.id for x in inv.move_ids], context=context)
-    self.write(cr, uid, ids, {'state':'draft'}, context=context)
+    self.write(cr, uid, ids, {'consultado': False, 'state':'draft'}, context=context)
+    
     return True
+#---------------------------------------------------------------------------------------------------------------------------------------------------
+  def accion_enviar_a(self, cr, uid, ids, context=None):
+    """ Envia el producto a Merma que es cuando se entrega al Banco o almacen .
+    @return: True
+    """
+    if context is None:
+      context = {}
+    id_merma = ids[0]
+    id_ubica_scrap=0
+    nombre_movimiento=''
+    datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
+    seleccion=datos.selecc_merma_m2m
+    obj_local = self.pool.get('stock.location')
+    for id_selec in seleccion :
+      selec_id=id_selec.id
+      cr.execute(
+      """
+      SELECT 
+        s.destino_id,
+        s.producto_s_m2o_id,
+        s.cantidad_banco,
+        s.product_m2o_med_id, 
+        s.precio_prod,
+        s.name_move,
+        s.se_llevo,
+        s.id
+        FROM merma m
+        INNER JOIN merma_m2m_selec_merma r
+        ON r.merma_m2o_id=m.id
+        INNER JOIN merma_seleccion s
+        ON r.select_merma_m2o_id=s.id
+        WHERE s.id = %s
+        AND m.id = %s
+        order by s.id DESC
+        limit 1
+      """,(selec_id,id_merma,) )
+      resultado = cr.fetchall()
+      if resultado != None and type( resultado ) in ( list, dict) :
+        resultado=resultado[0]
+        ubicar=resultado[6]
+        if ubicar :
+            nombre_movimiento="AUTOMATICO ENVIADO A" + ubicar.upper()
+            localiza_id=resultado[0]
+            ubicate = obj_local.browse(cr, uid, localiza_id)
+            id_ubica_scrap=ubicate.location_id.id  
+            locations_scrap = obj_local.search(cr, uid, [('location_id', 'child_of', [id_ubica_scrap])], context=context)
+            for id_scrap in locations_scrap:
+              
+                scrap = obj_local.browse(cr, uid, id_scrap)
+                nombre=scrap.name
+                nombre=nombre.lower()
+                if nombre.find("merma") >= 0 :
+                  # print "encontro"
+                  ubicacion_final=id_scrap
+                  
+                self.pool.get('merma_seleccion').write(cr, uid, [selec_id], {'ubicacion_final_id': ubicacion_final}, context=context)
+            # print ubicacion_final 
+            # print localiza_id  
+            if ubicacion_final != localiza_id :
+              valores = {
+                  'company_id': 1,
+                  'location_dest_id': ubicacion_final,
+                  'location_id':localiza_id,
+                  'product_id':resultado[1],
+                  'product_qty':resultado[2],
+                  'product_uom':resultado[3],
+                  'product_uos':resultado[3],
+                  'product_uos_qty':resultado[2],
+                  'name': nombre_movimiento,
+                  'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
+                  'date_expected': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                  'auto_validate': 0,
+                  'priority': '1',
+                  'partner_id':1,
+                  'price_unit':resultado[4],
+                  'state':'done',
+                  #"type","out"
+                  'origin':'AUTOMATIC'
+                }
+              # print valores
+              self.write(cr, uid, ids, {'state':'banco-alma'}, context=context)
+              self.pool.get('stock.move').create(cr, uid, valores)
+            else:
+              self.write(cr, uid, ids, {'state':'banco-alma'}, context=context)
+
+    return True  
   #---------------------------------------------------------------------------------------------------------------------------------------------------
-  def accion_cancelar_movimiento(self, cr, uid, ids, context=None):
-        """ Cancela el stock move y el listado
-        @return: True
-        """
-        # move_obj = self.pool.get('stock.move')
-        # account_move_obj = self.pool.get('account.move')
-        # for inv in self.browse(cr, uid, ids, context=context):
-        #     move_obj.action_cancel(cr, uid, [x.id for x in inv.move_ids], context=context)
-        #     for move in inv.move_ids:
-        #          account_move_ids = account_move_obj.search(cr, uid, [('name', '=', move.name)])
-        #          if account_move_ids:
-        #              account_move_data_l = account_move_obj.read(cr, uid, account_move_ids, ['state'], context=context)
-        #              for account_move in account_move_data_l:
-        #                  if account_move['state'] == 'posted':
-        #                      raise osv.except_osv(_('User Error!'),
-        #                                           _('In order to cancel this inventory, you must first unpost related journal entries.'))
-        #                  account_move_obj.unlink(cr, uid, [account_move['id']], context=context)
-        #     self.write(cr, uid, [inv.id], {'state': 'cancel'}, context=context)
-        self.write(cr, uid, ids, {'state':'cancel'}, context=context)
-        return True
+  # def accion_cancelar_movimiento(self, cr, uid, ids, context=None):
+  #       """ Cancela el stock move y el listado
+  #       @return: True
+  #       """
+  #       self.write(cr, uid, ids, {'state':'cancel'}, context=context)
+  #       return True
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
   ###                                                                 METODOS                                                                      ###
@@ -195,6 +306,7 @@ class merma( osv.osv ) :
     @return bool    
     """
     nuevo_id = None
+    vals['se_creo'] =time.strftime("%y%m%d")
     almacen=vals['almacen_m2o_id']
     destino=vals['loc_final_dic']
     vals['c_numero'] = self.obtenerNumero( cr, uid, almacen, destino )
@@ -250,11 +362,15 @@ class merma( osv.osv ) :
     'loc_final_dic':fields.selection(loc_desechos, 'Ubicación Final', required=True),
     # 'tiendas_dic':fields.selection(TIENDA, 'Tienda'),
     'fecha_mov':fields.date("Fecha de Movimiento", required=True),
+    'se_creo':fields.date("Fecha de creacion", required=False),
+    
     'n_usuario': fields.char("Realizo", required=False),
     'state': fields.selection(  ( ('draft', 'Borrador'),
                                   ('cancel','Cancelado'),
                                   ('confirm','Confirmado'),
-                                  ('done', 'Realizado')
+                                  ('done', 'Realizado'),
+                                  ('banco-alma', 'Enviado a banco/almacen '),
+                                  ('fin', 'Finalizar'),
                                 ),
                               'Estado', readonly=True,
                               select=True
@@ -276,25 +392,12 @@ class merma( osv.osv ) :
       #Etiqueta a mostrar al usuario
       'Selector Merma',
     ),
-    
-    # 'empleado_autor' : fields.function(
-    #   _obtenerIdLogueado,
-    #   type = 'text',
-    #   method = True,
-    #   string = 'Autor',
-    #   change_default = True,
-    #   store = False,
-    #   readonly = True,
-    #   required = False
-    # ),
 
   }
   
   #Valores por defecto de los campos del diccionario [_columns]
   _defaults = {
     'state': 'draft',
-    # 'ubicaciones_subquery' : _obtener_ubicaciones_subquery,
-
   }
   
   #Restricciones de BD (constraints)
@@ -324,7 +427,7 @@ class merma( osv.osv ) :
     data = {}
     data['ids'] = context.get('active_ids', [])
     data['model'] = context.get('active_model', 'ir.ui.menu')
-    data['form'] = self.read(cr, uid, ids,['n_usuario','fecha_mov','loc_final_dic','clave_numer','selecc_merma_m2m',], )[0]
+    data['form'] = self.read(cr, uid, ids,[ 'id','n_usuario','fecha_mov', 'se_creo','loc_final_dic','clave_numer','selecc_merma_m2m',], )[0]
     #Inicializando la variable datas, con el modelo
     datas = {
       'ids': [],
@@ -336,7 +439,7 @@ class merma( osv.osv ) :
     #Return el nombre del reporte que aparece en el service.name y el tipo de datos report.xml	
     return {
         'type': 'ir.actions.report.xml',
-        'report_name': 'reporte_banco',
+        'report_name': 'reporte_bancoo',
         'datas': datas,
         'nodestroy': True,
     }  

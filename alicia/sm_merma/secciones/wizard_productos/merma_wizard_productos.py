@@ -46,7 +46,6 @@ class merma_wizard_productos(osv.TransientModel):
       id_producto=datos.producto_m2o_id.id
       tienda=datos.almacen_m2o_id.id
       destino_id=datos.destino_mov_m2o_id.id
-      
       localizacion_id=datos.localizacion_m2o_id.id
       cantidad_mover=datos.cantidad_mover
       cantidad_prod=datos.cantidad_prod
@@ -54,17 +53,11 @@ class merma_wizard_productos(osv.TransientModel):
       unidad_med_id=datos.medida_m2o_id.id
       precio=datos.precio
       empleado_autor=datos.empleado_autor
-      name_move=producto
       autor_uid=uid
-      
       nombre_destino=datos.destino_mov_m2o_id.name
+      name_move=producto+" "+ nombre_destino
       clave_sep = nombre_destino.split()
       nombre_destino = clave_sep[1].lower()
-      print nombre_destino
-      print '++++"""""""""""""++++'
-      print cantidad_prod
-      print cantidad_mover
-      print clave
       #se guarda id de wizard
       ide_wizard = ids[0]
       #creo fechas
@@ -78,7 +71,7 @@ class merma_wizard_productos(osv.TransientModel):
                     autor_uid, fecha_x, ide_wizard, clave, fecha_mov_stock, empleado_autor, name_move, cod_ean13, producto, cantidad_mover, 
                     unidad_med, unidad_med_id, precio, autor_uid, localizacion_id, destino_id, id_producto, tienda, nombre_destino
                   )
-        print valores
+        # print valores
         this = self.browse(cr, uid, ids)[0]
         self.write(cr, uid, ids, {
                 'cod_ean13':'',
@@ -159,177 +152,200 @@ class merma_wizard_productos(osv.TransientModel):
       tienda=datos.almacen_m2o_id.id
       destino=datos.destino_mov_m2o_id.id
       muestra_dest=datos.destino_mov_m2o_id.complete_name
+      ide_wizard = ids[0]
+      existe = False
       #valida codigo no sea  vacio
       if len(cod_ean13) >= 10:
           #valida que el codigo sea digitos y sean 13
           if len(cod_ean13) == 13 and cod_ean13.isdigit() == True:
-            #consulta obtener datos del producto apartir del codigo
+            fecha = time.strftime("%y%m%d")
             cr.execute(
                 """
-                  SELECT p.name_template,
-                  p.image_small,
-                  p.id,
-                  pt.list_price AS precio,
-                  pu.name AS medida,
-                  pt.uom_id
-                  FROM product_product p
-                  INNER JOIN product_template pt
-                  ON p.product_tmpl_id=pt.id
-                  INNER JOIN product_uom pu
-                  ON pt.uom_id=pu.id
-                  WHERE p.active=True
-                  AND
-                  ean13 =%s
-                  order by p.id desc
-                  limit 1
-                """,(cod_ean13,))
-            producto = cr.fetchall()
-            # valida producto exista
-            if producto != None and type( producto ) in ( list, tuple, dict ) and producto != [] :
-              producto = producto[0]
-              id_producto=producto[2]
-              #valida que el codigo sea digitos y sean 13
-              if len(cod_ubicacion) == 13 and cod_ubicacion.isdigit() == True:
-                      #consulta para obtener id de la ubicacion apartir del codigo
-                      cr.execute(
-                      """
-                        SELECT id
-                        FROM stock_location
-                        WHERE active=True and
-                        x_ean13_location_correct = %s
-                      """,(cod_ubicacion,))
-                      ubica = cr.fetchall()
-                      
-                      if ubica != None and type( ubica ) in ( list, tuple, dict ) and ubica != [] :
-                          ubica = ubica[0]
-                          #Variable con el id de la ubicacion
-                          id_locali= ubica[0]
-                          #objeto de stock_location "Ubicaciones"
-                          location_pool = self.pool.get('stock.location')
-                          #nombre completo de la ubicacion para mostrar
-                          muestra_local = location_pool.browse(cr, uid, id_locali, context=context).complete_name
-                          #consulta para obtener el id de la "ubicacion de exitencias" de la tienda y obtener los hijos de esta para
-                          #comparar y validar que el "codigo de ubicacion" del producto pertenesca a la tienda seleccionada.
-                          cr.execute(
-                                  """
-                                  SELECT
-                                  s.lot_stock_id
-                                  from stock_warehouse s 
-                                  INNER JOIN stock_location se
-                                  ON s.lot_stock_id = se.id
-                                  WHERE s.id= %s
-                                  """,(tienda,))
-                          id_ubic_exist_tienda=cr.fetchone()
-                          #toma el valor del id de la ubicacion
-                          id_ubic_exist_tienda=id_ubic_exist_tienda[0]
-                          #Se obtienen los hijos apartir de la ubicacion padre
-                          local_hijos_tienda = location_pool.search(cr, uid, [('location_id', 'child_of', [id_ubic_exist_tienda])], context=context)
-                          #Se declara variable
-                          pertenece_ubicacion=False
-                          #recorre lista de ubicaciones de la tienda "local_hijos_tienda" y si encuentra que uno de los id coincide con el id de la
-                          # ubicacion cambia la variable de pertenece_ubicacion a true.
-                          for id_ubica in local_hijos_tienda:
-                            if id_ubica == id_locali:
-                              pertenece_ubicacion=True
-                          #Valida que la ubicacion pertenesca a la tienda
-                          if pertenece_ubicacion == True:
-                            #Consulta para validar que exista el producto en la ubicacion
-                            cr.execute(
-                              """
-                              SELECT location_id, product_id, trunc(qty, 3) 
-                              FROM stock_report_prodlots 
-                              WHERE location_id = %s and qty >0
-                              AND product_id = %s
-                              """,(id_locali, id_producto))
-                            existe_producto = cr.fetchall()
-                            if existe_producto != None and type(existe_producto) in ( list, tuple, dict ) and existe_producto != [] :
-                              existe_producto = existe_producto[0]
-                              cantidad_en_ubicacion= existe_producto[2]
-                              #se crea clave
-                              print "------------------------------------"
-                              ide_wizard = ids[0]
-                              datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
-                              clave_destino=str(datos.destino_mov_m2o_id.name)
-                              clave_sep = clave_destino.split()
-                              clave_sepa = clave_sep[1]
-                              clave = clave_sep[0].upper()+clave_sepa[:3].upper() + str(ide_wizard)
-                              print clave
-                              print "------------------------------------"
-                              
-                              
-                              self.write(cr, uid, ids, {
-                                  'producto': producto[0],
-                                  'imagen': producto[1],
-                                  'producto_m2o_id': id_producto,
-                                  'precio' : producto[3],
-                                  'unidad_med' : producto[4],
-                                  'medida_m2o_id' :producto[5],
-                                  'cantidad_prod' : cantidad_en_ubicacion,
-                                  'cantidad_mover' : '',
-                                  'cod_ean13': cod_ean13,
-                                  'cod_ubicacion': cod_ubicacion,
-                                  'localizacion_m2o_id': id_locali,
-                                  'almacen_m2o_id': tienda,
-                                  'destino_mov_m2o_id': destino,
-                                  'muestra_destino': muestra_dest,
-                                  'muestra_localizacion': muestra_local,
-                                  'clave_ide': clave,
-                                  'state': 'guardar',
-                              }, context=context)
-                            
-                              this = self.browse(cr, uid, ids)[0]
-                              return {
-                                        'type': 'ir.actions.act_window',
-                                        'view_type': 'form',
-                                        'view_mode': 'form',
-                                        'res_id': this.id,
-                                        'views': [(False, 'form')],
-                                        'res_model': 'merma_wizard_productos',
-                                        'target': 'new',
-                                     }
-                            else:
-                              return {
-                                'warning' : {
-                                  'title' : '¡No hay producto!',
-                                  'message' : 'En la ubicación seleccionada no hay existencia '+
-                                              'del producto',
-                                }  
-                              }
-                            
-                          else:
-                              return {
-                                'warning' : {
-                                  'title' : '¡Error! Código de Ubicación',
-                                  'message' : 'La ubicación NO pertenece a la tienda ' +
-                                  'seleccionada',
-                                }  
-                              }
+                  SELECT
+                  ean13
+                  FROM merma_seleccion
+                  WHERE fecha_creacion = %s
+                  AND ean13 =%s
+                  AND create_uid =%s
+                """,(fecha, cod_ean13, uid ))
+            registro_consultado = cr.fetchall()
+            # print registro_consultado
+            existe = (False) if (registro_consultado == [] or registro_consultado == None ) else ( ( True ) )
+            # print existe
+            if existe == False:
+              #consulta obtener datos del producto apartir del codigo
+              cr.execute(
+                  """
+                    SELECT p.name_template,
+                    p.image_small,
+                    p.id,
+                    pt.list_price AS precio,
+                    pu.name AS medida,
+                    pt.uom_id
+                    FROM product_product p
+                    INNER JOIN product_template pt
+                    ON p.product_tmpl_id=pt.id
+                    INNER JOIN product_uom pu
+                    ON pt.uom_id=pu.id
+                    WHERE p.active=True
+                    AND
+                    ean13 =%s
+                    order by p.id desc
+                    limit 1
+                  """,(cod_ean13,))
+              producto = cr.fetchall()
+              # valida producto exista
+              if producto != None and type( producto ) in ( list, tuple, dict ) and producto != [] :
+                producto = producto[0]
+                id_producto=producto[2]
+                #valida que el codigo sea digitos y sean 13
+                if len(cod_ubicacion) == 13 and cod_ubicacion.isdigit() == True:
+                        #consulta para obtener id de la ubicacion apartir del codigo
+                        cr.execute(
+                        """
+                          SELECT id
+                          FROM stock_location
+                          WHERE active=True and
+                          x_ean13_location_correct = %s
+                        """,(cod_ubicacion,))
+                        ubica = cr.fetchall()
                         
-                      else:
-                        return {
-                          'warning' : {
-                            'title' : '¡La Ubicación No Existe!',
-                            'message' : 'El codigo de la ubicación no pertenece a ninguna '+
-                                        'Ubicacion',
-                          }  
+                        if ubica != None and type( ubica ) in ( list, tuple, dict ) and ubica != [] :
+                              ubica = ubica[0]
+                              #Variable con el id de la ubicacion
+                              id_locali= ubica[0]
+                              #objeto de stock_location "Ubicaciones"
+                              location_pool = self.pool.get('stock.location')
+                              #nombre completo de la ubicacion para mostrar
+                              muestra_local = location_pool.browse(cr, uid, id_locali, context=context).complete_name
+                              #consulta para obtener el id de la "ubicacion de exitencias" de la tienda y obtener los hijos de esta para
+                              #comparar y validar que el "codigo de ubicacion" del producto pertenesca a la tienda seleccionada.
+                              cr.execute(
+                                      """
+                                      SELECT
+                                      s.lot_stock_id
+                                      from stock_warehouse s 
+                                      INNER JOIN stock_location se
+                                      ON s.lot_stock_id = se.id
+                                      WHERE s.id= %s
+                                      """,(tienda,))
+                              id_ubic_exist_tienda=cr.fetchone()
+                              #toma el valor del id de la ubicacion
+                              id_ubic_exist_tienda=id_ubic_exist_tienda[0]
+                              #Se obtienen los hijos apartir de la ubicacion padre
+                              local_hijos_tienda = location_pool.search(cr, uid, [('location_id', 'child_of', [id_ubic_exist_tienda])], context=context)
+                              #Se declara variable
+                              pertenece_ubicacion=False
+                              #recorre lista de ubicaciones de la tienda "local_hijos_tienda" y si encuentra que uno de los id coincide con el id de la
+                              # ubicacion cambia la variable de pertenece_ubicacion a true.
+                              for id_ubica in local_hijos_tienda:
+                                if id_ubica == id_locali:
+                                  pertenece_ubicacion=True
+                              #Valida que la ubicacion pertenesca a la tienda
+                              if pertenece_ubicacion == True:
+                                #Consulta para validar que exista el producto en la ubicacion
+                                cr.execute(
+                                  """
+                                  SELECT location_id, product_id, trunc(qty, 3) 
+                                  FROM stock_report_prodlots 
+                                  WHERE location_id = %s and qty >0
+                                  AND product_id = %s
+                                  """,(id_locali, id_producto))
+                                existe_producto = cr.fetchall()
+                                if existe_producto != None and type(existe_producto) in ( list, tuple, dict ) and existe_producto != [] :
+                                  existe_producto = existe_producto[0]
+                                  cantidad_en_ubicacion= existe_producto[2]
+                                  #se crea clave
+                                  ide_wizard = ids[0]
+                                  datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
+                                  clave_destino=str(datos.destino_mov_m2o_id.name)
+                                  clave_sep = clave_destino.split()
+                                  clave_sepa = clave_sep[1]
+                                  clave = clave_sep[0].upper()+clave_sepa[:3].upper() + str(ide_wizard)
+                                  
+                                  self.write(cr, uid, ids, {
+                                      'producto': producto[0],
+                                      'imagen': producto[1],
+                                      'producto_m2o_id': id_producto,
+                                      'precio' : producto[3],
+                                      'unidad_med' : producto[4],
+                                      'medida_m2o_id' :producto[5],
+                                      'cantidad_prod' : cantidad_en_ubicacion,
+                                      'cantidad_mover' : '',
+                                      'cod_ean13': cod_ean13,
+                                      'cod_ubicacion': cod_ubicacion,
+                                      'localizacion_m2o_id': id_locali,
+                                      'almacen_m2o_id': tienda,
+                                      'destino_mov_m2o_id': destino,
+                                      'muestra_destino': muestra_dest,
+                                      'muestra_localizacion': muestra_local,
+                                      'clave_ide': clave,
+                                      'state': 'guardar',
+                                  }, context=context)
+                                
+                                  this = self.browse(cr, uid, ids)[0]
+                                  return {
+                                            'type': 'ir.actions.act_window',
+                                            'view_type': 'form',
+                                            'view_mode': 'form',
+                                            'res_id': this.id,
+                                            'views': [(False, 'form')],
+                                            'res_model': 'merma_wizard_productos',
+                                            'target': 'new',
+                                         }
+                                else:
+                                  return {
+                                    'warning' : {
+                                      'title' : '¡No hay producto!',
+                                      'message' : 'En la ubicación seleccionada no hay existencia '+
+                                                  'del producto',
+                                    }  
+                                  }
+                                
+                              else:
+                                  return {
+                                    'warning' : {
+                                      'title' : '¡Error! Código de Ubicación',
+                                      'message' : 'La ubicación NO pertenece a la tienda ' +
+                                      'seleccionada',
+                                    }  
+                                  }
+                            
+                        else:
+                            return {
+                              'warning' : {
+                                'title' : '¡La Ubicación No Existe!',
+                                'message' : 'El codigo de la ubicación no pertenece a ninguna '+
+                                            'Ubicacion',
+                              }  
+                            }  
+                else:
+                    return {
+                        'warning' : {
+                          'title' : '¡Corriga Codigo Ubicación!',
+                          'message' : 'El código debe contener 13 digitos, sin espacios ni letras' ,
                         }  
+                      }    
+    
               else:
-                return {
+                  return {
                     'warning' : {
-                      'title' : '¡Corriga Codigo Ubicación!',
-                      'message' : 'El código debe contener 13 digitos, sin espacios ni letras' ,
+                      'title' : '¡El Producto No Existe!',
+                      'message' : 'El codigo ean13 no pertenece a ningun '+
+                      'producto ¡Intente con otro codigo!',
                     }  
-                  }    
-
+                  }
               
             else:
-              return {
-                'warning' : {
-                  'title' : '¡El Producto No Existe!',
-                  'message' : 'El codigo ean13 no pertenece a ningun '+
-                  'producto ¡Intente con otro codigo!',
-                }  
-              }
+                return {
+                  'warning' : {
+                    'title' : '¡El Producto ya se Registro!',
+                    'message' : 'Ingrese el siguiente codigo de '+
+                    'producto, este ya fue registrado',
+                  }  
+                }
+            
+              
           else:
             return {
                 'warning' : {
@@ -370,7 +386,6 @@ class merma_wizard_productos(osv.TransientModel):
     """
     #creacion del objeto
     datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
-    print datos
     tienda=datos.almacen_m2o_id.id
     destino=datos.destino_mov_m2o_id.id
     codigo=datos.cod_ean13
@@ -383,7 +398,6 @@ class merma_wizard_productos(osv.TransientModel):
             'muestra_destino': muestra,
             'state': 'producto',
         }, context=context)
-    #id
     this = self.browse(cr, uid, ids)[0]
     return {
             'type': 'ir.actions.act_window',
@@ -430,12 +444,10 @@ class merma_wizard_productos(osv.TransientModel):
             WHERE s.id= %s
             """,(id_almacen,))
     almacenes=cr.fetchall()
-    # print almacenes
+    
     if almacenes != None and type( almacenes ) in ( list, tuple, dict ):
-        # print almacenes[0]
         d_almacen=almacenes[0]
         ubicacion_seleccionada=d_almacen[0]
-        # print ubicacion_seleccionada
     #obtiene el nombre de las tiendas o de almacenes para hacer una comparaciones y obtener la variable con el numero de sucursales
     cr.execute(
             """
@@ -447,10 +459,9 @@ class merma_wizard_productos(osv.TransientModel):
             order by s.id
             """,)
     lista_tienda=cr.fetchall()
+    # print lista_tienda
     #Se obtiene el numero de tienas
     rango=len(lista_tienda)
-    # print "Rango"
-    # print rango
     suma=0
     sucursal=0
     # for tienda in lista_tienda:
@@ -482,12 +493,11 @@ class merma_wizard_productos(osv.TransientModel):
       scrap_location = true
       order by id
       """,(id_scrapped,))
-    # print '++++++++++++++++'
+    #recorre las lista de localidades
     for id_tienda in cr.fetchall():
        lista=id_tienda[0]
        list_loc_tienda.append(lista)   
 
-    #recorre las lista de localidades
     location_ids = []
     i=5
     #objeto de ubicaciones de almacen
@@ -496,11 +506,10 @@ class merma_wizard_productos(osv.TransientModel):
       id_tienda=int(id_tienda)
       ubicacion_t = location_pool.browse(cr, uid, id_tienda)
       nombre = ubicacion_t.name
-      # print nombre
       if sucursal>0:
         if nombre.find("SM1 Scrap Parent") >= 0 and sucursal==1 :
           location_ids = location_pool.search(cr, uid, [('location_id', 'child_of', [id_tienda])], context=context)
-          print location_ids
+          # print location_ids
         if nombre.find("SM2 Scrap Parent") >= 0 and sucursal==2 :
           location_ids = location_pool.search(cr, uid, [('location_id', 'child_of', [id_tienda])], context=context)
         if nombre.find("SM3 Scrap Parent") >= 0 and sucursal==3 :
@@ -510,7 +519,6 @@ class merma_wizard_productos(osv.TransientModel):
         if nombre.find("SM5 Scrap Parent") >= 0 and sucursal==5 :
           location_ids = location_pool.search(cr, uid, [('location_id', 'child_of', [id_tienda])], context=context)
       if sucursal>5:
-        # # print i
         for i in range(rango):
           i=i+1
           if nombre.find(str(i)) >= 0 and sucursal==i:
@@ -532,21 +540,19 @@ class merma_wizard_productos(osv.TransientModel):
                           'una localidad virtual de merma, caducado o desperdicio ' +
                           '¡Deben crearse primero!',
             }  
-          }
-    print location_ids      
-    #se borra el primer valor de tupla que es el padre de las ubicaciones
-    if location_ids != []: 
-      
+          }      
+    
+    if location_ids != []:
+      # print location_ids
+      #se borra el primer valor de tupla que es el padre de las ubicaciones
       del location_ids[0]
-      print location_ids
+      # print location_ids
       #Validando el retorno de datos encontrados para el filtrado de datos en destino_mov_m2o_id con etiqueta ubicacion destino
       cadena_retorno = ( str ( "('id','=','0')" if ( location_ids == [] ) else ( "('id','in'," + str( location_ids ) + ")" ) ) )
-      print cadena_retorno
+      # print cadena_retorno
 
       #se escribe el id del almacen
-      self.write(cr, uid, ids, {
-                'almacen_m2o_id': id_almacen,
-            },)
+      self.write(cr, uid, ids, {'almacen_m2o_id': id_almacen, },)
       #filtrar ubicaciones de tienda seleccionada 
       #Retornando domain
       return {
@@ -590,8 +596,6 @@ class merma_wizard_productos(osv.TransientModel):
     datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
     tienda=datos.almacen_m2o_id.id
     destino=datos.destino_mov_m2o_id.id
-    # filtro_ids=datos.filtro_ubicaciones
-    
     self.write(cr, uid, ids, {
             'almacen_m2o_id': tienda,
             'destino_mov_m2o_id': destino,
@@ -622,30 +626,7 @@ class merma_wizard_productos(osv.TransientModel):
       result[record.id] = nombre_empleado
     #Retornando los resultados evaluados
     return result
-  #----------------------------------------------------------------------------------------------------------------------
-  @staticmethod
-  def getNextNumber( cr, uid, almacen, destino ) :
-    """
-    Metodo que obtiene el numero de clave siguiente
-    * Para OpenERP [field.function]
-    * Argumentos OpenERP: [cr, tabla,nombre_campo]
-    :return dict
-    """ 
-    #Consultando cuál sería el nuevo numero
-    cr.execute( """
-               SELECT ( MAX( num_product ) + 1 ) AS next_number
-               FROM merma_seleccion
-               WHERE almacen_m2o_id = %s and destino_mov_m2o_id = %s and create_uid = %s
-               """ ,(almacen, destino, uid ) )
-    registro_consultado = cr.fetchone()
-    #Retornando el nuevo folio
-    return (
-      1
-    ) if (
-      registro_consultado is None
-    ) else (
-      1 if ( registro_consultado[0] is None ) else ( int( registro_consultado[0] ) )
-    )	 
+ 
   #--------------------------------------------------------------------------------------------------------------------------------------------------- 
   def create(self, cr, uid, vals, context = None ):
     """   
@@ -658,12 +639,6 @@ class merma_wizard_productos(osv.TransientModel):
     #Creando la clave siguiente para este registro
     almacen=vals['almacen_m2o_id']
     destino=vals['destino_mov_m2o_id']
-    # vals['cont'] = '1'
-    print'++++++++++++++++'
-    print almacen
-    print destino
-    print uid
-    # vals['numero'] = self.getNextNumber( cr, uid, almacen, destino )
     nuevo_id = super( merma_wizard_productos, self ).create( cr, uid, vals, context = context )
     return nuevo_id  
   #---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -737,11 +712,7 @@ class merma_wizard_productos(osv.TransientModel):
    'unidad_med':fields.char("Unidad de Medida", required=False),
    'precio':fields.float('Precio', required=False),
   # ======================================  Relaciones OpenERP [one2many](o2m) ====================================== #
-    # 'merma_m2o_id': fields.many2one(
-    #   'merma',
-    #   'Selector'
-    # ),
-    
+
    'almacen_m2o_id': fields.many2one(
       'stock.warehouse',
       'Tienda'

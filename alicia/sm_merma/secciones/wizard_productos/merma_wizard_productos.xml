@@ -19,8 +19,6 @@
 							<field name="state" widget="statusbar"/>
 							<field name="clave_ide" class="oe_inline" readonly="1" nolabel="1"/>
 					</h1>
-					<!--<field invisible="1" name="state"/>-->
-					
 					<div states="tienda">
 						<group states="tienda" string="Seleccionar Tienda y Ubicación Destino" colspan='4' col='4'>
 			        <field name="almacen_m2o_id" colspan='4' on_change="onchange_filtro_almacen( almacen_m2o_id )"/>
@@ -34,14 +32,11 @@
 							<label string=" " colspan="2"/>
 							<field name="cod_ubicacion" on_change="obtenerProducto(cod_ean13, cod_ubicacion)" colspan='2'/>
 							<label string=" " colspan="2"/>
-							<!--<field name="cont" colspan="2"/>-->
-							<!--<label string=" " colspan="2"/>-->
 		        </group>
 		      </div>
 					
 					<div states="guardar">
 		        <group  states="guardar" string="Información del Producto" colspan='4' col='4'>
-							<!--<field name="clave_ide" readonly="1" colspan='4'/>-->
 							<field name="imagen" widget="image" nolabel="1" colspan='1'/>
 							<field name="producto" nolabel="1" colspan='3'/>
 							<field name="precio" readonly="1" colspan='4'/>
@@ -52,11 +47,9 @@
 							<field name="muestra_destino" readonly="1" colspan='4'/>
 							<field name="cantidad_mover" 
 										 attrs="{ 'required' : [ ( 'cantidad_prod', '!=', 0.0 ) ]}" colspan='2'/>
-							<!--on_change="guardarProducto(cantidad_mover)"-->
-							<label string="* Ingresar cantidad a mover" colspan="1"
+							<label string="* Ingresar cantidad a mover" colspan="2"
 										 attrs="{ 'invisible' : [ ( 'cantidad_mover', '!=', 0.0 ) ]}"/>
-							<label string="*" colspan="1"
-										 attrs="{ 'invisible' : [ ( 'cantidad_mover', '!=', 0.0 ) ]}"/>
+						
 							<field name="empleado_autor" colspan='2'/>
 							<field name="producto_m2o_id" colspan='2' invisible="1"/>
 							<field name="localizacion_m2o_id" colspan='4' invisible="1"/>
@@ -75,7 +68,7 @@
 					
 					<footer states="producto">
 						<group col="4" colspan="4">
-							<button icon="gtk-cancel" special="cancel" string="Cancelar" colspan="2"/>
+							<button icon="gtk-cancel" special="cancel" string="Terminar" colspan="2"/>
 							<button icon="terp-tools" name="obtenerProducto" string="Buscar"
 											type="object"
 											colspan="2"

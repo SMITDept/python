@@ -49,30 +49,17 @@ class merma_seleccion( osv.osv ) :
     'precio_prod':fields.float('Precio', required=False),
     'nombre_destino':fields.char("Nombre destino", required=False),
     'estado':fields.char("Estado del movimiento", required=False),
+    'enviar_banco':fields.boolean('Banco'),
+    'se_llevo': fields.selection(( ('banco', 'Banco'), ('almacen','Almacen') ), 'Entregar', select=True  ),
+    'cantidad_banco':fields.float('Cantidad', required=False),
     # ========================================================  Relaciones [many2many](m2m) ======================================================== #
-    'usuario_m2o_id': fields.many2one(
-      'res.users',
-      'Usuario'
-    ),
-    'producto_s_m2o_id': fields.many2one(
-      'product.product',
-      'Producto'
-    ),
+    'usuario_m2o_id': fields.many2one( 'res.users', 'Usuario'),
+    'producto_s_m2o_id': fields.many2one( 'product.product', 'Producto'),
     'product_m2o_med_id': fields.many2one('product.uom', 'Unidad de Medida'),
-    
     'location_id': fields.many2one('stock.location', 'Ubicacion origen', select=True),
     'destino_id': fields.many2one('stock.location', 'Ubicacion Destino', select=True),
-
-    'almacen_m2o_id': fields.many2one(
-      'stock.warehouse',
-      'Tienda'
-    ),
-    
-    # 'merma_m2o_id': fields.many2one(
-    #   'merma',
-    #   'Merma'
-    # ),
-    
+    'ubicacion_final_id': fields.many2one('stock.location', 'Ubicacion Final', select=True),
+    'almacen_m2o_id': fields.many2one('stock.warehouse','Tienda'),
   }
   
   #Valores por defecto de los campos del diccionario [_columns]

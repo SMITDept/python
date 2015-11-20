@@ -18,6 +18,7 @@
 					<field name="almacen_m2o_id" />
 					<field name="loc_final_dic"/>
 					<field name="n_usuario"/>
+					<field name="state"/>
 				</tree>
 			</field>
 		</record>
@@ -32,23 +33,29 @@
 					<header>
 						<!--groups="stock.group_stock_user"-->
 						<!--groups="stock.group_stock_manager"-->
-						<button name="accion_confirmar" states="draft" string="Confirmar Movimiento" type="object" class="oe_highlight" />
-						<button name="accion_realizar" states="confirm" string="Validar Movimiento" type="object" class="oe_highlight" />
-						<button name="accion_cancelar_borrador" states="cancel" string="Cancelar Borrador" type="object"/>
-						<button name="accion_cancelar_movimiento" states="draft,confirm,done"  string="Cancelar Movimiento" type="object"/>
-						<field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+						<label string="* Al Ejecutar el Movimiento ya no es posible CANCELAR *" states="confirm" colspan="2"/>
+						<label string="* Al Confirmar ya no podra seguir Editando *" states="draft" colspan="2"/>
+						<button name="accion_confirmar" states="draft" string="Confirmar Movimiento" type="object" class="oe_highlight"/>
+						<button name="accion_ejecutar" states="confirm" string="Ejecutar Movimiento" type="object"  class="oe_highlight"/>
+						<button name="accion_cancelar_borrador" states="confirm" string="Cancelar Borrador" type="object"/>
+						<label string="* Entregar a Banco o Almacen *" states="done" colspan="2"/>
+						<button name="accion_enviar_a" states="done" string="Entregar" type="object" class="oe_highlight"/>
+						<!--<button name="accion_cancelar_movimiento" states="draft,confirm,done"  string="Cancelar Movimiento" type="object"/>-->
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm,done,banco-alma"/>
 						
           </header>
 					<group string="Control de Desechos" col="4" colspan="2">
 						<field name="clave_numer" readonly="1" colspan="2"/>
 						<field name="n_usuario" readonly="1" colspan="2"/>
-            <field name="fecha_mov" colspan="2" attrs="{ 'readonly' : [ ( 'state', '=', 'confirm' ) ]}"/>
+            <field name="fecha_mov" colspan="2" attrs="{'readonly': [('state','in',('confirm','done','cancel','banco-alma'))]}"/>
 						<field name="consultado" colspan="2" invisible="1"/>
-						<field name="almacen_m2o_id" attrs="{ 'readonly' : [ ( 'consultado', '=', True ) ]}"/>
+						<field name="almacen_m2o_id" attrs="{ 'readonly' : ['|', ( 'consultado', '=', True ),( 'state', 'in', ('confirm','done','cancel','banco-alma') ) ]}"/>
 						<label string=" " colspan="2"/>
-						<field name="loc_final_dic" attrs="{ 'readonly' : [ ( 'consultado', '=', True) ]}"/>
+						<field name="loc_final_dic" attrs="{ 'readonly' : ['|', ( 'consultado', '=', True ),( 'state', 'in', ('confirm','done','cancel', 'banco-alma') ) ]}"/>
 					</group>
-					<group string="Buscar Productos" col="4" colspan="4" attrs="{ 'invisible' : [ ( 'state', '=', 'confirm' ) ]}">
+					<field name="se_creo" invisible="1"/>
+					
+					<group string="Buscar Productos" col="4" colspan="4" attrs="{ 'invisible' : [ ( 'state', 'in', ('confirm','done','cancel','banco-alma') ) ]}">
 					<button name="obtenerProductos"
 											string="Obtener Productos"
 											type="object"
@@ -56,13 +63,33 @@
 					</group>
 					<group string="Lista de Productos" col="4" colspan="4">
 					<field name="selecc_merma_m2m" nolabel="1"
-								 attrs="{ 'readonly' : [ ( 'state', '=', 'confirm' ) ]}"/>
-					</group>	
-         <group string="Imprimir Reporte" col="4" colspan="4">
+								 attrs="{ 'readonly' : [ ( 'state', 'in', ('confirm','done','cancel','banco-alma') ) ]}">
+						<tree string="Merma seleccion" version="7.0" editable="bottom"> 
+							<field name="clave_ide" readonly="1"/>	
+							<field name="fecha_creacion" readonly="1"/>
+							<field name="usuario_m2o_id" readonly="1"/>
+							<field name="ean13" readonly="1"/>
+							<field name="producto_s_m2o_id" readonly="1"/>
+							<field name="cantidad" readonly="1"/>
+							<field name="product_m2o_med_id" readonly="1"/>
+							<field name="precio_prod" readonly="1"/>
+							<field name="location_id" readonly="1"/>
+							<field name="destino_id" readonly="1"/>
+							<field name="se_llevo"/>
+							<field name="cantidad_banco"/>
+            </tree>
+          </field>  
+					</group>
+					<!--<div states="banco-alma">-->
+					<!--	-->
+					<!---->
+					<!--</div>-->
+         <group string="Imprimir Reporte" col="4" colspan="4" attrs="{ 'invisible' : [ ( 'state', 'in', ('confirm','draft','done','cancel') ) ]}">
 						<button name="imprimir_reporte_banco"
 										string="Imprimir"
 										type="object"
-										icon="gtk-print" colspan="4"/>
+										icon="gtk-print"
+										colspan="4"/>
 					</group>
 				</form>
 			</field>
@@ -80,7 +107,6 @@
 					<field name="n_usuario"/>
 					<field name="almacen_m2o_id" />
 					<field name="loc_final_dic"/>
-        <!--<field name="clave"/>-->
 				</search>
 			</field>
 		</record>

@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-import reporte_banco
+import reporte_bancoo
