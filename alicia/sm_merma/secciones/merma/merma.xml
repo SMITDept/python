@@ -62,6 +62,7 @@
 											class="oe_highlight"/>
 					</group>
 					<group string="Lista de Productos" col="4" colspan="4">
+					<label string="* Para indicar que se llevo el Banco/Almacen de clic sobre los campos ENTREGAR y CANTIDAD *" states="done" colspan="4"/>	
 					<field name="selecc_merma_m2m" nolabel="1"
 								 attrs="{ 'readonly' : [ ( 'state', 'in', ('confirm','done','cancel','banco-alma') ) ]}">
 						<tree string="Merma seleccion" version="7.0" editable="bottom"> 

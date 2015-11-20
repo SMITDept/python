@@ -128,6 +128,7 @@ class merma( osv.osv ) :
         s.precio_prod,
         s.name_move,
         s.se_llevo,
+        s.producto,
         s.id
         FROM merma m
         INNER JOIN merma_m2m_selec_merma r
@@ -143,25 +144,24 @@ class merma( osv.osv ) :
       if resultado != None and type( resultado ) in ( list, dict) :
         resultado=resultado[0]
         ubicar=resultado[6]
-        if ubicar :
-            nombre_movimiento="AUTOMATICO ENVIADO A" + ubicar.upper()
+        produc=resultado[7]
+        qty_bank=resultado[2]
+        if ubicar and qty_bank > 0:
+            nombre_movimiento= produc.upper() + "AUTOMATICO ENVIADO A " + ubicar.upper()
             localiza_id=resultado[0]
             ubicate = obj_local.browse(cr, uid, localiza_id)
             id_ubica_scrap=ubicate.location_id.id  
             locations_scrap = obj_local.search(cr, uid, [('location_id', 'child_of', [id_ubica_scrap])], context=context)
             for id_scrap in locations_scrap:
-              
                 scrap = obj_local.browse(cr, uid, id_scrap)
                 nombre=scrap.name
                 nombre=nombre.lower()
                 if nombre.find("merma") >= 0 :
                   # print "encontro"
                   ubicacion_final=id_scrap
-                  
-                self.pool.get('merma_seleccion').write(cr, uid, [selec_id], {'ubicacion_final_id': ubicacion_final}, context=context)
-            # print ubicacion_final 
-            # print localiza_id  
+                  self.pool.get('merma_seleccion').write(cr, uid, [selec_id], {'ubicacion_final_id': ubicacion_final}, context=context)
             if ubicacion_final != localiza_id :
+              # print "paseeeeeee"
               valores = {
                   'company_id': 1,
                   'location_dest_id': ubicacion_final,

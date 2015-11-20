@@ -38,8 +38,8 @@ class merma_wizard_productos(osv.TransientModel):
     # print cantidad_mover
     datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
     cantidad_mover=datos.cantidad_mover
-    valida=cantidad_mover-1
-    if valida >=0 :
+    valida=cantidad_mover
+    if valida > 0 :
       producto=datos.producto
       clave=datos.clave_ide
       cod_ean13=datos.cod_ean13
