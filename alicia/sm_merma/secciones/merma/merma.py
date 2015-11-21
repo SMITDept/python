@@ -12,8 +12,6 @@ from osv import fields, osv
 import time
 import datetime
 
-
-
 #Modulo :: 
 class merma( osv.osv ) :
   #--------------------------------------------------------Variables Privadas y Publicas--------------------------------------------------------------
@@ -36,7 +34,7 @@ class merma( osv.osv ) :
   #---------------------------------------------------------------------------------------------------------------------------------------------------  
   def accion_ejecutar(self, cr, uid, ids, context=None):
     """
-    Finaliza haciendo el movimiento automatico en almacen
+    Realiza el movimiento automatico en movimientos de almacen
     @return: True
     """
     if context is None:
@@ -63,6 +61,7 @@ class merma( osv.osv ) :
         ON r.select_merma_m2o_id=s.id
         WHERE s.id = %s
         AND m.id = %s
+        AND s.estado ='espera'
         order by s.id DESC
         limit 1
       """,(selec_id,id_merma,) )
@@ -114,6 +113,7 @@ class merma( osv.osv ) :
     id_ubica_scrap=0
     nombre_movimiento=''
     datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
+    
     seleccion=datos.selecc_merma_m2m
     obj_local = self.pool.get('stock.location')
     for id_selec in seleccion :
@@ -137,6 +137,7 @@ class merma( osv.osv ) :
         ON r.select_merma_m2o_id=s.id
         WHERE s.id = %s
         AND m.id = %s
+        AND s.estado ='espera'
         order by s.id DESC
         limit 1
       """,(selec_id,id_merma,) )
@@ -146,8 +147,9 @@ class merma( osv.osv ) :
         ubicar=resultado[6]
         produc=resultado[7]
         qty_bank=resultado[2]
-        if ubicar and qty_bank > 0:
-            nombre_movimiento= produc.upper() + "AUTOMATICO ENVIADO A " + ubicar.upper()
+        estado="realizado"
+        if ubicar:
+            nombre_movimiento= produc.upper() + "AUTOMATICO ENTREGADO A " + ubicar.upper()
             localiza_id=resultado[0]
             ubicate = obj_local.browse(cr, uid, localiza_id)
             id_ubica_scrap=ubicate.location_id.id  
@@ -157,11 +159,10 @@ class merma( osv.osv ) :
                 nombre=scrap.name
                 nombre=nombre.lower()
                 if nombre.find("merma") >= 0 :
-                  # print "encontro"
+
                   ubicacion_final=id_scrap
-                  self.pool.get('merma_seleccion').write(cr, uid, [selec_id], {'ubicacion_final_id': ubicacion_final}, context=context)
-            if ubicacion_final != localiza_id :
-              # print "paseeeeeee"
+                  self.pool.get('merma_seleccion').write(cr, uid, [selec_id], {'ubicacion_final_id': ubicacion_final, 'estado': estado }, context=context)
+            if ubicacion_final != localiza_id and qty_bank > 0:
               valores = {
                   'company_id': 1,
                   'location_dest_id': ubicacion_final,
@@ -182,20 +183,13 @@ class merma( osv.osv ) :
                   #"type","out"
                   'origin':'AUTOMATIC'
                 }
-              # print valores
+    
               self.write(cr, uid, ids, {'state':'banco-alma'}, context=context)
               self.pool.get('stock.move').create(cr, uid, valores)
             else:
               self.write(cr, uid, ids, {'state':'banco-alma'}, context=context)
-
     return True  
-  #---------------------------------------------------------------------------------------------------------------------------------------------------
-  # def accion_cancelar_movimiento(self, cr, uid, ids, context=None):
-  #       """ Cancela el stock move y el listado
-  #       @return: True
-  #       """
-  #       self.write(cr, uid, ids, {'state':'cancel'}, context=context)
-  #       return True
+
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
   ###                                                                 METODOS                                                                      ###
@@ -227,6 +221,8 @@ class merma( osv.osv ) :
       TO_CHAR(create_date,'YYYY-MM-DD')= %s
       AND
       nombre_destino like %s
+      AND
+      estado ='espera'
       """,(tienda_alm, fecha_mov, destino,) )
       resultado = cr.fetchall()
       if resultado != None and type( resultado ) in ( list, dict) :
@@ -283,7 +279,7 @@ class merma( osv.osv ) :
     :return dict
     """
     #Se crea clave
-    fecha_realizo = time.strftime("%d%m%y")
+    fecha_realizo = time.strftime("%y%m%d")
     obj_almacen = self.pool.get('stock.warehouse')
     tienda_nombre=obj_almacen.browse(cr, uid, almacen).name
     nombre_sep = tienda_nombre.split()
@@ -360,7 +356,6 @@ class merma( osv.osv ) :
     'consultado':fields.boolean('Consultado'),
     'clave_numer' : fields.char( 'Clave' ),
     'loc_final_dic':fields.selection(loc_desechos, 'Ubicación Final', required=True),
-    # 'tiendas_dic':fields.selection(TIENDA, 'Tienda'),
     'fecha_mov':fields.date("Fecha de Movimiento", required=True),
     'se_creo':fields.date("Fecha de creacion", required=False),
     
@@ -368,8 +363,8 @@ class merma( osv.osv ) :
     'state': fields.selection(  ( ('draft', 'Borrador'),
                                   ('cancel','Cancelado'),
                                   ('confirm','Confirmado'),
-                                  ('done', 'Realizado'),
-                                  ('banco-alma', 'Enviado a banco/almacen '),
+                                  ('done', 'Movimiento Realizado'),
+                                  ('banco-alma', 'Enviado a Banco/Almacen '),
                                   ('fin', 'Finalizar'),
                                 ),
                               'Estado', readonly=True,
@@ -435,7 +430,6 @@ class merma( osv.osv ) :
       'form': data,
     }
 
-    
     #Return el nombre del reporte que aparece en el service.name y el tipo de datos report.xml	
     return {
         'type': 'ir.actions.report.xml',

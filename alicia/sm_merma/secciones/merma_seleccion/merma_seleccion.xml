@@ -27,7 +27,7 @@
 					<field name="se_llevo"/>
 					<field name="cantidad_banco"/>
 					<field name="ubicacion_final_id"/>
-					
+					<field name="estado"/>
 				</tree>
 			</field>
 		</record>
@@ -57,7 +57,7 @@
 					<field name="name_move"/>
 					<field name="se_llevo"/>
 					<field name="enviar_banco" />
-					<field name="cantidad_banco" attrs="{ 'readonly' : [ ( 'se_llevo', 'in', ('banco','almacen') ) ]}"/>
+					<field name="cantidad_banco" />
 					<field name="ubicacion_final_id"/>
 					<field name="estado"/>
 					</group>
@@ -93,7 +93,7 @@
 		
 		<!-- Menu Items -->
 		
-		<menuitem name="Lista de Registro Producto"
+		<menuitem name="Lista de Producto"
 					parent="sm_merma.seccion_control"
 					id="lista_merma_seleccion"
 					action="action_merma_seleccion"/>

@@ -36,6 +36,7 @@ class reporte_bancoo(report_sxw.rml_parse):
       'get_datos_merma': self.get_datos_merma,
       'fecha_mov':self.fecha_mov,
       'realizo':self.realizo,
+      'get_sumas_merma' : self.get_sumas_merma,
       
       
     })
@@ -57,6 +58,7 @@ class reporte_bancoo(report_sxw.rml_parse):
         s.unidad_med AS unidad, 
         s.precio_prod AS precio, 
         l.complete_name AS origen,
+        ll.complete_name AS destino,
         s.se_llevo AS llevo, 
         s.cantidad_banco AS cantidad_banco
         FROM merma m
@@ -66,6 +68,8 @@ class reporte_bancoo(report_sxw.rml_parse):
         ON r.select_merma_m2o_id=s.id
         INNER JOIN stock_location l
         ON s.location_id=l.id
+        INNER JOIN stock_location ll
+        ON s.destino_id=ll.id
         WHERE m.id = %s
         order by s.id ASC
         """,(id_control_merma,)
@@ -122,8 +126,34 @@ class reporte_bancoo(report_sxw.rml_parse):
     if data.get('form', False) and data['form'].get('n_usuario', False):
         nombre=str(data['form'].get('n_usuario',False))
         realizo = 'REALIZO: ' + nombre
-    return realizo  
- # ['n_usuario','fecha_mov','loc_final_dic','clave_numer','selecc_merma_m2m',] 
+    return realizo
+  #----------------------------------------------------------------------------------------------------------------------
+  def get_sumas_merma( self, data ):
+    id_control_merma=0
+    if data.get('form', False) and data['form'].get('id', False):
+      id_control_merma = int(data['form'].get('id',False))
+      self.cr.execute(
+        """
+        SELECT 
+        Sum(s.cantidad) AS cantidad_product,
+        Sum(s.cantidad_banco) AS cantidad_banco
+        FROM merma m
+        INNER JOIN merma_m2m_selec_merma r
+        ON r.merma_m2o_id=m.id
+        INNER JOIN merma_seleccion s
+        ON r.select_merma_m2o_id=s.id
+        INNER JOIN stock_location l
+        ON s.location_id=l.id
+        WHERE m.id = %s
+        GROUP BY m.id
+        """,(id_control_merma,)
+      )
+      sumas = self.cr.dictfetchall()
+      if ( len( sumas ) > 0 ):
+        return sumas
+      else:
+        return { 'value' : {} }    
+
 #########################################################################################################################
 #------------------------------------------------------------------------------------------------------------------------
 #Nombre del reporte, nombre del modelo,ruta del rml, parser con el nombre de la clase y header el encabezado del reporte

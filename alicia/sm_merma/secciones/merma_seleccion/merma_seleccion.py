@@ -64,7 +64,6 @@ class merma_seleccion( osv.osv ) :
   
   #Valores por defecto de los campos del diccionario [_columns]
   _defaults = {
-  # 'elegir' : True,
   }
 
 merma_seleccion()

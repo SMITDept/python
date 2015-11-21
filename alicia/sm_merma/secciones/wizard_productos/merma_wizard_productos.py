@@ -35,7 +35,6 @@ class merma_wizard_productos(osv.TransientModel):
     @return dict
     """
     #objeto
-    # print cantidad_mover
     datos=self.pool.get( self._name ).browse( cr, uid, ids[0] )
     cantidad_mover=datos.cantidad_mover
     valida=cantidad_mover
@@ -58,6 +57,7 @@ class merma_wizard_productos(osv.TransientModel):
       name_move=producto+" "+ nombre_destino
       clave_sep = nombre_destino.split()
       nombre_destino = clave_sep[1].lower()
+      estado="espera"
       #se guarda id de wizard
       ide_wizard = ids[0]
       #creo fechas
@@ -69,7 +69,7 @@ class merma_wizard_productos(osv.TransientModel):
         #Valores a insertar
         valores = (
                     autor_uid, fecha_x, ide_wizard, clave, fecha_mov_stock, empleado_autor, name_move, cod_ean13, producto, cantidad_mover, 
-                    unidad_med, unidad_med_id, precio, autor_uid, localizacion_id, destino_id, id_producto, tienda, nombre_destino
+                    unidad_med, unidad_med_id, precio, autor_uid, localizacion_id, destino_id, id_producto, tienda, nombre_destino, estado,
                   )
         # print valores
         this = self.browse(cr, uid, ids)[0]
@@ -84,10 +84,9 @@ class merma_wizard_productos(osv.TransientModel):
           """
           INSERT INTO merma_seleccion
           (create_uid, create_date, ide_wizard, clave_ide, fecha_creacion, name_login, name_move, ean13, producto, cantidad, unidad_med,  
-          product_m2o_med_id, precio_prod, usuario_m2o_id, location_id, destino_id, producto_s_m2o_id, almacen_m2o_id, nombre_destino )
-          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+          product_m2o_med_id, precio_prod, usuario_m2o_id, location_id, destino_id, producto_s_m2o_id, almacen_m2o_id, nombre_destino, estado )
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
           """, valores )
-        
         
         return {
                     'type': 'ir.actions.act_window',
@@ -459,12 +458,12 @@ class merma_wizard_productos(osv.TransientModel):
             order by s.id
             """,)
     lista_tienda=cr.fetchall()
-    # print lista_tienda
-    #Se obtiene el numero de tienas
+
+    #Se obtiene el numero de tiendas
     rango=len(lista_tienda)
     suma=0
     sucursal=0
-    # for tienda in lista_tienda:
+
     for i in range(rango):
       suma=suma + 1
       if ubicacion_seleccionada.find(str(suma)) >= 0:
@@ -543,13 +542,10 @@ class merma_wizard_productos(osv.TransientModel):
           }      
     
     if location_ids != []:
-      # print location_ids
       #se borra el primer valor de tupla que es el padre de las ubicaciones
       del location_ids[0]
-      # print location_ids
       #Validando el retorno de datos encontrados para el filtrado de datos en destino_mov_m2o_id con etiqueta ubicacion destino
       cadena_retorno = ( str ( "('id','=','0')" if ( location_ids == [] ) else ( "('id','in'," + str( location_ids ) + ")" ) ) )
-      # print cadena_retorno
 
       #se escribe el id del almacen
       self.write(cr, uid, ids, {'almacen_m2o_id': id_almacen, },)
@@ -763,7 +759,6 @@ class merma_wizard_productos(osv.TransientModel):
   #Valores por defecto de los elementos del arreglo [_columns]
   _defaults = {
     'state': 'tienda',
-    # 'ubicaciones_subquery' : _obtener_ubicaciones_subquery,
   }
    
   #Reestricciones desde código

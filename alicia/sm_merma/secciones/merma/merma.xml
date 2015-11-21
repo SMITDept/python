@@ -12,7 +12,7 @@
 			<field name="model">merma</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
-				<tree string="Merma">
+				<tree string="Control de Merma">
 					<field name="clave_numer"/>
 					<field name="fecha_mov"/>
 					<field name="almacen_m2o_id" />
@@ -29,10 +29,8 @@
 			<field name="model">merma</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="Control de Desechos" version="7.0">
+				<form string="Control de Merma" version="7.0">
 					<header>
-						<!--groups="stock.group_stock_user"-->
-						<!--groups="stock.group_stock_manager"-->
 						<label string="* Al Ejecutar el Movimiento ya no es posible CANCELAR *" states="confirm" colspan="2"/>
 						<label string="* Al Confirmar ya no podra seguir Editando *" states="draft" colspan="2"/>
 						<button name="accion_confirmar" states="draft" string="Confirmar Movimiento" type="object" class="oe_highlight"/>
@@ -40,11 +38,9 @@
 						<button name="accion_cancelar_borrador" states="confirm" string="Cancelar Borrador" type="object"/>
 						<label string="* Entregar a Banco o Almacen *" states="done" colspan="2"/>
 						<button name="accion_enviar_a" states="done" string="Entregar" type="object" class="oe_highlight"/>
-						<!--<button name="accion_cancelar_movimiento" states="draft,confirm,done"  string="Cancelar Movimiento" type="object"/>-->
 						<field name="state" widget="statusbar" statusbar_visible="draft,confirm,done,banco-alma"/>
-						
           </header>
-					<group string="Control de Desechos" col="4" colspan="2">
+					<group string="Control de Merma" col="4" colspan="2">
 						<field name="clave_numer" readonly="1" colspan="2"/>
 						<field name="n_usuario" readonly="1" colspan="2"/>
             <field name="fecha_mov" colspan="2" attrs="{'readonly': [('state','in',('confirm','done','cancel','banco-alma'))]}"/>
@@ -54,7 +50,6 @@
 						<field name="loc_final_dic" attrs="{ 'readonly' : ['|', ( 'consultado', '=', True ),( 'state', 'in', ('confirm','done','cancel', 'banco-alma') ) ]}"/>
 					</group>
 					<field name="se_creo" invisible="1"/>
-					
 					<group string="Buscar Productos" col="4" colspan="4" attrs="{ 'invisible' : [ ( 'state', 'in', ('confirm','done','cancel','banco-alma') ) ]}">
 					<button name="obtenerProductos"
 											string="Obtener Productos"
@@ -81,10 +76,6 @@
             </tree>
           </field>  
 					</group>
-					<!--<div states="banco-alma">-->
-					<!--	-->
-					<!---->
-					<!--</div>-->
          <group string="Imprimir Reporte" col="4" colspan="4" attrs="{ 'invisible' : [ ( 'state', 'in', ('confirm','draft','done','cancel') ) ]}">
 						<button name="imprimir_reporte_banco"
 										string="Imprimir"
@@ -103,7 +94,7 @@
 			<field name="model">merma</field>
 			<field name="type">search</field>
 			<field name="arch" type="xml">					
-				<search string="Control de Desechos">
+				<search string="Control de Merma">
 					<field name="fecha_mov"/>
 					<field name="n_usuario"/>
 					<field name="almacen_m2o_id" />
@@ -115,14 +106,14 @@
 		<!-- Action Records -->	
 	
 		<record model="ir.actions.act_window" id="action_merma">
-			<field name="name">Merma</field>
+			<field name="name">Control de Merma</field>
 			<field name="view_id" ref="view_merma_tree"/>
 			<field name="res_model">merma</field>
 		</record>
 		
 		<!-- Menu Items -->
 		
-		<menuitem name="Control de Desechos"
+		<menuitem name="Control de Merma"
 					parent="sm_merma.seccion_control"
 					id="lista_merma"
 					action="action_merma"/>
