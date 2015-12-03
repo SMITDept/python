@@ -37,14 +37,16 @@ class auxiliar_contable(osv.osv_memory):
     * Argumentos OpenERP: [cr, uid, ids, context]
     @return int
     """   
-    
     self.query = ""
     per_id=''
+    carry=0
     current_date=date.today()
-    # current_date=date(2014,03,01)
-    carry, new_month=divmod(current_date.month-1+1, 12)
-    new_month+=-1
-    current_date=current_date.replace(year=current_date.year+carry, month=new_month, day=1)
+    # current_date=date(2014,01,01)
+    new_month=current_date.month-1
+    if new_month == 0 :
+      new_month=12
+      carry=1
+    current_date=current_date.replace(year=current_date.year-carry, month=new_month, day=1)
     self.query = str(current_date)
     cr.execute(
       """
@@ -53,9 +55,10 @@ class auxiliar_contable(osv.osv_memory):
       WHERE date_start = '"""+ self.query +"""'
       """)
     registro = cr.fetchone()
-    if (len( registro ) > 0 ):
+    if registro != None and type( registro ) in ( list, tuple ):
+      if (len( registro ) > 0 ):
       #Obteniendo el ID del periodo
-      per_id = registro[0]
+        per_id = registro[0]
     else:
       cr.execute(
       """
@@ -75,13 +78,13 @@ class auxiliar_contable(osv.osv_memory):
 
     if worksheet :
       #Se crean los nombres de las columnas
-      worksheet.write(0,0,'CREACION', style_title)
-      worksheet.write(0,1,'FECHA', style_title)
+      worksheet.write(0,0,'FECHA', style_title)
+      worksheet.write(0,1,'CREACION', style_title)
       worksheet.write(0,2,'DEBITO', style_title)
       worksheet.write(0,3,'CREDITO', style_title)
       worksheet.write(0,4,'NOMBRE', style_title)
       worksheet.write(0,5,'DESCRIPCION', style_title)
-      worksheet.col(0).width = 30 * 256
+      worksheet.col(1).width = 30 * 256
       worksheet.col(4).width = 40 * 256
       worksheet.col(5).width = 50 * 256
       return True
@@ -135,8 +138,9 @@ class auxiliar_contable(osv.osv_memory):
       if bandera == True:
         cr.execute(
             """
-              SELECT aml.create_date AS create_d,
+              SELECT 
               aml.date AS date,
+              aml.create_date AS create_d,
               aml.debit AS debit,
               aml.credit AS credit,
               aml.name AS name,
@@ -146,14 +150,14 @@ class auxiliar_contable(osv.osv_memory):
               ON aml.account_id = acc.id
               WHERE  aml.state = 'valid'
               """+ self.query +"""
-              ORDER BY aml.create_date
+              ORDER BY aml.date ASC
             """)
         aux = cr.fetchall()
         if type( aux ) in ( list, dict) :
           #objeto que crea el libro de trabajo con el constructor Workbook()
           workbook = xlwt.Workbook()
           #El objeto de libro llama al método add_sheet() para agregar una nueva hoja de cálculo
-          worksheet = workbook.add_sheet('Auxiliar por cuenta')
+          worksheet = workbook.add_sheet('Cuenta por Periodo')
           style0 = xlwt.easyxf('font: name Arial, color-index black', num_format_str='#,##0.00')
           style1 = xlwt.easyxf(num_format_str='DD-MM-YY')
           styleNo = xlwt.easyxf('font: name Arial, color-index red', num_format_str='#,##0.00')
@@ -163,18 +167,22 @@ class auxiliar_contable(osv.osv_memory):
             col = 0
             num=0
             n=1
-            fecha =aux[0][1]
+            fecha =aux[0][0]
             num_mess=fecha.split("-")
             siguiente = int(num_mess[1]) + 1 
             creado=self._creaworksheet(cr, uid, ids, worksheet)
             titul=''
-            for create_d, date, debit, credit, name, nombre in (aux):
+            for date, create_d, debit, credit, name, nombre in (aux):
               num_mes=date.split("-")
               mes = int(num_mes[1])
+              anio = int(num_mes[0])
+              
               if mes == siguiente :
+
                 n+=1
                 siguiente = mes + 1
-                worksheet = workbook.add_sheet('Auxiliar por cuenta ' + str(n))
+                period= str(num_mes[1]) +'-'+str(num_mes[0])
+                worksheet = workbook.add_sheet('Cuenta por Periodo ' + str(period))
                 creado=self._creaworksheet(cr, uid, ids, worksheet)
                 if creado == True :
                   row = 1
@@ -182,8 +190,8 @@ class auxiliar_contable(osv.osv_memory):
                 else:
                   break  
 
-              worksheet.write(row, col, create_d, style0)
-              worksheet.write(row, col + 1, date, style1)
+              worksheet.write(row, col, date, style0)
+              worksheet.write(row, col + 1, create_d, style1)
               worksheet.write(row, col + 2, debit, style0)
               worksheet.write(row, col + 3, credit, style0)
               worksheet.write(row, col + 4, name, style0)
@@ -191,11 +199,9 @@ class auxiliar_contable(osv.osv_memory):
               row += 1
               num += 1    
               titul=nombre
-              # print row
               
             titul=titul.split()
             namee='Auxiliar_'+str(titul[0]).capitalize()+'.xls'
-
           else:
               raise osv.except_osv(_( '¡Aviso!' ),_( 'No se encontraron datos en ' + tipo_name) )
               # worksheet.write(1, 0, '* No se encontraron datos en la busqueda *', styleNo)
@@ -204,7 +210,6 @@ class auxiliar_contable(osv.osv_memory):
 
     print namee
     # guarda el archivo en la ruta especificada      
-    # return workbook.save(path)
     with tempfile.NamedTemporaryFile(delete=False) as fcsv:
         workbook.save(fcsv.name)
     with open(fcsv.name, 'r') as fname:

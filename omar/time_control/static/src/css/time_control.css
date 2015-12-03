@@ -1,3 +1,4 @@
+/* Clase para el botón de registrar */
 .oe_time_control {
     color: white;
     background: url(../img/bac.jpg);
@@ -5,17 +6,20 @@
     height: 100%;
 }
 
+/* Clase para mostrar la hora */
 .style_hour{
     font-size: 45px;
     margin-top: 0%;
     margin-left: 10%;
 }
 
+/* margen del imput */
 .margin {
     margin-left: 15%;
 
 }
 
+/* Clase para el botón de registrar */
 .styled-button {
 	border-radius:5px;
 	-moz-border-radius:5px;
@@ -31,10 +35,12 @@
 	margin-top: 6px !important;
 }
 
+/* fondo del modulo */
 .styled-button: hover {
 	background-image: linear-gradient(to bottom, #fff, #fff) !important;
 }
 
+/* tamaño del botón */
 .input-size {
 	padding:9px 50px !important;
 }

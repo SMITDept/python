@@ -1,4 +1,5 @@
 
+//Cargar los plugins requeridos
 var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	jshint = require('gulp-jshint'),
@@ -11,8 +12,8 @@ var gulp = require('gulp'),
 	nodemon = require('gulp-nodemon'),
 	exec = require('child_process').exec;
 
-//insert data
 
+//Cargar las imágenes
 gulp.task('images', function() {
 	return gulp.src('static/img/*')
 	.pipe(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true }))
@@ -21,6 +22,7 @@ gulp.task('images', function() {
 	.pipe(notify({ message: 'Images task complete' }));
 });
 
+//Cargar los archivos html
 gulp.task('html', function() {
     return gulp.src('static/html/*.html')
         .pipe(gulp.dest('static/html'))
@@ -28,6 +30,7 @@ gulp.task('html', function() {
         .pipe(notify({ message: 'HTML task complete' }))
 });
 
+//Compila los archivos js en uno solo
 gulp.task('scripts', function() {
 	return gulp.src('static/js/source/*.js')
 	.pipe(jshint())
@@ -39,6 +42,7 @@ gulp.task('scripts', function() {
 	.pipe(notify({ message: 'Scripts task complete' }));
 });
 
+//Inicia el servidor de gulp
 gulp.task('webserver', function () {
   nodemon({
   	script: 'server.js'

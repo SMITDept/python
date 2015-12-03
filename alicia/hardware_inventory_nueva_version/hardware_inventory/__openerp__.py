@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
+  #Características del modulo generales del modulo.
   'name': 'SM Hardware',
   'version': '2.0',
   'category': 'SUPERMAS',
@@ -10,13 +11,14 @@
   'installable': True,
   'active': False,
   'description': 'Módulo Hardware - Modulo para el inventario de hardware y mantenimiento',
-  #This model depends of BASE OpenERP model...
+  #Módulos de los cual les depende su funcionamiento.
   'depends': [
     'base',
     'board',
     'hr',
+    'web',
   ],
-  #XML imports
+  #Importación de las vistas del modulo
   'data': [
 
     #------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -25,10 +27,10 @@
 
     #Archivo principal de menús
     'menus.xml',
-     'secciones/hardware/hardware_views.xml',
-     'secciones/administracion/catalogos/cat_dispositivos/cat_dispositivos.xml',
-     'secciones/administracion/sucursal/sucursal.xml',
-     'secciones/maintenance/maintenance_view.xml',
+    'secciones/hardware/hardware_views.xml',
+    'secciones/administracion/catalogos/cat_dispositivos/cat_dispositivos.xml',
+    'secciones/administracion/sucursal/sucursal.xml',
+    'secciones/maintenance/maintenance_view.xml',
   ],
   'demo_xml': [
                ],

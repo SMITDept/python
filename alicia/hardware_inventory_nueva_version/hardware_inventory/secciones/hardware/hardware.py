@@ -207,6 +207,9 @@ class hardware(osv.osv):
 
     nuevo_id = super( hardware, self ).create( cr, uid, vals, context = context )
     return nuevo_id
+
+  def show_fields_responsible(self, cr, uid, context = None):
+    return False
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
   ###                                                                                                                                              ###
   ###                                                  Atributos basicos de un modelo OPENERP                                                      ###
@@ -236,6 +239,7 @@ class hardware(osv.osv):
     'hd_capacity':fields.integer("HD Capacity", required=False),
     'status_dic':fields.selection(STATUS, 'Status', required =True ),
     'cost_hardware':fields.float('Cost Hardware', required=False),
+    'show_responsible': fields.boolean('Responsible'),
     
     #Este campo contiene la imagen utilizada como imagen para el producto, limitado a 1024x1024px
     'image': fields.binary("Image"),
@@ -280,7 +284,8 @@ class hardware(osv.osv):
                                    store={
                                       'hardware': (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
                                   },),
-    
+    'format_responsibility': fields.binary('Format responsibility', required=False),
+    'responsible': fields.many2one('res.users',"User responsible", required=False),
     
   }
     
