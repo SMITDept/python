@@ -116,13 +116,13 @@ class auxiliar_contable(osv.osv_memory):
           periodo_id_init=str(periodo_id_init)
           periodo_fin_id=str(periodo_fin_id)
           self.query = self.query + " AND aml.period_id BETWEEN " + periodo_id_init + " AND " + periodo_fin_id
-          # print self.query
+          print self.query
         # self.query = self.query + " AND aml.period_id = " + periodo_id_init
         else:
           periodo_id_init=str(periodo_id_init)
           periodo_fin_id=str(periodo_fin_id)
           self.query = self.query + " AND aml.period_id BETWEEN " + periodo_fin_id + " AND " + periodo_id_init
-          # print self.query
+          print self.query
         bandera=True
       else:  
         if datos.rango_fechas == True :
