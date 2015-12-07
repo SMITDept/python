@@ -44,14 +44,15 @@ class comparision_tc_vta(osv.TransientModel):
 	    * Argumentos OpenERP: [cr, uid, ids, context]
 	    @return int
 	    """   
-	    
 	    self.query = ""
 	    per_id=''
+	    carry=0
 	    current_date=date.today()
-	    # current_date=date(2014,03,01)
-	    carry, new_month=divmod(current_date.month-1+1, 12)
-	    new_month+=-1
-	    current_date=current_date.replace(year=current_date.year+carry, month=new_month, day=1)
+	    new_month=current_date.month-1
+	    if new_month == 0 :
+	      new_month=12
+	      carry=1
+	    current_date=current_date.replace(year=current_date.year-carry, month=new_month, day=1)
 	    self.query = str(current_date)
 	    cr.execute(
 	      """
@@ -60,10 +61,10 @@ class comparision_tc_vta(osv.TransientModel):
 	      WHERE date_start = '"""+ self.query +"""'
 	      """)
 	    registro = cr.fetchone()
-	    if registro:
+	    if registro != None and type( registro ) in ( list, tuple ):
+	      if (len( registro ) > 0 ):
 	      #Obteniendo el ID del periodo
-	      per_id = (( registro[0] ) if ( len( registro ) > 0 ) else ( None ))
-	      return per_id
+	        per_id = registro[0]
 	    else:
 	      cr.execute(
 	      """
@@ -72,8 +73,8 @@ class comparision_tc_vta(osv.TransientModel):
 	      ORDER BY id DESC
 	      """)
 	      registro = cr.fetchone()
-	      per_id_ultimo = (( registro[0] ) if ( len( registro ) > 0 ) else ( None ))
-	      return per_id_ultimo
+	      per_id = registro[0]
+	    return per_id
 
 	#Descripcion del modulo
 	_description = 'Comparision TC with VTA'
