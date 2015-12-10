@@ -66,7 +66,7 @@ class merma( osv.osv ) :
         limit 1
       """,(selec_id,id_merma,) )
       resultado = cr.fetchall()
-      if resultado != None and type( resultado ) in ( list, dict) :
+      if resultado != None and type( resultado ) in ( list, dict) and resultado != []:
         resultado=resultado[0]
         valores =    {
           'company_id': 1,
@@ -142,14 +142,14 @@ class merma( osv.osv ) :
         limit 1
       """,(selec_id,id_merma,) )
       resultado = cr.fetchall()
-      if resultado != None and type( resultado ) in ( list, dict) :
+      if resultado != None and type( resultado ) in ( list, dict) and resultado != [] :
         resultado=resultado[0]
         ubicar=resultado[6]
         produc=resultado[7]
         qty_bank=resultado[2]
         estado="realizado"
         if ubicar:
-            nombre_movimiento= produc.upper() + "AUTOMATICO ENTREGADO A " + ubicar.upper()
+            nombre_movimiento= produc.upper() + "MOV. DE MERMA " + produc.upper()
             localiza_id=resultado[0]
             ubicate = obj_local.browse(cr, uid, localiza_id)
             id_ubica_scrap=ubicate.location_id.id  
@@ -159,9 +159,9 @@ class merma( osv.osv ) :
                 nombre=scrap.name
                 nombre=nombre.lower()
                 if nombre.find("merma") >= 0 :
-
                   ubicacion_final=id_scrap
-                  self.pool.get('merma_seleccion').write(cr, uid, [selec_id], {'ubicacion_final_id': ubicacion_final, 'estado': estado }, context=context)
+                  fecha_mov_merma = time.strftime("%y%m%d")
+                  self.pool.get('merma_seleccion').write(cr, uid, [selec_id], {'ubicacion_final_id': ubicacion_final, 'estado': estado, 'fecha_realizo': fecha_mov_merma }, context=context)
             if ubicacion_final != localiza_id and qty_bank > 0:
               valores = {
                   'company_id': 1,
@@ -188,6 +188,10 @@ class merma( osv.osv ) :
               self.pool.get('stock.move').create(cr, uid, valores)
             else:
               self.write(cr, uid, ids, {'state':'banco-alma'}, context=context)
+             
+      else:
+        self.write(cr, uid, ids, {'state':'banco-alma'}, context=context)
+              
     return True  
 
   ### //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ###
@@ -226,9 +230,11 @@ class merma( osv.osv ) :
       """,(tienda_alm, fecha_mov, destino,) )
       resultado = cr.fetchall()
       if resultado != None and type( resultado ) in ( list, dict) :
-        self.write(cr, uid, ids, {
-                'consultado': True,   
-        }, context=context)
+
+        if resultado:
+          self.write(cr, uid, ids, {
+                  'consultado': True,   
+          }, context=context)
         for id_selec in resultado:
           id_select = id_selec[0]
           cr.execute(
@@ -355,16 +361,16 @@ class merma( osv.osv ) :
     'c_numero' : fields.integer( 'Clave Numero' ),
     'consultado':fields.boolean('Consultado'),
     'clave_numer' : fields.char( 'Clave' ),
-    'loc_final_dic':fields.selection(loc_desechos, 'Ubicación Final', required=True),
+    'loc_final_dic':fields.selection(loc_desechos, 'Ubicación Destino', required=True),
     'fecha_mov':fields.date("Fecha de Movimiento", required=True),
     'se_creo':fields.date("Fecha de creacion", required=False),
     
-    'n_usuario': fields.char("Realizo", required=False),
+    'n_usuario': fields.char("Realizó", required=False),
     'state': fields.selection(  ( ('draft', 'Borrador'),
                                   ('cancel','Cancelado'),
                                   ('confirm','Confirmado'),
-                                  ('done', 'Movimiento Realizado'),
-                                  ('banco-alma', 'Enviado a Banco/Almacen '),
+                                  ('done', 'Por Entregar'),
+                                  ('banco-alma', 'Realizado'),
                                   ('fin', 'Finalizar'),
                                 ),
                               'Estado', readonly=True,

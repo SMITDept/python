@@ -59,7 +59,8 @@ class reporte_bancoo(report_sxw.rml_parse):
         s.precio_prod AS precio, 
         l.complete_name AS origen,
         ll.complete_name AS destino,
-        s.se_llevo AS llevo, 
+        s.se_llevo AS llevo,
+        s.fecha_realizo AS fecha_realizo,
         s.cantidad_banco AS cantidad_banco
         FROM merma m
         INNER JOIN merma_m2m_selec_merma r

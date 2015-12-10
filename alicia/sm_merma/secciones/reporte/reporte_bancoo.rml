@@ -123,19 +123,19 @@
     </blockTable>
     <spacer length="0.5cm"/>
     <!-- #tabla de relacion a account_move_line-->
-    <blockTable colWidths="100.0, 190.0, 70.0, 100.0, 50.0, 50.0, 150.0, 50.0" style="Tabla_header">
+    <blockTable colWidths="70.0, 100.0, 190.0, 150.0, 50.0, 50.0, 50.0, 100.0" style="Tabla_header">
       <tr>
-        <td>
-          <para style="terp_tblheader_General_Centre">Capturo</para>
-        </td>
-        <td>
-          <para style="terp_tblheader_General_Centre">Origen</para>
-        </td>
         <td>
           <para style="terp_tblheader_General_Centre">Codigo</para>
         </td>
         <td>
           <para style="terp_tblheader_General_Centre">Producto</para>
+        </td>
+        <td>
+          <para style="terp_tblheader_General_Centre">Origen</para>
+        </td>
+        <td>
+          <para style="terp_tblheader_General_Centre">Destino</para>
         </td>
         <td>
           <para style="terp_tblheader_General_Centre">Cantidad</para>
@@ -144,28 +144,28 @@
           <para style="terp_tblheader_General_Centre">Precio</para>
         </td>
         <td>
-          <para style="terp_tblheader_General_Centre">Destino</para>
+          <para style="terp_tblheader_General_Centre">Merma</para>  
         </td>
         <td>
-          <para style="terp_tblheader_General_Centre">Banco</para>  
+          <para style="terp_tblheader_General_Centre">Capturo</para>
         </td>
       </tr>
     </blockTable>
     
-    <blockTable colWidths="100.0, 190.0, 70.0, 100.0, 50.0, 50.0, 150.0, 50.0" style="Table1">
+    <blockTable colWidths="70.0, 100.0, 190.0, 150.0, 50.0, 50.0, 50.0, 100.0" style="Table1">
       
       <tr> [[ repeatIn(get_datos_merma(data['form']), 'ref') ]]
-        <td>
-         <para style="terp_default_Centre_8">[[ ref['name_login'] ]]</para>
-        </td>
-        <td>
-         <para style="terp_default_Centre_8">[[ ref['origen'] ]] </para>
-        </td>
         <td>
           <para style="terp_default_Centre_8">[[ ref['codigo'] ]] </para>
         </td>
         <td>
           <para style="terp_default_Centre_8">[[ ref['producto'] ]] </para>
+        </td>
+        <td>
+         <para style="terp_default_Centre_8">[[ ref['origen'] ]] </para>
+        </td>
+        <td>
+          <para style="terp_default_Centre_8">[[ ref['destino'] ]] </para>
         </td>
         <td>
           <para style="terp_default_Centre_8">[[ ref['cantidad'] ]] [[ ref['unidad'] ]]</para>
@@ -174,14 +174,14 @@
           <para style="terp_default_Centre_8">$ [[ ref['precio'] ]] </para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ref['destino'] ]] </para>
+          <para style="terp_default_Centre_8">[[ ref['cantidad_banco'] == None and '0.0' or ref['cantidad_banco'] ]] [[ ref['unidad'] ]]</para>
         </td>
         <td>
-          <para style="terp_default_Centre_8">[[ ref['cantidad_banco'] ]] [[ ref['unidad'] ]]</para>
+         <para style="terp_default_Centre_8">[[ ref['name_login'] ]]</para>
         </td>
       </tr>
     </blockTable>
-    <blockTable colWidths="100.0, 190.0, 70.0, 100.0, 50.0, 50.0, 150.0, 50.0" style="Tabla_header">
+    <blockTable colWidths="70.0, 100.0, 190.0, 150.0, 50.0, 50.0, 50.0, 100.0" style="Tabla_header">
       <tr>[[repeatIn(get_sumas_merma(data['form']), 'sum') ]]
         <td>
           <para style="terp_tblheader_General_Centre"><font color="white"></font></para>
@@ -195,18 +195,20 @@
         <td>
           <para style="terp_tblheader_General_Centre"><font color="white"></font></para>
         </td>
-        <td>
-          <para style="terp_tblheader_General_Centre">[[ sum['cantidad_product'] ]] [[ ref['unidad'] ]]</para>
+        <td>				
+					
+          <para style="terp_tblheader_General_Centre">[[ sum['cantidad_product'] == None and '0.0' or sum['cantidad_product'] ]] [[ ref['unidad'] ]]</para>
         </td>
         <td>
           <para style="terp_tblheader_General_Centre"><font color="white"></font></para>
         </td>
         <td>
-          <para style="terp_tblheader_General_Centre"></para>  
+          <para style="terp_tblheader_General_Centre">[[ sum['cantidad_banco'] == None and '0.0' or sum['cantidad_banco'] ]] [[ ref['unidad'] ]]</para>
         </td>
         <td>
-          <para style="terp_tblheader_General_Centre">[[ sum['cantidad_banco'] ]] [[ ref['unidad'] ]]</para>
+          <para style="terp_tblheader_General_Centre"></para>  
         </td>
+
       </tr>
     </blockTable>
    

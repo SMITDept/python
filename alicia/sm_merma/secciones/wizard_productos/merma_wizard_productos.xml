@@ -25,7 +25,6 @@
 							<field name="destino_mov_m2o_id" colspan='4'/>
 		        </group>
 		      </div>
-					
 		      <div states="producto">
 		        <group  states="producto" string="Introducir Código de Producto y Ubicación" colspan='4' col='4'>
 			        <field name="cod_ean13"  on_change="obtenerProducto(cod_ean13, cod_ubicacion)" colspan='2'/>

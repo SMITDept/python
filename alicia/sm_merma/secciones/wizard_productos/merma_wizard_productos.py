@@ -9,7 +9,6 @@
 #########################################################################################################################
 
 #Importando las clases necesarias
-import time
 from osv import fields, osv
 import time
 import datetime
@@ -70,6 +69,7 @@ class merma_wizard_productos(osv.TransientModel):
         valores = (
                     autor_uid, fecha_x, ide_wizard, clave, fecha_mov_stock, empleado_autor, name_move, cod_ean13, producto, cantidad_mover, 
                     unidad_med, unidad_med_id, precio, autor_uid, localizacion_id, destino_id, id_producto, tienda, nombre_destino, estado,
+                    cantidad_prod,
                   )
         # print valores
         this = self.browse(cr, uid, ids)[0]
@@ -84,8 +84,9 @@ class merma_wizard_productos(osv.TransientModel):
           """
           INSERT INTO merma_seleccion
           (create_uid, create_date, ide_wizard, clave_ide, fecha_creacion, name_login, name_move, ean13, producto, cantidad, unidad_med,  
-          product_m2o_med_id, precio_prod, usuario_m2o_id, location_id, destino_id, producto_s_m2o_id, almacen_m2o_id, nombre_destino, estado )
-          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+          product_m2o_med_id, precio_prod, usuario_m2o_id, location_id, destino_id, producto_s_m2o_id, almacen_m2o_id, nombre_destino,
+          estado, cantidad_ubica )
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
           """, valores )
         
         return {

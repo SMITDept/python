@@ -2,7 +2,7 @@
 
 {
   'name': 'SM Merma',
-  'version': '1.0',
+  'version': '1.1',
   'category': 'SUPERMAS',
   'author': 'SUPERMAS',
   'maintainer': 'SUPERMAS',
